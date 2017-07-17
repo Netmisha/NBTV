@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\Sockets">
+      <UniqueIdentifier>{9d273728-cde2-4d29-90bc-ad0cea268fc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\AbstractSocket">
+      <UniqueIdentifier>{57f92781-af14-490a-a51b-0dd038576d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\BroadcastSocket">
+      <UniqueIdentifier>{f4a111bf-afa6-4317-b077-b55dfc35125d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\RecvSocket">
+      <UniqueIdentifier>{9cbaf649-0a8d-4400-ab47-c6ccd13a09e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Network">
+      <UniqueIdentifier>{217b6857-14d0-49ec-834a-a411ee1a6787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Parcer">
+      <UniqueIdentifier>{698c528d-4ae1-4de3-b2d9-e4ca32fd65d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Defines">
+      <UniqueIdentifier>{a0d70b53-cc4e-44dc-8936-0b109e0909a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Structs">
+      <UniqueIdentifier>{8a9096f3-4ee2-4cd3-b6f7-ccc156619d6d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AppManager.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Chat.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AbstractSocket.cpp">
+      <Filter>Resource Files\Sockets\AbstractSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvSocket.cpp">
+      <Filter>Resource Files\Sockets\RecvSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="BroadcastSocket.cpp">
+      <Filter>Resource Files\Sockets\BroadcastSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="Parcer.cpp">
+      <Filter>Resource Files\Parcer</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Resource Files\Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AppManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Chat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractSocket.h">
+      <Filter>Resource Files\Sockets\AbstractSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="BroadcastSocket.h">
+      <Filter>Resource Files\Sockets\BroadcastSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvSocket.h">
+      <Filter>Resource Files\Sockets\RecvSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Parcer.h">
+      <Filter>Resource Files\Parcer</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>Resource Files\Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Resource Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="UserMsg.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvStruct.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="UnpackedMessage.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="LogMessage.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
