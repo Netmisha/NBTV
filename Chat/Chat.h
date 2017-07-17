@@ -18,20 +18,22 @@ public:
 
 	void SetNetwork(Network* net);
 	void SetUserInfo(char color, std::string name);
-	std::thread& GetInputThread();
+	std::thread& GetInputThread(); //thread descriptor getter
 
 	void ResetChat();
-	void PutMsg(UserMsg msg);
+	void PutMsg(UserMsg msg); // show msg to the screen
 	
-	void AddMsg(UserMsg msg);
-	void InputStream();
+	void AddMsg(UserMsg msg); //adds msg to the vector and call`s PutMsg()
+	void InputStream();  
 
-	void Activate();
+	void Activate(); //starts input thread
+	void ActivatePrivateChat(std::string name); //private chat input mode
 
 private:
-	void IOnlineMsg();
-	void IOfflineMsg();
-	void SendMsg(UserMsg msg);
+	void IOnlineMsg();	//sends online msg
+	void IOfflineMsg();	//sends online msg
+	void SendMsg(UserMsg msg); //broadcast message and AddMsg()
+	int SendMsgTo(std::string name, UserMsg msg); //all msgs user write goes directly to the chosen user
 
 
 	char msg_color_;
@@ -46,4 +48,4 @@ private:
 	std::mutex chat_mutex_;
 };
 
-void ActivateChat(Chat* chat);
+void ActivateChat(Chat* chat); //function for input thread

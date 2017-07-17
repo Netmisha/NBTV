@@ -4,6 +4,8 @@
 #include "AbstractSocket.h"
 #include "Defines.h"
 
+#pragma warning(disable : 4996)	//inet_addr warining block
+
 class BroadcastSocket : public AbstractSocket
 {
 public:

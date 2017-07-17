@@ -21,12 +21,14 @@ Chat::~Chat()
 
 void Chat::IOnlineMsg()
 {
+	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
 	UserMsg msg = { msg_color_, user_name_, user_name_ + " is online!" };
 	SendMsg(msg);
 }
 
 void Chat::IOfflineMsg()
 {
+	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 	UserMsg msg = { msg_color_, user_name_, user_name_ + " left the chat!" };
 	SendMsg(msg);
 }
@@ -36,6 +38,15 @@ void Chat::SendMsg(UserMsg msg)
 	connected_network_->SendMsg(msg);
 	buffer_.clear();
 	AddMsg(msg);
+}
+
+int Chat::SendMsgTo(std::string name, UserMsg msg)
+{
+	int result = connected_network_->SendMsgTo(name, msg);
+	buffer_.clear();
+	AddMsg(msg);
+
+	return result;
 }
 
 void Chat::SetNetwork(Network * net)
@@ -98,12 +109,21 @@ void Chat::InputStream()
 	while (1)
 	{
 		
-		
-		char tmp;
-		for (tmp = _getch(); tmp != '\r'; tmp = _getch())
+		for (char tmp = _getch(); tmp != '\r'; tmp = _getch())
 		{	
 			buffer_.push_back(tmp);
 			cout << tmp;
+		}
+		if (buffer_[0] == '/' && buffer_[1] == 'w' && buffer_[2] == ' ')
+		{
+			for (int i = 3; i > 0; i--)
+			{
+				buffer_.erase(buffer_.begin());
+			}
+
+			ActivatePrivateChat(buffer_);
+
+			continue;
 		}
 		UserMsg msg = { msg_color_, user_name_, buffer_ };
 		SendMsg(msg);
@@ -116,7 +136,33 @@ void Chat::Activate()
 	input_thread_ = std::thread(ActivateChat, this);
 }
 
-void ActivateChat(Chat* chat)
+void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes directly to the chosen user
+{
+	buffer_.clear();
+	AddMsg({ 7, "PRIVATE CHAT WITH", name });
+
+	while (1)
+	{
+		for (char tmp = _getch(); tmp != '\r'; tmp = _getch())
+		{
+			buffer_.push_back(tmp);
+			cout << tmp;
+		}
+		if (buffer_[0] == '/' && buffer_[1] == 'w')
+		{
+			buffer_.clear();
+			break;
+		}
+		UserMsg msg = { msg_color_, user_name_, buffer_ };
+		if (SendMsgTo(name, msg) == -1)
+		{
+			AddMsg({ 7, "THRRE NO USER WITH THIS NAME ", name });
+			break;
+		}
+	}
+}
+
+void ActivateChat(Chat* chat) //function for input thread
 {
 	chat->InputStream();
 }

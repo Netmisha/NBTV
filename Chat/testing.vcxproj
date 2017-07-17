@@ -13,6 +13,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5E84FE97-BBFD-4479-BF26-12FD7EBD6FDB}</ProjectGuid>
     <RootNamespace>testing</RootNamespace>
+    <ProjectName>ChatApp</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
