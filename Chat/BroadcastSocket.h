@@ -17,6 +17,8 @@ public:
     //broadcasts message to the network
     int Send(const void *buffer, int size);
 
+    int SendTo(const void *buffer, int size, const char* ip);
+
     void SetBroadcastPort(int port);
 
 private:

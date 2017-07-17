@@ -49,3 +49,15 @@ void BroadcastSocket::SetBroadcastPort(int port)
 {
     broadcast_addr_.sin_port = htons(port);
 }
+
+int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)
+{
+    sockaddr_in send_to_addr = broadcast_addr_;
+    send_to_addr.sin_addr.s_addr = inet_addr(ip);
+    return sendto(socket_,
+                  (const char*)buffer,
+                  size,
+                  0,
+                  (SOCKADDR*)&send_to_addr,
+                  (int)sizeof(send_to_addr));
+}

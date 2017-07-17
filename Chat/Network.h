@@ -6,8 +6,10 @@
 #include "UserMsg.h"
 #include "Parcer.h"
 #include "Chat.h"
+
 #include <thread>
 #include <mutex>
+#include <map>
 
 
 class Network
@@ -18,6 +20,8 @@ public:
 
     //chat uses this function to broadcast messages
     int SendMsg(UserMsg user_msg);
+
+    int SendMsgTo(std::string user_name, UserMsg &user_msg);
     //function to prepare network for working
     int PrepareNetwork();
     //thread func for starting network
@@ -29,6 +33,9 @@ public:
     void StopNetwork();
 
 	void SetChat(Chat* chat);
+
+    void SendLogMsg(std::string name, int type);
+    
 private:
     Chat *chat_;
     //socket for broadcasting
@@ -44,8 +51,12 @@ private:
     //mutex on send
     std::mutex send_mutex_;
 
+    std::map<std::string, std::string> users_name_ip_map_;
+
     //cleanup function, closes sockets
     void Cleanup();
+
+    void ProcessLogMessage(LogMessage msg, std::string ip);
 };
 
 #endif // !NETWORK_H

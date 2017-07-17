@@ -11,9 +11,7 @@ using std::cin;
 using std::endl;
 
 
-Chat::Chat()
-{
-}
+Chat::Chat(){}
 
 
 Chat::~Chat()

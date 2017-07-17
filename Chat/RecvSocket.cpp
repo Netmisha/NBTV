@@ -58,5 +58,5 @@ int RecvSocket::Recv(RecvStruct* out_result)
     out_result->packet_ = new char[recv_size]();
     memcpy(out_result->packet_, buffer_, recv_size);
 
-    return 0;
+    return recv_size;
 }
