@@ -25,7 +25,8 @@ public:
 	void PutMsg(const UserMsg& msg); // show msg to the screen
 	
 	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
-	void InputStream();  
+	void InputStream(); 
+	void ReadFromKeyboard(); //reading from keyboard 
 	void PopBuffer(int num);
 	bool CheckForCommands();
 

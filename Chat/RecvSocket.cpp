@@ -15,7 +15,7 @@ bool RecvSocket::Initialize(int port)
 {
     if(!AbstractSocket::Initialize(UDP))
     {
-        return -1;
+        return false;
     }
 
     char broadcast_enabled = 1;
@@ -25,7 +25,7 @@ bool RecvSocket::Initialize(int port)
                   &broadcast_enabled,
                   sizeof(broadcast_enabled) != 0))
     {
-        return -1;
+        return false;
     }
 
     sockaddr_in port_bind;

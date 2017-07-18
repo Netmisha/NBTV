@@ -107,16 +107,29 @@ void Chat::InputStream()
 {
 	while (input_is_working_) 
 	{
+		ReadFromKeyboard();
 		
-		for (char tmp = _getch(); tmp != '\r'; tmp = _getch())
-		{	
-			buffer_.push_back(tmp);
-			cout << tmp;
-		}
 		if (!CheckForCommands())
 		{
 			UserMsg msg = { msg_color_, user_name_, buffer_ };
 			SendMsg(msg);
+		}
+	}
+}
+
+void Chat::ReadFromKeyboard()
+{
+	for (char tmp = _getch(); tmp != '\r'; tmp = _getch())
+	{
+		if (tmp == BACKSPACE_BUTTON && !buffer_.empty())
+		{
+			printf("\b \b");
+			buffer_.pop_back();
+		}
+		else
+		{
+			buffer_.push_back(tmp);
+			cout << tmp;
 		}
 	}
 }
@@ -183,11 +196,8 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 
 	while (true)
 	{
-		for (char tmp = _getch(); tmp != '\r'; tmp = _getch())
-		{
-			buffer_.push_back(tmp);
-			cout << tmp;
-		}
+		ReadFromKeyboard();
+
 		if (!strncmp(buffer_.c_str(), "/w", 2))
 		{
 			buffer_.clear();
@@ -200,6 +210,7 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 			break;
 		}
 	}
+	ResetChat();
 }
 
 void ActivateChat(Chat* chat) //function for input thread
