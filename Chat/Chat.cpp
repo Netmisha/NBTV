@@ -66,6 +66,11 @@ std::thread& Chat::GetInputThread()
 	return input_thread_;
 }
 
+const std::string& Chat::GetName()
+{
+    return  user_name_;
+}
+
 void Chat::ResetChat()
 {
 	system("cls");

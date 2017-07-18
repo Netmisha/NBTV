@@ -2,7 +2,7 @@
 #define DEFINES_H
 
 //default port
-#define PORT (unsigned short)10062
+#define PORT (unsigned short)20001
 //broadcast ip
 #define BROADCAST_IP "255.255.255.255"
 //max buffer size without

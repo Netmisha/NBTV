@@ -19,6 +19,7 @@ public:
 	void SetNetwork(Network* net);
 	void SetUserInfo(char color, std::string name);
 	std::thread& GetInputThread(); //thread descriptor getter
+    const std::string& GetName(); //name getter
 
 	void ResetChat();
 	void PutMsg(UserMsg msg); // show msg to the screen

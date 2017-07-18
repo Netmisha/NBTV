@@ -24,6 +24,7 @@ int Network::PrepareNetwork()
     }
 
     error_check = recv_socket_.Initialize();
+    error_check = WSAGetLastError();
     if(error_check != 0)
     {
         return error_check;
@@ -129,7 +130,7 @@ void Network::ProcessLogMessage(LogMessage msg, std::string ip)
 
         users_name_ip_map_[msg.name_] = ip;
 
-        LogMessage log_msg = { LOG_ONLINE, "g"/*chat_->getName()*/ };
+        LogMessage log_msg = { LOG_ONLINE, chat_->GetName() };
         void *answ_log_msg = NULL;
         int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
         broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());

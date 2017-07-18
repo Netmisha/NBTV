@@ -23,6 +23,10 @@ int Parcer::PackMessage(int type, void *in_msg, void* &out_result)
 UnpackedMessage Parcer::UnpackMessage(void *packet)
 {
     UnpackedMessage result;
+    if(!packet)
+    {
+        return result;
+    }
     char *temp_ptr = (char*)packet;
     result.type_ = *temp_ptr++;
     switch(result.type_)
@@ -109,6 +113,7 @@ int Parcer::PackLogMessage(void *in_msg, void* &out_packet)
     out_packet = new char[msg_size]();
     
     char *temp_ptr = (char*)out_packet;
+    *temp_ptr++ = LOG_MESSAGE;
     *temp_ptr++ = log_msg->type_;
     *temp_ptr++ = (unsigned char)log_msg->name_.length();
     memcpy(temp_ptr, &log_msg->name_[0], log_msg->name_.length());

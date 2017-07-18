@@ -14,8 +14,8 @@ enum
 
     LOG_ONLINE = (unsigned char)1,
     LOG_OFFLINE = (unsigned char)0,
-    //1B flag + 1B name size
-    LOG_MESSAGE_HEADER_SIZE = 2,
+    //1B flag + 1B type + 1B name size
+    LOG_MESSAGE_HEADER_SIZE = 3,
 };
 
 class Parcer
