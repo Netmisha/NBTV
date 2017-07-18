@@ -56,6 +56,8 @@ private:
     //cleanup function, closes sockets
     void Cleanup();
 
+    void ProcessMessage(const RecvStruct &recv_str);
+
     void ProcessLogMessage(LogMessage msg, std::string ip);
 };
 

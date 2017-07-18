@@ -3,7 +3,7 @@
 
 int Parcer::PackMessage(int type, void *in_msg, void* &out_result)
 {
-    int packet_size;
+    int packet_size = -1;
     switch(type)
     {
         case PREPARE_MESSAGE:
@@ -35,6 +35,9 @@ UnpackedMessage Parcer::UnpackMessage(void *packet)
             break;
         case CHAT_MESSAGE:
             result.msg_ = Parcer::ParceChatMessage(temp_ptr);
+            break;
+        default:
+            result.type_ = INVALID_TYPE;
             break;
     }
 
@@ -110,7 +113,7 @@ int Parcer::PackLogMessage(void *in_msg, void* &out_packet)
     *temp_ptr++ = (unsigned char)log_msg->name_.length();
     memcpy(temp_ptr, &log_msg->name_[0], log_msg->name_.length());
 
-    return LOG_MESSAGE_SIZE;
+    return msg_size;
 }
 
 void* Parcer::ParceLogMessage(void *in_packet)

@@ -11,6 +11,7 @@
 //size of ip in chars
 #define IP_SIZE 16
 
+//WSAStartup version define
 #define WSA_MIN_VERSION 2
 #define WSA_MAX_VERSION 2
 #define WSA_VERSION MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION) 

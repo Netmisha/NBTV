@@ -29,8 +29,9 @@ int Network::PrepareNetwork()
         return error_check;
     }
 
+    //getting local pc ip
     int rand_value = rand(), buffer = 0;
-    void *rand_value_send;
+    void *rand_value_send = NULL;
     buffer = Parcer::PackMessage(PREPARE_MESSAGE, &rand_value, rand_value_send);
     error_check = broadc_socket_.Send(rand_value_send, buffer);
     if(error_check == SOCKET_ERROR)
@@ -41,7 +42,7 @@ int Network::PrepareNetwork()
     while(true)
     {
         RecvStruct recv_struct;
-        int j = recv_socket_.Recv(&recv_struct);
+        recv_socket_.Recv(&recv_struct);
 
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_struct.packet_);
         if(unp_msg.type_ == PREPARE_MESSAGE ||
@@ -54,6 +55,7 @@ int Network::PrepareNetwork()
 
         delete[] unp_msg.msg_;
     }
+    //-----------------------
 
     return 0;
 }
@@ -91,23 +93,7 @@ void Network::LoopRecv()
         RecvStruct packet;
         recv_socket_.Recv(&packet);
         
-        if(packet.ip_ != my_ip_ || BROADCAST_LOOPBACK)
-        {
-            //allocation in heap
-            UnpackedMessage unp_msg = Parcer::UnpackMessage(packet.packet_);
-            
-            switch(unp_msg.type_)
-            {
-                case CHAT_MESSAGE:
-                    chat_->AddMsg(*(UserMsg*)unp_msg.msg_);
-                    break;
-                case LOG_MESSAGE:
-                    ProcessLogMessage(*(LogMessage*)unp_msg.msg_, packet.ip_);
-                    break;
-            }
-
-            delete unp_msg.msg_;
-        }
+        ProcessMessage(packet);
     }
 }
 
@@ -132,14 +118,23 @@ void Network::SendLogMsg(std::string name, int type)
 
 void Network::ProcessLogMessage(LogMessage msg, std::string ip)
 {
+    //if it`s login message
     if(msg.type_ == LOG_ONLINE)
     {
+        //if user already in map
         if(users_name_ip_map_.find(msg.name_) != users_name_ip_map_.end())
         {
-            users_name_ip_map_.erase(msg.name_);
+            return;
         }
+
         users_name_ip_map_[msg.name_] = ip;
+
+        LogMessage log_msg = { LOG_ONLINE, "g"/*chat_->getName()*/ };
+        void *answ_log_msg = NULL;
+        int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
+        broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
     }
+    //or logoff message
     else
     {
         users_name_ip_map_.erase(msg.name_);
@@ -155,7 +150,7 @@ int Network::SendMsgTo(std::string user_name, UserMsg &user_msg)
     }
 
     void *packet = NULL;
-    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet);
+    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
 
     send_mutex_.lock();
     packet_size = broadc_socket_.SendTo(packet, packet_size, it->second.c_str());
@@ -163,4 +158,26 @@ int Network::SendMsgTo(std::string user_name, UserMsg &user_msg)
 
     delete[] packet;
     return packet_size;
+}
+
+void Network::ProcessMessage(const RecvStruct &recv_str)
+{
+    if(recv_str.ip_ != my_ip_ || BROADCAST_LOOPBACK)
+    {
+        //allocation in heap
+        UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_str.packet_);
+
+        switch(unp_msg.type_)
+        {
+            case CHAT_MESSAGE:
+                chat_->AddMsg(*(UserMsg*)unp_msg.msg_);
+                break;
+            case LOG_MESSAGE:
+                ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
+                break;
+        }
+
+        delete unp_msg.msg_;
+    }
+
 }
