@@ -17,15 +17,17 @@ public:
 	~Chat();
 
 	void SetNetwork(Network* net);
-	void SetUserInfo(char color, std::string name);
+	void SetUserInfo(char color, const std::string& name);
 	std::thread& GetInputThread(); //thread descriptor getter
     const std::string& GetName(); //name getter
 
 	void ResetChat();
-	void PutMsg(UserMsg msg); // show msg to the screen
+	void PutMsg(const UserMsg& msg); // show msg to the screen
 	
-	void AddMsg(UserMsg msg); //adds msg to the vector and call`s PutMsg()
+	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
 	void InputStream();  
+	void PopBuffer(int num);
+	bool CheckForCommands();
 
 	void Activate(); //starts input thread
 	void ActivatePrivateChat(std::string name); //private chat input mode
@@ -33,8 +35,8 @@ public:
 private:
 	void IOnlineMsg();	//sends online msg
 	void IOfflineMsg();	//sends online msg
-	void SendMsg(UserMsg msg); //broadcast message and AddMsg()
-	int SendMsgTo(std::string name, UserMsg msg); //all msgs user write goes directly to the chosen user
+	void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
+	int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
 
 
 	char msg_color_;
@@ -45,6 +47,7 @@ private:
 	std::vector< UserMsg > messages_;
 	Network* connected_network_;
 
+	volatile bool input_is_working_;
 	std::thread input_thread_;
 	std::mutex chat_mutex_;
 };
