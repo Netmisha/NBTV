@@ -11,7 +11,7 @@ RecvSocket::~RecvSocket()
     delete[] buffer_;
 }
 
-int RecvSocket::Initialize(int port)
+bool RecvSocket::Initialize(int port)
 {
     if(!AbstractSocket::Initialize(UDP))
     {
@@ -34,7 +34,7 @@ int RecvSocket::Initialize(int port)
     port_bind.sin_port = htons(port != -1 ? (unsigned int)port : PORT);
     port_bind.sin_addr.s_addr = INADDR_ANY;
     
-    return bind(socket_, (SOCKADDR*)&port_bind, (int)sizeof(port_bind));
+    return bind(socket_, (SOCKADDR*)&port_bind, (int)sizeof(port_bind)) == 0;
 }
 
 int RecvSocket::Recv(RecvStruct* out_result)

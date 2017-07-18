@@ -16,7 +16,7 @@ public:
     //initializes socket to specific port
     //if no specific port stated - to standart
     //one, in Defines.h
-    int Initialize(int port = -1);
+    bool Initialize(int port = -1);
     //recvs message, returns size of it
     //sets parameter as pointer to it
     int Recv(RecvStruct* out_result);

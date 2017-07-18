@@ -17,15 +17,12 @@ bool Network::PrepareNetwork()
         return false;
     }
 
-    error_check = broadc_socket_.Initialize();
-    if(error_check != 0)
+    if(!broadc_socket_.Initialize())
     {
         return false;
     }
 
-    error_check = recv_socket_.Initialize();
-    error_check = WSAGetLastError();
-    if(error_check != 0)
+    if(!recv_socket_.Initialize())
     {
         return false;
     }
