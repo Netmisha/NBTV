@@ -17,7 +17,7 @@ bool AbstractSocket::Initialize(const SocketConnectionType &type)
             break;
     }
 
-    return (socket_ == INVALID_SOCKET ? false : true);
+    return socket_ != INVALID_SOCKET;
 }
 
 bool AbstractSocket::Close()
@@ -28,5 +28,5 @@ bool AbstractSocket::Close()
 
     error_check = closesocket(socket_);
     
-    return (error_check != SOCKET_ERROR ? true : false);
+    return error_check != SOCKET_ERROR;
 }
