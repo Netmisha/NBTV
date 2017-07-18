@@ -1,7 +1,7 @@
 #include "Parcer.h"
 #include <iostream>
 
-int Parcer::PackMessage(int type, void *in_msg, void* &out_result)
+int Parcer::PackMessage(const MessageType &type, const void *in_msg, void* &out_result)
 {
     int packet_size = -1;
     switch(type)
@@ -20,7 +20,7 @@ int Parcer::PackMessage(int type, void *in_msg, void* &out_result)
     return packet_size;
 }
 
-UnpackedMessage Parcer::UnpackMessage(void *packet)
+UnpackedMessage Parcer::UnpackMessage(const void *packet)
 {
     UnpackedMessage result;
     if(!packet)
@@ -48,7 +48,7 @@ UnpackedMessage Parcer::UnpackMessage(void *packet)
     return result;
 }
 
-int Parcer::PackChatMessage(void *in_msg, void* &out_packet)
+int Parcer::PackChatMessage(const void *in_msg, void* &out_packet)
 {
     UserMsg *user_msg = (UserMsg*)in_msg;
     int pack_size = CHAT_MESSAGE_HEADER_SIZE + user_msg->name_.length() + user_msg->msg_.length();
@@ -71,7 +71,7 @@ int Parcer::PackChatMessage(void *in_msg, void* &out_packet)
     return pack_size;
 }
 
-void* Parcer::ParceChatMessage(void *in_packet)
+void* Parcer::ParceChatMessage(const void *in_packet)
 {
     UserMsg *result = new UserMsg();
     unsigned char name_size, msg_size;
@@ -89,7 +89,7 @@ void* Parcer::ParceChatMessage(void *in_packet)
     return (void*)result;
 }
 
-int Parcer::PackPrepMessage(void *in_msg, void* &out_packet)
+int Parcer::PackPrepMessage(const void *in_msg, void* &out_packet)
 {
     out_packet = new char[PREPARE_MESSAGE_SIZE]();
     char* temp_ptr = (char*)out_packet;
@@ -99,14 +99,14 @@ int Parcer::PackPrepMessage(void *in_msg, void* &out_packet)
     return PREPARE_MESSAGE_SIZE;
 }
 
-void* Parcer::ParcePrepMessage(void *in_packet)
+void* Parcer::ParcePrepMessage(const void *in_packet)
 {
     int* result = new int();
     *result = *(int*)in_packet;
     return (void*)result;
 }
 
-int Parcer::PackLogMessage(void *in_msg, void* &out_packet)
+int Parcer::PackLogMessage(const void *in_msg, void* &out_packet)
 {
     LogMessage *log_msg = (LogMessage*)in_msg;
     int msg_size = log_msg->name_.length() + LOG_MESSAGE_HEADER_SIZE;
@@ -121,7 +121,7 @@ int Parcer::PackLogMessage(void *in_msg, void* &out_packet)
     return msg_size;
 }
 
-void* Parcer::ParceLogMessage(void *in_packet)
+void* Parcer::ParceLogMessage(const void *in_packet)
 {
     LogMessage *result = new LogMessage();
     char *temp_ptr = (char*)in_packet;

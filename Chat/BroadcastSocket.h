@@ -14,7 +14,7 @@ public:
 
     //calls AbstractSocket::Initialize
     //and finishes initializetion
-    int Initialize();
+    bool Initialize();
 
     //broadcasts message to the network
     int Send(const void *buffer, int size);

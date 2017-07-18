@@ -7,10 +7,9 @@
 #include "Parcer.h"
 #include "Chat.h"
 
-#include <thread>
-#include <mutex>
+#include <thread>   //change to API
+#include <mutex>    //same
 #include <map>
-
 
 class Network
 {
@@ -21,9 +20,9 @@ public:
     //chat uses this function to broadcast messages
     int SendMsg(UserMsg user_msg);
 
-    int SendMsgTo(std::string user_name, UserMsg &user_msg);
+    int SendMsgTo(const std::string &user_name, const UserMsg &user_msg);
     //function to prepare network for working
-    int PrepareNetwork();
+    bool PrepareNetwork();
     //thread func for starting network
     static void StartNetwork(void *network_ptr);
     //function that loops recv and processes messages
@@ -34,7 +33,7 @@ public:
 
 	void SetChat(Chat* chat);
 
-    void SendLogMsg(std::string name, int type);
+    void SendLogMsg(const std::string &name, const LogType &type);
     
 private:
     Chat *chat_;
@@ -58,7 +57,7 @@ private:
 
     void ProcessMessage(const RecvStruct &recv_str);
 
-    void ProcessLogMessage(LogMessage msg, std::string ip);
+    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
 };
 
 #endif // !NETWORK_H

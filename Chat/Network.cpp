@@ -8,26 +8,23 @@ Network::~Network()
     Cleanup();
 }
 
-int Network::PrepareNetwork()
+bool Network::PrepareNetwork()
 {
     WSAData wsa_data;
     int error_check = WSAStartup(WSA_VERSION, &wsa_data);
     if(error_check != 0)
     {
-        return error_check;
+        return false;
     }
 
-    error_check = broadc_socket_.Initialize();
-    if(error_check != 0)
+    if(!broadc_socket_.Initialize())
     {
-        return error_check;
+        return false;
     }
 
-    error_check = recv_socket_.Initialize();
-    error_check = WSAGetLastError();
-    if(error_check != 0)
+    if(!recv_socket_.Initialize())
     {
-        return error_check;
+        return false;
     }
 
     //getting local pc ip
@@ -37,7 +34,7 @@ int Network::PrepareNetwork()
     error_check = broadc_socket_.Send(rand_value_send, buffer);
     if(error_check == SOCKET_ERROR)
     {
-        return error_check;
+        return false;
     }
     
     while(true)
@@ -46,8 +43,8 @@ int Network::PrepareNetwork()
         recv_socket_.Recv(&recv_struct);
 
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_struct.packet_);
-        if(unp_msg.type_ == PREPARE_MESSAGE &&
-           *(int*)unp_msg.msg_ == rand_value)
+        if((unp_msg.type_ == PREPARE_MESSAGE) &&
+           (*(int*)unp_msg.msg_ == rand_value))
         {
             my_ip_ = recv_struct.ip_;
             delete[] unp_msg.msg_;
@@ -58,7 +55,7 @@ int Network::PrepareNetwork()
     }
     //-----------------------
 
-    return 0;
+    return true;
 }
 
 int Network::SendMsg(UserMsg user_msg)
@@ -108,16 +105,16 @@ void Network::SetChat(Chat * chat)
 	chat_ = chat;
 }
 
-void Network::SendLogMsg(std::string name, int type)
+void Network::SendLogMsg(const std::string &name, const LogType &type)
 {
-    LogMessage log_msg = { type, name };
+    LogMessage log_msg = { (int)type, name };
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
     broadc_socket_.Send(send_buffer, send_size); //err_check
 }
 
-void Network::ProcessLogMessage(LogMessage msg, std::string ip)
+void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 {
     //if it`s login message
     if(msg.type_ == LOG_ONLINE)
@@ -142,7 +139,7 @@ void Network::ProcessLogMessage(LogMessage msg, std::string ip)
     }
 }
 
-int Network::SendMsgTo(std::string user_name, UserMsg &user_msg)
+int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
 {
     std::map<std::string, std::string>::iterator it = users_name_ip_map_.find(user_name);
     if(it == users_name_ip_map_.end())
@@ -151,7 +148,7 @@ int Network::SendMsgTo(std::string user_name, UserMsg &user_msg)
     }
 
     void *packet = NULL;
-    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
+    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet); //allocation in heap
 
     send_mutex_.lock();
     packet_size = broadc_socket_.SendTo(packet, packet_size, it->second.c_str());

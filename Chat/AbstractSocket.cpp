@@ -1,11 +1,10 @@
 #include "AbstractSocket.h"
 
-AbstractSocket::AbstractSocket() : socket_(INVALID_SOCKET)
-{}
+AbstractSocket::AbstractSocket() : socket_(INVALID_SOCKET) {}
 
-AbstractSocket::~AbstractSocket(){}
+AbstractSocket::~AbstractSocket() {}
 
-int AbstractSocket::Initialize(int type)
+bool AbstractSocket::Initialize(const SocketConnectionType &type)
 {
     switch(type)
     {
@@ -18,13 +17,16 @@ int AbstractSocket::Initialize(int type)
             break;
     }
 
-    return (socket_ == INVALID_SOCKET ? INVALID_SOCKET : 0);
+    return socket_ != INVALID_SOCKET;
 }
 
-int AbstractSocket::Close()
+bool AbstractSocket::Close()
 {
     int error_check = shutdown(socket_, SD_BOTH);
-    if(error_check == 0)
-        error_check = closesocket(socket_);
-    return error_check;
+    if(error_check == SOCKET_ERROR)
+        return false;
+
+    error_check = closesocket(socket_);
+    
+    return error_check != SOCKET_ERROR;
 }

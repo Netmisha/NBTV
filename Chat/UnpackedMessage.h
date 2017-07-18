@@ -1,7 +1,7 @@
 #ifndef UNPACKED_MESSAGE_H
 #define UNPACKED_MESSAGE_H
 
-enum
+enum MessageType
 {
     INVALID_TYPE = -1,
     PREPARE_MESSAGE = 0,
