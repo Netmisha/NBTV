@@ -13,7 +13,7 @@ RecvSocket::~RecvSocket()
 
 int RecvSocket::Initialize(int port)
 {
-    if(AbstractSocket::Initialize(UDP) != 0)
+    if(!AbstractSocket::Initialize(UDP))
     {
         return -1;
     }

@@ -16,7 +16,7 @@ BroadcastSocket::~BroadcastSocket(){}
 
 bool BroadcastSocket::Initialize()
 {
-    if(AbstractSocket::Initialize(UDP) != true)
+    if(!AbstractSocket::Initialize(UDP))
     {
         return false;
     }
