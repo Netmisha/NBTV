@@ -6,7 +6,7 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-enum
+enum SocketConnectionType
 {
     TCP = 0,
     UDP = 1
@@ -21,10 +21,10 @@ public:
     //initializes socket as
     //SOCK_STREAM/tcp or DGRAM/udp
     //depending on 'type'
-    int Initialize(int type);
+    bool Initialize(const SocketConnectionType &type);
 
     //closes socket
-    int Close();
+    bool Close();
 
 protected:
     SOCKET socket_;

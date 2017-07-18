@@ -12,14 +12,13 @@ BroadcastSocket::BroadcastSocket(int port_to_send)
     broadcast_addr_.sin_addr.s_addr = inet_addr(BROADCAST_IP);
 }
 
-BroadcastSocket::~BroadcastSocket()
-{}
+BroadcastSocket::~BroadcastSocket(){}
 
-int BroadcastSocket::Initialize()
+bool BroadcastSocket::Initialize()
 {
-    if(AbstractSocket::Initialize(UDP) != 0)
+    if(AbstractSocket::Initialize(UDP) != true)
     {
-        return -1;
+        return false;
     }
 
     char broadcast_enabled = 1;
@@ -29,10 +28,10 @@ int BroadcastSocket::Initialize()
                   &broadcast_enabled,
                   sizeof(broadcast_enabled)) != 0)
     {
-        return -1;
+        return false;
     }
 
-    return 0;
+    return true;
 }
 
 int BroadcastSocket::Send(const void* buffer, int size)

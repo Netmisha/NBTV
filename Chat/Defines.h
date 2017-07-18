@@ -1,4 +1,4 @@
-#ifndef DEFINES_H //pragma once for losers
+#ifndef DEFINES_H
 #define DEFINES_H
 
 //default port
