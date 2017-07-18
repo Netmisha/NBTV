@@ -144,7 +144,7 @@ void Chat::Activate()
 void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes directly to the chosen user
 {
 	buffer_.clear();
-	AddMsg({ 7, "PRIVATE CHAT WITH", name });
+	AddMsg(UserMsg{ 7, "PRIVATE CHAT WITH", name });
 
 	while (1)
 	{
@@ -161,7 +161,7 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 		UserMsg msg = { msg_color_, user_name_, buffer_ };
 		if (SendMsgTo(name, msg) == -1)
 		{
-			AddMsg({ 7, "THRRE NO USER WITH THIS NAME ", name });
+			AddMsg(UserMsg{ 7, "THRRE NO USER WITH THIS NAME ", name });
 			break;
 		}
 	}

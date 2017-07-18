@@ -46,7 +46,7 @@ int Network::PrepareNetwork()
         recv_socket_.Recv(&recv_struct);
 
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_struct.packet_);
-        if(unp_msg.type_ == PREPARE_MESSAGE ||
+        if(unp_msg.type_ == PREPARE_MESSAGE &&
            *(int*)unp_msg.msg_ == rand_value)
         {
             my_ip_ = recv_struct.ip_;
