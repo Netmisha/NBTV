@@ -2,6 +2,11 @@
 
 Thread::Thread() : thread_handle_(INVALID_HANDLE_VALUE) {}
 
+Thread::Thread(thread_function func, void * params)
+{
+	BeginThread(func, params);
+}
+
 Thread::~Thread(){}
 
 bool Thread::BeginThread(thread_function function, void *params)

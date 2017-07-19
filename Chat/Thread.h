@@ -10,6 +10,7 @@ class Thread
 {
 public:
     Thread();
+	Thread(thread_function func, void *params);
     ~Thread();
 
     //starts thread with specific function

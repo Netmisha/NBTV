@@ -2,10 +2,11 @@
 
 #include <vector>
 #include <string>
-#include <mutex>
-#include <thread>
 
 #include "UserMsg.h"
+
+#include "Mutex.h"
+#include "Thread.h"
 
 class Network;
 
@@ -18,7 +19,7 @@ public:
 
 	void SetNetwork(Network* net);
 	void SetUserInfo(char color, const std::string& name);
-	std::thread& GetInputThread(); //thread descriptor getter
+	Thread& GetInputThread(); //thread descriptor getter
     const std::string& GetName(); //name getter
 
 	void ResetChat();
@@ -49,8 +50,8 @@ private:
 	Network* connected_network_;
 
 	volatile bool input_is_working_;
-	std::thread input_thread_;
-	std::mutex chat_mutex_;
+	Thread input_thread_;
+	Mutex chat_mutex_;
 };
 
-void ActivateChat(Chat* chat); //function for input thread
+void ActivateChat(void* chat); //function for input thread

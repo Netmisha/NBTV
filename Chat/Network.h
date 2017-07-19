@@ -10,8 +10,6 @@
 
 #include "Mutex.h"
 
-#include <thread>   //change to API
-
 #include <map>
 #include <algorithm>
 

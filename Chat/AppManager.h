@@ -1,6 +1,7 @@
 #pragma once
-#include "Chat.h"
+
 #include "Network.h"
+#include "Chat.h"
 
 
 class AppManager

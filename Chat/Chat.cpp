@@ -1,7 +1,8 @@
-#include "Chat.h"
+
 #include "Network.h"
+#include "Chat.h"
+
 #include <iostream>
-#include <thread>
 #include <chrono>
 
 #include <conio.h>
@@ -31,7 +32,6 @@ void Chat::IOfflineMsg()
 	UserMsg msg = { msg_color_, user_name_, user_name_ + " left the chat!" };
 	SendMsg(msg);
 	cout << "\n Please wait... ";
-	std::this_thread::sleep_for(std::chrono::seconds(5));
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
@@ -64,7 +64,7 @@ void Chat::SetUserInfo(char color, const std::string& name)
 	IOnlineMsg();
 }
 
-std::thread& Chat::GetInputThread()
+Thread& Chat::GetInputThread()
 {
 	return input_thread_;
 }
@@ -95,12 +95,12 @@ void Chat::PutMsg(const UserMsg& msg)
 
 void Chat::AddMsg(const UserMsg& msg)
 {
-	chat_mutex_.lock();
+	chat_mutex_.Lock();
 
 	messages_.push_back(msg);
 	ResetChat();
 
-	chat_mutex_.unlock();
+	chat_mutex_.Unlock();
 }
 
 void Chat::InputStream()
@@ -186,7 +186,7 @@ bool Chat::CheckForCommands() //chat commands
 
 void Chat::Activate()
 {
-	input_thread_ = std::thread(ActivateChat, this);
+	input_thread_.BeginThread(ActivateChat, this);
 }
 
 void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes directly to the chosen user
@@ -213,7 +213,7 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 	ResetChat();
 }
 
-void ActivateChat(Chat* chat) //function for input thread
+void ActivateChat(void* chat) //function for input thread
 {
-	chat->InputStream();
+	((Chat*)chat)->InputStream();
 }
