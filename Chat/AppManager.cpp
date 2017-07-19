@@ -16,10 +16,7 @@ void AppManager::Work()
 }
 
 
-AppManager::~AppManager()
-{
-
-}
+AppManager::~AppManager(){}
 
 AppManager::AppManager()
 {

@@ -26,7 +26,7 @@ public:
     //function to prepare network for working
     bool PrepareNetwork();
     //thread func for starting network
-    static void StartNetwork(void *network_ptr);
+    static unsigned int StartNetwork(void *network_ptr);
     //function that loops recv and processes messages
     //to stop - call StopNetwork
     void LoopRecv();

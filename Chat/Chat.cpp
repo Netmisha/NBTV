@@ -213,7 +213,8 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 	ResetChat();
 }
 
-void ActivateChat(void* chat) //function for input thread
+unsigned int ActivateChat(void* chat) //function for input thread
 {
 	((Chat*)chat)->InputStream();
+    return 0;
 }
