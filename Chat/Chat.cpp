@@ -93,6 +93,18 @@ void Chat::PutMsg(const UserMsg& msg)
 	
 }
 
+void Chat::PrintSomeoneList(std::vector<std::string>& list)
+{
+    chat_mutex_.Lock();
+    for (int i = 0; i < list.size(); i++)
+    {
+        cout << i + 1 << " " + list[i] << endl;
+    }
+    std::cerr << "Please enter message: " << buffer_;
+
+    chat_mutex_.Unlock();
+}
+
 void Chat::AddMsg(const UserMsg& msg)
 {
 	chat_mutex_.Lock();
@@ -161,16 +173,34 @@ bool Chat::CheckForCommands() //chat commands
 			buffer_.clear();
 			ResetChat();
 		}
+        else if (!strncmp(buffer_.c_str(), "fl ", 3))
+        {
+            PopBuffer(3);
+            std::stringstream stream;
+            std::string name;
+            stream >> name;
+            buffer_.clear();
+            if (name.empty())
+            {
+                std::vector<std::string> list = connected_network_->GetFileList();
+                PrintSomeoneList(list);
+            }
+            else
+            {
+                connected_network_->RequestSomeoneList(name);
+                chat_mutex_.Lock();
+            }
+        }
 		else if (!strncmp(buffer_.c_str(), "getf ", 5))
 		{
 			PopBuffer(5);
-			std::stringstream stream;
-			std::string name;
-			int index;
-			stream >> name;
+            std::stringstream stream;
+            std::string name;
+            int index;
+            stream >> name;
 			stream >> index;
-			//connected_network_->GetFile(name, index);
-			//set listen socket
+			connected_network_->GetFile(name, index);
+			
 		}
 		else if (!strncmp(buffer_.c_str(), "setcolor ", 9))
 		{
@@ -218,7 +248,7 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 		UserMsg msg = { msg_color_, user_name_, buffer_ };
 		if (SendMsgTo(name, msg) == -1)
 		{
-			AddMsg(UserMsg{ 7, "THRRE NO USER WITH THIS NAME ", name });
+			AddMsg(UserMsg{ 7, "THERE NO USER WITH THIS NAME ", name });
 			break;
 		}
 	}

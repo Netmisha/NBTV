@@ -42,6 +42,10 @@ public:
 	void GetFile(std::string user_name, int index);
 	void SendFile(std::string pass, std::string ip);
 
+    std::vector<std::string> GetFileList();
+    void RequestSomeoneList(std::string name);
+    void SendList(std::string ip);
+
     
 private:
     Chat *chat_;

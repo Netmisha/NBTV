@@ -145,6 +145,31 @@ void Network::SendFile(std::string pass, std::string ip)
 	 file_send_socket_.SendFile(pass, ip);
 }
 
+std::vector<std::string> Network::GetFileList()
+{
+    return FM_.GetFileNames();
+}
+
+void Network::RequestSomeoneList(std::string name)
+{
+    
+    void *send_buffer = NULL;
+    int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
+
+    broadc_socket_.Send(send_buffer, send_size); //err_check
+}
+
+void Network::SendList(std::string ip)
+{
+    std::vector<std::string> file_names = FM_.GetFileNames();
+    void *send_buffer = NULL;
+    int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &file_names, send_buffer);
+
+    broadc_socket_.SendTo(send_buffer, send_size, ip.c_str()); //err_check
+}
+
+
+
 void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 {
     switch(msg.type_)
@@ -206,6 +231,12 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
 			case GET_FILE_MESSAGE:
 				SendFile( FM_.GetFileName( *((int*)unp_msg.msg_) ), recv_str.ip_);
 				break;
+            case FILE_LIST_REQUEST:
+                SendList(recv_str.ip_);
+                break;
+                case FILE_LIST_MESSAGE:
+                chat_->PrintSomeoneList(*((std::vector<std::string>*)unp_msg.msg_));
+                break;
         }
 
         delete unp_msg.msg_;

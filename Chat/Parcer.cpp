@@ -52,8 +52,12 @@ UnpackedMessage Parcer::UnpackMessage(const void *packet)
 		case GET_FILE_MESSAGE:
 			result.msg_ = Parcer::ParceGetFileMessage(temp_ptr);
 			break;
+        case FILE_LIST_REQUEST:
+            result.type_ = FILE_LIST_REQUEST;
+            break;
         case FILE_LIST_MESSAGE:
             result.msg_ = Parcer::ParceFileList(temp_ptr);
+            break;
         default:
             result.type_ = INVALID_TYPE;
             break;

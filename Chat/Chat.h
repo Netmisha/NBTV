@@ -24,7 +24,8 @@ public:
 
 	void ResetChat();
 	void PutMsg(const UserMsg& msg); // show msg to the screen
-	
+    void PrintSomeoneList(std::vector<std::string>& list);
+
 	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
 	void InputStream(); 
 	void ReadFromKeyboard(); //reading from keyboard 
