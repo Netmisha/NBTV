@@ -63,9 +63,9 @@ int Network::SendMsg(UserMsg user_msg)
     void *packet = NULL;
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
 
-    send_mutex_.lock();
+    send_mutex_.Lock();
     packet_size = broadc_socket_.Send(packet, packet_size);
-    send_mutex_.unlock();
+    send_mutex_.Unlock();
 
     delete[] packet; //clearing heap
     return packet_size;
@@ -107,7 +107,7 @@ void Network::SetChat(Chat * chat)
 
 void Network::SendLogMsg(const std::string &name, const LogType &type)
 {
-    LogMessage log_msg = { (int)type, name };
+    LogMessage log_msg = { type, name };
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
@@ -116,33 +116,32 @@ void Network::SendLogMsg(const std::string &name, const LogType &type)
 
 void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 {
-    //if it`s login message
-    if(msg.type_ == LOG_ONLINE)
+    switch(msg.type_)
     {
-        //if user already in map
-        if(users_name_ip_map_.find(msg.name_) != users_name_ip_map_.end())
+    case LOG_ONLINE:
         {
-            return;
+            LogMessage log_msg = { LOG_RESPONCE, chat_->GetName() };
+            void *answ_log_msg = NULL;
+            int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
+            broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
         }
+        //do not put break here
+    case LOG_RESPONCE:
+        user_ip_name_map_[ip] = msg.name_;
+        break;
 
-        users_name_ip_map_[msg.name_] = ip;
-
-        LogMessage log_msg = { LOG_ONLINE, chat_->GetName() };
-        void *answ_log_msg = NULL;
-        int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
-        broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
-    }
-    //or logoff message
-    else
-    {
-        users_name_ip_map_.erase(msg.name_);
+    case LOG_OFFLINE:
+        user_ip_name_map_.erase(ip);
+        break;
     }
 }
 
 int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
 {
-    std::map<std::string, std::string>::iterator it = users_name_ip_map_.find(user_name);
-    if(it == users_name_ip_map_.end())
+    std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
+                                                                   user_ip_name_map_.end(),
+                                                                   NameSearch(&user_name));
+    if(it == user_ip_name_map_.end())
     {
         return -1;
     }
@@ -150,9 +149,9 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
     void *packet = NULL;
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet); //allocation in heap
 
-    send_mutex_.lock();
+    send_mutex_.Lock();
     packet_size = broadc_socket_.SendTo(packet, packet_size, it->second.c_str());
-    send_mutex_.unlock();
+    send_mutex_.Unlock();
 
     delete[] packet;
     return packet_size;

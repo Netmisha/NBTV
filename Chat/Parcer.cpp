@@ -54,11 +54,11 @@ int Parcer::PackChatMessage(const void *in_msg, void* &out_packet)
     int pack_size = CHAT_MESSAGE_HEADER_SIZE + user_msg->name_.length() + user_msg->msg_.length();
     out_packet = new char[pack_size]();
 
-    char *temp_ptr = (char*)out_packet;
+    unsigned char *temp_ptr = (unsigned char*)out_packet;
     *temp_ptr++ = (unsigned char)CHAT_MESSAGE;
-    *temp_ptr++ = (char)user_msg->name_.length();
+    *temp_ptr++ = (unsigned char)user_msg->name_.length();
     *temp_ptr++ = user_msg->color_;
-    *temp_ptr++ = (char)user_msg->msg_.length();
+    *temp_ptr++ = (unsigned char)user_msg->msg_.length();
 
     memcpy(temp_ptr,
            &user_msg->name_[0],
@@ -75,10 +75,10 @@ void* Parcer::ParceChatMessage(const void *in_packet)
 {
     UserMsg *result = new UserMsg();
     unsigned char name_size, msg_size;
-    char *temp_ptr = (char*)in_packet;
-    name_size = (unsigned char)*temp_ptr++;
-    result->color_ = (unsigned char)*(temp_ptr++);
-    msg_size = (unsigned char)*(temp_ptr++);
+    unsigned char *temp_ptr = (unsigned char*)in_packet;
+    name_size = *temp_ptr++;
+    result->color_ = *temp_ptr++;
+    msg_size = *temp_ptr++;
 
     result->name_.resize(name_size);
     memcpy(&result->name_[0], temp_ptr, name_size);
@@ -92,7 +92,7 @@ void* Parcer::ParceChatMessage(const void *in_packet)
 int Parcer::PackPrepMessage(const void *in_msg, void* &out_packet)
 {
     out_packet = new char[PREPARE_MESSAGE_SIZE]();
-    char* temp_ptr = (char*)out_packet;
+    unsigned char* temp_ptr = (unsigned char*)out_packet;
     *temp_ptr = PREPARE_MESSAGE;
     *(int*)(temp_ptr + 1) = *(int*)in_msg;
     
@@ -112,7 +112,7 @@ int Parcer::PackLogMessage(const void *in_msg, void* &out_packet)
     int msg_size = log_msg->name_.length() + LOG_MESSAGE_HEADER_SIZE;
     out_packet = new char[msg_size]();
     
-    char *temp_ptr = (char*)out_packet;
+    unsigned char *temp_ptr = (unsigned char*)out_packet;
     *temp_ptr++ = LOG_MESSAGE;
     *temp_ptr++ = log_msg->type_;
     *temp_ptr++ = (unsigned char)log_msg->name_.length();
@@ -124,9 +124,9 @@ int Parcer::PackLogMessage(const void *in_msg, void* &out_packet)
 void* Parcer::ParceLogMessage(const void *in_packet)
 {
     LogMessage *result = new LogMessage();
-    char *temp_ptr = (char*)in_packet;
+    unsigned char *temp_ptr = (unsigned char*)in_packet;
 
-    result->type_ = *temp_ptr++;
+    result->type_ = (LogType)*temp_ptr++;
     int name_size = *temp_ptr++;
     result->name_.resize(name_size);
 

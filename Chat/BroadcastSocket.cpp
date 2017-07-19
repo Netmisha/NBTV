@@ -7,9 +7,8 @@ BroadcastSocket::BroadcastSocket(int port_to_send)
     broadcast_addr_.sin_port = 
         htons(port_to_send != -1 ? (unsigned int)port_to_send : PORT); //defined in Defines.h
     
-    //wanted to change it to inet_pton, but it doesn't work for some reason
     //BROADCAST_IP defined in Defines.h
-    broadcast_addr_.sin_addr.s_addr = inet_addr(BROADCAST_IP);
+    inet_pton(broadcast_addr_.sin_family, BROADCAST_IP, &(broadcast_addr_.sin_addr));
 }
 
 BroadcastSocket::~BroadcastSocket(){}
@@ -52,7 +51,7 @@ void BroadcastSocket::SetBroadcastPort(int port)
 int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)
 {
     sockaddr_in send_to_addr = broadcast_addr_;
-    send_to_addr.sin_addr.s_addr = inet_addr(ip);
+    inet_pton(send_to_addr.sin_family, ip, &(send_to_addr.sin_addr));
     return sendto(socket_,
                   (const char*)buffer,
                   size,

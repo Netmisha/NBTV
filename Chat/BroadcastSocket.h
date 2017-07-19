@@ -4,7 +4,7 @@
 #include "AbstractSocket.h"
 #include "Defines.h"
 
-#pragma warning(disable : 4996)	//inet_addr warining block
+#include <WS2tcpip.h>
 
 class BroadcastSocket : public AbstractSocket
 {

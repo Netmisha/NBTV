@@ -3,13 +3,17 @@
 
 #include "BroadcastSocket.h"
 #include "RecvSocket.h"
-#include "UserMsg.h"
 #include "Parcer.h"
+
 #include "Chat.h"
+#include "NameSearch.h"
+
+#include "Mutex.h"
 
 #include <thread>   //change to API
-#include <mutex>    //same
+
 #include <map>
+#include <algorithm>
 
 class Network
 {
@@ -48,9 +52,9 @@ private:
     //if needed, just set it as 0/false
     volatile bool is_working_;
     //mutex on send
-    std::mutex send_mutex_;
+    Mutex send_mutex_;
 
-    std::map<std::string, std::string> users_name_ip_map_;
+    std::map<std::string, std::string> user_ip_name_map_;
 
     //cleanup function, closes sockets
     void Cleanup();

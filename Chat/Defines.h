@@ -20,7 +20,7 @@
 //1 for enabling
 #define BROADCAST_LOOPBACK 0
 
-
 //ASCI buttons
 #define BACKSPACE_BUTTON 8 
+
 #endif // !DEFINES_H
