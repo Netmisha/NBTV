@@ -4,7 +4,7 @@
 #include <process.h>
 #include <Windows.h>
 
-typedef unsigned int(*thread_function)(void*);
+typedef void(*thread_function)(void*);
 
 class Thread
 {

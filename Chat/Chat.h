@@ -34,6 +34,7 @@ public:
 	void Activate(); //starts input thread
 	void ActivatePrivateChat(std::string name); //private chat input mode
 
+	
 private:
 	void IOnlineMsg();	//sends online msg
 	void IOfflineMsg();	//sends online msg
@@ -54,4 +55,4 @@ private:
 	Mutex chat_mutex_;
 };
 
-unsigned int ActivateChat(void* chat); //function for input thread
+void ActivateChat(void* chat); //function for input thread

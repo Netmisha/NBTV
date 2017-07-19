@@ -1,5 +1,7 @@
 #include "Network.h"
 
+#include <stdlib.h>
+
 Network::Network() : is_working_(false){}
 
 Network::~Network()
@@ -10,8 +12,8 @@ Network::~Network()
 bool Network::PrepareNetwork()
 {
     WSAData wsa_data;
-    int error_check = WSAStartup(MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION)
-                                 , &wsa_data);
+    int error_check = WSAStartup(MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION), 
+                                &wsa_data);
     if(error_check != 0)
     {
         return false;
@@ -27,6 +29,14 @@ bool Network::PrepareNetwork()
         return false;
     }
 
+	if (!file_send_socket_.Initialize())
+	{
+		return false;
+	}
+    if (!file_send_socket_.Initialize())
+	{
+		return false;
+	}
     //getting local pc ip
     int rand_value = rand(), buffer = 0;
     void *rand_value_send = NULL;
@@ -78,10 +88,9 @@ void Network::Cleanup()
     WSACleanup();
 }
 
-unsigned int Network::StartNetwork(void *network_ptr)
+void Network::StartNetwork(void *network_ptr)
 {
     ((Network*)network_ptr)->LoopRecv();
-    return 0;
 }
 
 void Network::LoopRecv()
@@ -113,6 +122,26 @@ void Network::SendLogMsg(const std::string &name, const LogType &type)
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
     broadc_socket_.Send(send_buffer, send_size); //err_check
+}
+
+void Network::GetFile(std::string user_name, int index)
+{
+	int file_index;
+	void *send_buffer = NULL;
+	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
+
+	//search for ip
+	std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
+		user_ip_name_map_.end(),
+		NameSearch(&user_name));
+
+	broadc_socket_.SendTo(send_buffer, send_size, it->second.c_str());
+    file_get_socket_.GetFile(std::to_string(index));
+}
+
+void Network::SendFile(std::string pass, std::string ip)
+{
+	 file_send_socket_.SendFile(pass, ip);
 }
 
 void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
@@ -173,6 +202,9 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
             case LOG_MESSAGE:
                 ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
                 break;
+			case GET_FILE_MESSAGE:
+				SendFile( FM_.GetFileName( *((int*)unp_msg.msg_) ), recv_str.ip_);
+				break;
         }
 
         delete unp_msg.msg_;

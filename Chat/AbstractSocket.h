@@ -5,7 +5,7 @@
 #include <Windows.h>
 
 #pragma comment(lib, "Ws2_32.lib")
-
+#define FILE_PORT 12000
 enum SocketConnectionType
 {
     TCP = 0,

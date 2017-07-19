@@ -8,7 +8,8 @@ enum MessageType
     LOG_MESSAGE = 1,
     CHAT_MESSAGE = 2,
     FILE_LIST_REQUEST = 3,
-    FILE_LIST_MESSAGE = 4
+    FILE_LIST_MESSAGE = 4,
+	GET_FILE_MESSAGE = 5
 };
 
 struct UnpackedMessage

@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <chrono>
-
+#include <sstream>
 #include <conio.h>
 
 using std::cout;
@@ -161,6 +161,17 @@ bool Chat::CheckForCommands() //chat commands
 			buffer_.clear();
 			ResetChat();
 		}
+		else if (!strncmp(buffer_.c_str(), "getf ", 5))
+		{
+			PopBuffer(5);
+			std::stringstream stream;
+			std::string name;
+			int index;
+			stream >> name;
+			stream >> index;
+			//connected_network_->GetFile(name, index);
+			//set listen socket
+		}
 		else if (!strncmp(buffer_.c_str(), "setcolor ", 9))
 		{
 			PopBuffer(9);
@@ -177,6 +188,7 @@ bool Chat::CheckForCommands() //chat commands
 			input_is_working_ = false;
 
 		}
+
 		
 		return true;
 	}
@@ -213,8 +225,7 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 	ResetChat();
 }
 
-unsigned int ActivateChat(void* chat) //function for input thread
+void ActivateChat(void* chat) //function for input thread
 {
 	((Chat*)chat)->InputStream();
-    return 0;
 }

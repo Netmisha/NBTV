@@ -11,7 +11,7 @@ Thread::~Thread(){}
 
 bool Thread::BeginThread(thread_function function, void *params)
 {
-    thread_handle_ = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, params, 0, NULL);
+    thread_handle_ = (HANDLE)_beginthread(function, 0, params);
     return thread_handle_ != INVALID_HANDLE_VALUE;
 }
 
