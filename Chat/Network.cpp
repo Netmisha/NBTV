@@ -88,9 +88,10 @@ void Network::Cleanup()
     WSACleanup();
 }
 
-void Network::StartNetwork(void *network_ptr)
+unsigned Network::StartNetwork(void *network_ptr)
 {
     ((Network*)network_ptr)->LoopRecv();
+    return 0;
 }
 
 void Network::LoopRecv()

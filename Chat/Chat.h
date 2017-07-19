@@ -55,4 +55,4 @@ private:
 	Mutex chat_mutex_;
 };
 
-void ActivateChat(void* chat); //function for input thread
+unsigned ActivateChat(void* chat); //function for input thread
