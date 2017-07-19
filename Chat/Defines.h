@@ -13,8 +13,7 @@
 
 //WSAStartup version define
 #define WSA_MIN_VERSION 2
-#define WSA_MAX_VERSION 2
-#define WSA_VERSION MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION) 
+#define WSA_MAX_VERSION 2 
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
@@ -22,5 +21,8 @@
 
 //ASCI buttons
 #define BACKSPACE_BUTTON 8 
+
+#define FILE_DATA_SAVE_DIR  "Data"
+#define FILE_DATA_SAVE_FULLPATH "Data/shared_files.shif"
 
 #endif // !DEFINES_H

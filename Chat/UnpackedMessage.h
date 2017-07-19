@@ -6,7 +6,9 @@ enum MessageType
     INVALID_TYPE = -1,
     PREPARE_MESSAGE = 0,
     LOG_MESSAGE = 1,
-    CHAT_MESSAGE = 2
+    CHAT_MESSAGE = 2,
+    FILE_LIST_REQUEST = 3,
+    FILE_LIST_MESSAGE = 4
 };
 
 struct UnpackedMessage

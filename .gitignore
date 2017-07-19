@@ -40,5 +40,5 @@
 *.sln
 
 # vs folders
-Chat/vc
+Chat/.vc
 Chat/Debug

@@ -1,5 +1,4 @@
 #include "Network.h"
-#include <iostream>
 
 Network::Network() : is_working_(false){}
 
@@ -11,7 +10,8 @@ Network::~Network()
 bool Network::PrepareNetwork()
 {
     WSAData wsa_data;
-    int error_check = WSAStartup(WSA_VERSION, &wsa_data);
+    int error_check = WSAStartup(MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION)
+                                 , &wsa_data);
     if(error_check != 0)
     {
         return false;
