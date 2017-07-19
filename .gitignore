@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+# Project Files
+*.vcxproj
+*.vcxproj.filters
+*.sdf
+*.v12.suo
+*.opensdf
+*.sln
+
+# vs folders
+Chat/vc
+Chat/Debug
