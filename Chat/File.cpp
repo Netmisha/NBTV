@@ -24,7 +24,7 @@ bool File::SetFile(const std::string &path)
     while(!str_stream.eof())
     {
         //shortening path to file name
-        std::getline(str_stream, temp_name, '/');
+        std::getline(str_stream, temp_name, '\\');
     }
     name_ = temp_name;
 

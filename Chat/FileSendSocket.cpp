@@ -41,12 +41,12 @@ bool FileSendSocket::SendFile(std::string pass, std::string ip)
         0, NULL,
         CREATE_ALWAYS, //Creates a new file, always.
         FILE_ATTRIBUTE_NORMAL, NULL);
-    bool result = TransmitFile(socket_, file_to_send,
-                    0, //we send hole file
-                    0, //default  nNumberOfBytesPerSend
-                    NULL, //Overlapped
-                    NULL,
-                    TF_DISCONNECT); //  disconnect after all 
+    bool result = (bool)TransmitFile(socket_, file_to_send,
+                                     0, //we send hole file
+                                     0, //default  nNumberOfBytesPerSend
+                                     NULL, //Overlapped
+                                     NULL,
+                                     (BOOL)TF_DISCONNECT); //  disconnect after all 
                                     //the file data has been send
     return result;
 }

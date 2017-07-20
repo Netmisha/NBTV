@@ -37,24 +37,20 @@ std::string FileManager::GetFileName(int file_index)const
     return shared_files_[file_index].GetName();
 }
 
-std::vector<std::string> FileManager::GetFilePaths()const
+void FileManager::GetFilePaths(std::vector<std::string> &out_result)const
 {
-    std::vector<std::string> return_vector;
     for(File it : shared_files_)
     {
-        return_vector.push_back(it.GetPath());
+        out_result.push_back(it.GetPath());
     }
-    return return_vector;
 }
 
-std::vector<std::string> FileManager::GetFileNames()const
+void FileManager::GetFileNames(std::vector<std::string> &out_result)const
 {
-    std::vector<std::string> return_vector;
     for(File it : shared_files_)
     {
-        return_vector.push_back(it.GetName());
+        out_result.push_back(it.GetName());
     }
-    return return_vector;
 }
 
 void FileManager::Save()
@@ -62,35 +58,77 @@ void FileManager::Save()
     if((CreateDirectory(FILE_DATA_SAVE_DIR, NULL)) ||
        (GetLastError() == ERROR_ALREADY_EXISTS))
     {
-        std::ofstream file_stream;
-        file_stream.open(FILE_DATA_SAVE_FULLPATH,
-                         std::ofstream::out);
-
-        for(std::string path : GetFilePaths())
+        HANDLE file = CreateFile(FILE_DATA_SAVE_FULLPATH,   //path
+                                 GENERIC_WRITE,             //to write
+                                 0,                         //non-share
+                                 NULL,                      //security
+                                 CREATE_ALWAYS,             //always create
+                                 FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
+                                 NULL);                     //why no default arguments
+        if(file == INVALID_HANDLE_VALUE)
         {
-            file_stream << path.length() << path;
+            return;
         }
+        int bytes_written;
+        std::vector<std::string> file_paths;
+        GetFilePaths(file_paths);
+
+        for(std::string path : file_paths)
+        {
+            int path_size = path.length();
+            WriteFile(file,
+                      &path_size,
+                      sizeof(path_size),
+                      (DWORD*)&bytes_written,
+                      NULL);
+
+            WriteFile(file,
+                      &path[0],
+                      path_size,
+                      (DWORD*)&bytes_written,
+                      NULL);
+        }
+        CloseHandle(file);
     }
 }
 
 void FileManager::Load()
 {
-    std::ifstream file_stream(FILE_DATA_SAVE_FULLPATH,
-                              std::ifstream::in);
-    if(!file_stream.is_open())
+    HANDLE file = CreateFile(FILE_DATA_SAVE_FULLPATH,   //path
+                             GENERIC_READ,              //to read
+                             0,                         //non-share
+                             NULL,                      //security
+                             OPEN_ALWAYS,               //always create
+                             FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
+                             NULL);
+    if(file == INVALID_HANDLE_VALUE)
     {
         return;
     }
-
-    int path_size;
+    
+    int bytes_read;
     std::string path;
-    File file;
-    while(!file_stream.eof())
+    while(true)
     {
-        file_stream >> path_size;
+        int path_size;
+        bool error_flag = (bool)ReadFile(file,
+                                         &path_size,
+                                         sizeof(path_size),
+                                         (DWORD*)&bytes_read,
+                                         NULL);
+        if(error_flag && bytes_read == 0)
+        {
+            //eof
+            break;
+        }
         path.resize(path_size);
-        file_stream.read(&path[0], path_size);
-        if(file.SetFile(path))
-            shared_files_.push_back(file);
+
+        error_flag = (bool)ReadFile(file,
+                                    &path[0],
+                                    path_size,
+                                    (DWORD*)bytes_read,
+                                    (BOOL)NULL);
     }
+
+    CloseHandle(file);
 }

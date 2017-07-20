@@ -96,7 +96,7 @@ void Chat::PutMsg(const UserMsg& msg)
 void Chat::PrintSomeoneList(std::vector<std::string>& list)
 {
     chat_mutex_.Lock();
-    for (int i = 0; i < list.size(); i++)
+    for (int i = 0; i < (int)list.size(); i++)
     {
         cout << i + 1 << " " + list[i] << endl;
     }

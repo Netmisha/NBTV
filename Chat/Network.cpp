@@ -147,7 +147,9 @@ void Network::SendFile(std::string pass, std::string ip)
 
 std::vector<std::string> Network::GetFileList()
 {
-    return FM_.GetFileNames();
+    //return FM_.GetFileNames();
+    std::vector<std::string> PLACEHOLDER;
+    return PLACEHOLDER;
 }
 
 void Network::RequestSomeoneList(std::string name)
@@ -161,7 +163,7 @@ void Network::RequestSomeoneList(std::string name)
 
 void Network::SendList(std::string ip)
 {
-    std::vector<std::string> file_names = FM_.GetFileNames();
+    std::vector<std::string> file_names;// = FM_.GetFileNames();
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &file_names, send_buffer);
 

@@ -25,9 +25,9 @@ public:
     //get specific file name
     std::string GetFileName(int file_index)const;
     //get all file paths
-    std::vector<std::string> GetFilePaths()const;
+    void GetFilePaths(std::vector<std::string> &out_result)const;
     //get all file names
-    std::vector<std::string> GetFileNames()const;
+    void GetFileNames(std::vector<std::string> &out_result)const;
 
 private:
     //vector of shared files
@@ -37,4 +37,4 @@ private:
     void Load();
 };
 
-#endif // !FILE_MANAGER_H
+#endif // !FILE_MANAGER_H;
