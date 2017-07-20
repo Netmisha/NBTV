@@ -156,8 +156,15 @@ void Network::RequestSomeoneList(const std::string& name)
     
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
-
-    broadc_socket_.Send(send_buffer, send_size); //err_check
+    
+    std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
+        user_ip_name_map_.end(),
+        NameSearch(&name));
+    if (it == user_ip_name_map_.end())
+    {
+        return ;
+    }
+    broadc_socket_.SendTo(send_buffer, send_size, it->first.c_str()); //err_check
 }
 
 void Network::SendList(const std::string& ip)
@@ -166,6 +173,7 @@ void Network::SendList(const std::string& ip)
     FM_->GetFileNames(file_names);
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &file_names, send_buffer);
+
 
     broadc_socket_.SendTo(send_buffer, send_size, ip.c_str()); //err_check
 }
@@ -208,7 +216,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet); //allocation in heap
 
     send_mutex_.Lock();
-    packet_size = broadc_socket_.SendTo(packet, packet_size, it->second.c_str());
+    packet_size = broadc_socket_.SendTo(packet, packet_size, it->first.c_str());
     send_mutex_.Unlock();
 
     delete[] packet;

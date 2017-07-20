@@ -186,16 +186,17 @@ bool Chat::CheckForCommands() //chat commands
             std::string name;
             stream >> name;
             buffer_.clear();
+            ResetChat();
             if (name.empty())
             {
                 std::vector<std::string> list; 
                 FM_->GetFileNames(list);
-                PrintSomeoneList(list); //I print mt list
+                PrintSomeoneList(list); //I print my list
             }
             else
             {
                 connected_network_->RequestSomeoneList(name); //asking for someone`s list
-                chat_mutex_.Lock();
+                
             }
         }
 		else if (!strncmp(buffer_.c_str(), "getf ", 5))

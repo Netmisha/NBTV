@@ -177,57 +177,59 @@ void * Parcer::ParceGetFileMessage(const void * in_packet)
 
 
 int Parcer::PackFileListRequest(const void *in_msg, void* &out_packet)
- {
+{
     out_packet = new char();
     *(unsigned char*)out_packet = FILE_LIST_REQUEST;
     return FILE_LIST_REQUEST_SIZE;
-    }
+}
 
 int Parcer::PackFileList(const void *in_msg, void* &out_packet)
 {
     std::vector<std::string> *file_names = (std::vector<std::string>*)in_msg;
     int size = FILE_LIST_HEADER_SIZE;
     for (std::string str : *file_names)
-         {
+    {
         size += str.length() + 2;
-        }
-    
-        out_packet = new char[size]();
+    }
+
+    out_packet = new char[size]();
     char* temp_ptr = (char*)out_packet;
     *temp_ptr++ = FILE_LIST_MESSAGE;
     *(short*)temp_ptr = file_names->size();
     temp_ptr += 2;
-    
-        for (std::string str : *file_names)
-         {
+
+    for (std::string str : *file_names)
+    {
         *(short*)temp_ptr = (short)str.length();
         temp_ptr += 2;
         memcpy(temp_ptr, &str[0], str.length());
         temp_ptr += str.length();
-        }
-    
-        return size;
     }
 
+    return size;
+}
+
 void* Parcer::ParceFileList(const void *in_packet)
- {
+{
     std::vector<std::string> *file_names = new std::vector<std::string>;
     char *temp_ptr = (char*)in_packet;
-    
-        int names_num = *(short*)temp_ptr;
+
+    int names_num = *(short*)temp_ptr;
     temp_ptr += 2;
-    
-        std::string temp_name;
+
+    std::string temp_name;
     for (int i = 0; i < names_num; ++i)
-         {
+    {
         short name_size = *(short*)temp_ptr;
         temp_ptr += 2;
-        
-            temp_name.resize(name_size);
+
+        temp_name.resize(name_size);
         memcpy(&temp_name[0], temp_ptr, name_size);
-        
-            temp_ptr += name_size;
-        }
-    
-        return file_names;
+
+        file_names->push_back(temp_name);
+
+        temp_ptr += name_size;
+    }
+
+    return file_names;
 }
