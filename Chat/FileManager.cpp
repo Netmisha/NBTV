@@ -98,7 +98,7 @@ void FileManager::Load()
                              GENERIC_READ,              //to read
                              0,                         //non-share
                              NULL,                      //security
-                             OPEN_ALWAYS,               //always create
+                             OPEN_EXISTING,             //only existing
                              FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
                              NULL);
     if(file == INVALID_HANDLE_VALUE)
@@ -106,28 +106,33 @@ void FileManager::Load()
         return;
     }
     
-    int bytes_read;
+    DWORD bytes_read = 0;
+    File shared_file;
     std::string path;
     while(true)
     {
         int path_size;
-        bool error_flag = (bool)ReadFile(file,
+        BOOL error_flag = ReadFile(file,
                                          &path_size,
                                          sizeof(path_size),
-                                         (DWORD*)&bytes_read,
+                                         &bytes_read,
                                          NULL);
-        if(error_flag && bytes_read == 0)
+        if(error_flag && bytes_read < (int)sizeof(path_size))
         {
             //eof
             break;
         }
+
         path.resize(path_size);
 
-        error_flag = (bool)ReadFile(file,
+        error_flag = ReadFile(file,
                                     &path[0],
                                     path_size,
-                                    (DWORD*)bytes_read,
-                                    (BOOL)NULL);
+                                    &bytes_read,
+                                    NULL);
+
+        if(shared_file.SetFile(path))
+            shared_files_.push_back(shared_file);
     }
 
     CloseHandle(file);
