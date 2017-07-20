@@ -1,3 +1,4 @@
+
 #ifndef THREAD_H
 #define THREAD_H
 
@@ -10,7 +11,7 @@ class Thread
 {
 public:
     Thread();
-	Thread(thread_function func, void *params);
+    Thread(thread_function func, void *params);
     ~Thread();
 
     //starts thread with specific function

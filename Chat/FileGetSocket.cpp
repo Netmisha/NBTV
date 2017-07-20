@@ -16,7 +16,7 @@ bool FileGetSocket::Initialize()
     return true;
 }
 
-void FileGetSocket::GetFile(std::string filename)
+void FileGetSocket::GetFile(const std::string& filename)
 {
     sockaddr_in sock_addr = { AF_INET, htons(FILE_PORT), INADDR_ANY };
 

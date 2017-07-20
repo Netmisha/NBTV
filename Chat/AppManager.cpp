@@ -25,4 +25,6 @@ AppManager::AppManager()
 {
     chat_.SetNetwork(&network_);
     network_.SetChat(&chat_);
+    chat_.SetFM(&fm_);
+    network_.SetFM(&fm_);
 }

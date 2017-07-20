@@ -9,7 +9,7 @@
 #include "Thread.h"
 
 class Network;
-
+class FileManager;
 
 class Chat
 {
@@ -18,13 +18,15 @@ public:
 	~Chat();
 
 	void SetNetwork(Network* net);
+    void SetFM(FileManager* fm);
+
 	void SetUserInfo(char color, const std::string& name);
 	Thread& GetInputThread(); //thread descriptor getter
     const std::string& GetName(); //name getter
 
-	void ResetChat();
-	void PutMsg(const UserMsg& msg); // show msg to the screen
-    void PrintSomeoneList(std::vector<std::string>& list);
+	void ResetChat() const;
+	void PutMsg(const UserMsg& msg) const; // show msg to the screen
+    void PrintSomeoneList(std::vector<std::string>& list) const;
 
 	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
 	void InputStream(); 
@@ -49,7 +51,9 @@ private:
 
 	std::vector< std::string > users_;
 	std::vector< UserMsg > messages_;
+
 	Network* connected_network_;
+    FileManager* FM_;
 
 	volatile bool input_is_working_;
 	Thread input_thread_;

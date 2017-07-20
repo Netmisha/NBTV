@@ -57,6 +57,11 @@ void Chat::SetNetwork(Network * net)
 	connected_network_ = net;
 }
 
+void Chat::SetFM(FileManager * fm)
+{
+    FM_ = fm;
+}
+
 void Chat::SetUserInfo(char color, const std::string& name)
 {
 	msg_color_ = color;
@@ -74,7 +79,7 @@ const std::string& Chat::GetName()
     return  user_name_;
 }
 
-void Chat::ResetChat()
+void Chat::ResetChat() const
 {
 	system("cls");
 	for (auto i : messages_)
@@ -85,7 +90,7 @@ void Chat::ResetChat()
 	
 }
 
-void Chat::PutMsg(const UserMsg& msg)
+void Chat::PutMsg(const UserMsg& msg) const
 {
     cout << msg.name_ << " : "; 
 
@@ -93,9 +98,10 @@ void Chat::PutMsg(const UserMsg& msg)
 	
 }
 
-void Chat::PrintSomeoneList(std::vector<std::string>& list)
+void Chat::PrintSomeoneList(std::vector<std::string>& list) const
 {
     chat_mutex_.Lock();
+    cout << endl;
     for (size_t i = 0; i < list.size(); i++)
     {
         cout << i + 1 << " " + list[i] << endl;
@@ -176,25 +182,26 @@ bool Chat::CheckForCommands() //chat commands
         else if (!strncmp(buffer_.c_str(), "fl ", 3))
         {
             PopBuffer(3);
-            std::stringstream stream;
+            std::stringstream stream(buffer_);
             std::string name;
             stream >> name;
             buffer_.clear();
             if (name.empty())
             {
-                std::vector<std::string> list = connected_network_->GetFileList();
-                PrintSomeoneList(list);
+                std::vector<std::string> list; 
+                FM_->GetFileNames(list);
+                PrintSomeoneList(list); //I print mt list
             }
             else
             {
-                connected_network_->RequestSomeoneList(name);
+                connected_network_->RequestSomeoneList(name); //asking for someone`s list
                 chat_mutex_.Lock();
             }
         }
 		else if (!strncmp(buffer_.c_str(), "getf ", 5))
 		{
 			PopBuffer(5);
-            std::stringstream stream;
+            std::stringstream stream(buffer_);
             std::string name;
             int index;
             stream >> name;
@@ -202,6 +209,17 @@ bool Chat::CheckForCommands() //chat commands
 			connected_network_->GetFile(name, index);
 			
 		}
+        else if (!strncmp(buffer_.c_str(), "addf ", 5))
+        {
+            PopBuffer(5);
+            std::stringstream stream(buffer_);
+            std::string pass;
+            stream >> pass;
+            FM_->AddFile(pass);
+            buffer_.clear();
+            ResetChat();
+
+        }
 		else if (!strncmp(buffer_.c_str(), "setcolor ", 9))
 		{
 			PopBuffer(9);

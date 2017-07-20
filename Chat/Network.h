@@ -1,6 +1,5 @@
 #ifndef NETWORK_H
 #define NETWORK_H
-
 #include "FileGetSocket.h"
 #include "FileSendSocket.h"
 #include "BroadcastSocket.h"
@@ -23,7 +22,7 @@ public:
     ~Network();
 
     //chat uses this function to broadcast messages
-    int SendMsg(UserMsg user_msg);
+    int SendMsg(const UserMsg& user_msg);
 
     int SendMsgTo(const std::string &user_name, const UserMsg &user_msg);
     //function to prepare network for working
@@ -37,20 +36,21 @@ public:
     void StopNetwork();
 
 	void SetChat(Chat* chat);
+    void SetFM(FileManager * fm);
+    
 
     void SendLogMsg(const std::string &name, const LogType &type);
 
-	void GetFile(std::string user_name, int index);
-	void SendFile(std::string pass, std::string ip);
+	void GetFile(const std::string& user_name, int index);
+	void SendFile(const std::string& pass, const std::string& ip);
 
-    std::vector<std::string> GetFileList();
-    void RequestSomeoneList(std::string name);
-    void SendList(std::string ip);
+    void RequestSomeoneList(const std::string& name);
+    void SendList(const std::string& ip);
 
     
 private:
     Chat *chat_;
-	FileManager FM_;
+	FileManager *FM_;
     //socket for broadcasting
     BroadcastSocket broadc_socket_;
     //socket for recieving messages

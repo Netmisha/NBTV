@@ -68,7 +68,7 @@ bool Network::PrepareNetwork()
     return true;
 }
 
-int Network::SendMsg(UserMsg user_msg)
+int Network::SendMsg(const UserMsg& user_msg)
 {
     void *packet = NULL;
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
@@ -116,6 +116,11 @@ void Network::SetChat(Chat * chat)
 	chat_ = chat;
 }
 
+void Network::SetFM(FileManager * fm)
+{
+    FM_ = fm;
+}
+
 void Network::SendLogMsg(const std::string &name, const LogType &type)
 {
     LogMessage log_msg = { type, name };
@@ -125,7 +130,7 @@ void Network::SendLogMsg(const std::string &name, const LogType &type)
     broadc_socket_.Send(send_buffer, send_size); //err_check
 }
 
-void Network::GetFile(std::string user_name, int index)
+void Network::GetFile(const std::string& user_name, int index)
 {
 	int file_index;
 	void *send_buffer = NULL;
@@ -140,19 +145,13 @@ void Network::GetFile(std::string user_name, int index)
     file_get_socket_.GetFile(std::to_string(index));
 }
 
-void Network::SendFile(std::string pass, std::string ip)
+void Network::SendFile(const std::string& pass, const std::string& ip)
 {
 	 file_send_socket_.SendFile(pass, ip);
 }
 
-std::vector<std::string> Network::GetFileList()
-{
-    //return FM_.GetFileNames();
-    std::vector<std::string> PLACEHOLDER;
-    return PLACEHOLDER;
-}
 
-void Network::RequestSomeoneList(std::string name)
+void Network::RequestSomeoneList(const std::string& name)
 {
     
     void *send_buffer = NULL;
@@ -161,9 +160,10 @@ void Network::RequestSomeoneList(std::string name)
     broadc_socket_.Send(send_buffer, send_size); //err_check
 }
 
-void Network::SendList(std::string ip)
+void Network::SendList(const std::string& ip)
 {
-    std::vector<std::string> file_names;// = FM_.GetFileNames();
+    std::vector<std::string> file_names;
+    FM_->GetFileNames(file_names);
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &file_names, send_buffer);
 
@@ -231,7 +231,7 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
                 ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
                 break;
 			case GET_FILE_MESSAGE:
-				SendFile( FM_.GetFileName( *((int*)unp_msg.msg_) ), recv_str.ip_);
+				SendFile( FM_->GetFileName( *((int*)unp_msg.msg_) ), recv_str.ip_);
 				break;
             case FILE_LIST_REQUEST:
                 SendList(recv_str.ip_);

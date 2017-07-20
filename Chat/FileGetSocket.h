@@ -12,6 +12,6 @@ public:
 
     bool Initialize();
 
-    void GetFile(std::string filename);
+    void GetFile(const std::string& filename);
 };
 

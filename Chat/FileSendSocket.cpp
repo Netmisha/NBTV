@@ -17,7 +17,7 @@ bool FileSendSocket::Initialize()
 	return true;
 }
 
-bool FileSendSocket::SendFile(std::string pass, std::string ip)
+bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip)
 {
     if (socket_ == INVALID_SOCKET)
         exit(1);
