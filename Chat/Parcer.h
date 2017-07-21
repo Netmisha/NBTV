@@ -18,7 +18,7 @@ enum ConstantSizes
     LOG_MESSAGE_HEADER_SIZE = 3,
 	
 	//1Bflag + 1Bindex
-	GET_FILE_MESSAGE_SIZE = 2,
+	GET_FILE_MESSAGE_SIZE = 5,
 
     FILE_LIST_REQUEST_SIZE = 1,
     

@@ -37,10 +37,12 @@ public:
 	void Activate(); //starts input thread
 	void ActivatePrivateChat(std::string name); //private chat input mode
 
-	
+    void IOfflineMsg();	//sends online msg
+
 private:
+
 	void IOnlineMsg();	//sends online msg
-	void IOfflineMsg();	//sends online msg
+	
 	void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
 	int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
 

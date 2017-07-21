@@ -42,7 +42,7 @@ public:
     void SendLogMsg(const std::string &name, const LogType &type);
 
 	void GetFile(const std::string& user_name, int index);
-	void SendFile(const std::string& pass, const std::string& ip);
+	void SendFile(const std::string& pass, const std::string& ip, std::string& name);
 
     void RequestSomeoneList(const std::string& name);
     void SendList(const std::string& ip);

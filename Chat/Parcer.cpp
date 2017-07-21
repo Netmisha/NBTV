@@ -160,8 +160,8 @@ int Parcer::PackGetFileMessage(const void * in_msg, void *& out_packet)
 	out_packet = new char[msg_size]();
 
 	unsigned char *temp_ptr = (unsigned char*)out_packet;
-	*temp_ptr++ = LOG_MESSAGE;
-	*temp_ptr++ = *((int*)in_msg);
+	*temp_ptr++ = GET_FILE_MESSAGE;
+	*temp_ptr++ = *((int*)in_msg) - 1 ;
 	
 
 	return msg_size;

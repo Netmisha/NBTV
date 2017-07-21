@@ -1,7 +1,7 @@
-#include "FileGetSocket.h"
+﻿#include "FileGetSocket.h"
+#include "Defines.h"
 
-
-FileGetSocket::FileGetSocket(){}
+FileGetSocket::FileGetSocket():first_time(true){}
 
 
 FileGetSocket::~FileGetSocket(){}
@@ -16,42 +16,72 @@ bool FileGetSocket::Initialize()
     return true;
 }
 
-void FileGetSocket::GetFile(const std::string& filename)
+bool FileGetSocket::GetFile()
 {
-    sockaddr_in sock_addr = { AF_INET, htons(FILE_PORT), INADDR_ANY };
-
-
-
-    if (bind(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
+    if (first_time)
     {
-        std::cerr << "unable to bind socket!\n";
-        shutdown(socket_, 2);
-    }
+        sockaddr_in sock_addr = { AF_INET, htons(FILE_PORT), INADDR_ANY };
 
-    if (listen(socket_, SOMAXCONN) != 0)
-    {
-        std::cerr << "unable to set listening socket mode!\n";
-        shutdown(socket_, 2);
-    }
+        if (socket_ == INVALID_SOCKET)
+        {
+            std::cerr << "socket is not exist!\n";
+            return false;
+        }
 
+        if (bind(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
+        {
+            std::cout << GetLastError();
+            std::cerr << "unable to bind socket!\n";
+            shutdown(socket_, 2);
+        }
+
+        if (listen(socket_, SOMAXCONN) != 0)
+        {
+            std::cerr << "unable to set listening socket mode!\n";
+            shutdown(socket_, 2);
+        }
+        first_time = false;
+    }
     SOCKET file_getter = accept(socket_, 0, 0);
+    int ppop = WSAGetLastError();
+   
+    if (!((CreateDirectory("Download", NULL)) ||
+        (GetLastError() == ERROR_ALREADY_EXISTS)))
+        return false;
+ 
+    char buffer[CHUNK_SIZE] = {};
+    char nbuffer[CHUNK_SIZE] = {};
 
-    HANDLE hFile = CreateFile( (LPCTSTR)filename.c_str() , 
-                            GENERIC_WRITE, //I will write in this file
-                            0, NULL, 
-                            CREATE_ALWAYS, //Creates a new file, always.
-                            FILE_ATTRIBUTE_NORMAL, NULL);
-    
-    LPVOID buffer;// aka void*
-    LPDWORD transferred_bytes=NULL; //pointer to a variable that receives the number 
-                    //of bytes that were actually transferred by a read or write operation
-    LPOVERLAPPED overlap_struct=NULL; //contains info used in asynchronous  (I/O).
-    while (true)
+    recv(file_getter, nbuffer, CHUNK_SIZE, 0); //gettinh file name
+    std::string dir(("Download\\") + std::string(nbuffer));
+
+    HANDLE file = CreateFile(dir.c_str(),
+                             GENERIC_WRITE,
+                             0,
+                             NULL,
+                             CREATE_ALWAYS,
+                             FILE_ATTRIBUTE_NORMAL,
+                             NULL);
+    BOOL err_check;
+    int size = 0;
+    int recv_size = 0;
+    DWORD bytes_written;
+    int die = 0;
+    while (true) //file getting
     {
-        ReadFile((HANDLE)socket_, &buffer, MAX_PATH, transferred_bytes, overlap_struct);
-        GetOverlappedResult((HANDLE)socket_, overlap_struct, transferred_bytes, TRUE);
-        if (transferred_bytes == 0) break;
-        WriteFile(hFile, buffer, *transferred_bytes, transferred_bytes, NULL);
+        int recved_bytes = recv(file_getter, buffer, CHUNK_SIZE, 0);
+        err_check = WriteFile(file,
+                                   buffer,
+                                   recved_bytes,
+                                   &bytes_written,
+                                   NULL);
+        recv_size += recved_bytes;
+        size += 1;
+        if (recved_bytes < CHUNK_SIZE)
+        {
+            break;
+        }
     }
-    CloseHandle(hFile);
+    CloseHandle(file);
+    return err_check;
 }

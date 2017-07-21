@@ -33,7 +33,7 @@ bool Network::PrepareNetwork()
 	{
 		return false;
 	}
-    if (!file_send_socket_.Initialize())
+    if (!file_get_socket_.Initialize())
 	{
 		return false;
 	}
@@ -132,7 +132,7 @@ void Network::SendLogMsg(const std::string &name, const LogType &type)
 
 void Network::GetFile(const std::string& user_name, int index)
 {
-	int file_index;
+	int file_index = index;
 	void *send_buffer = NULL;
 	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
 
@@ -141,13 +141,14 @@ void Network::GetFile(const std::string& user_name, int index)
 		user_ip_name_map_.end(),
 		NameSearch(&user_name));
 
-	broadc_socket_.SendTo(send_buffer, send_size, it->second.c_str());
-    file_get_socket_.GetFile(std::to_string(index));
+	broadc_socket_.SendTo(send_buffer, send_size, it->first.c_str());
+    
+    file_get_socket_.GetFile();
 }
 
-void Network::SendFile(const std::string& pass, const std::string& ip)
+void Network::SendFile(const std::string& pass, const std::string& ip, std::string& name)
 {
-	 file_send_socket_.SendFile(pass, ip);
+	 file_send_socket_.SendFile(pass, ip, name);
 }
 
 
@@ -239,7 +240,7 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
                 ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
                 break;
 			case GET_FILE_MESSAGE:
-				SendFile( FM_->GetFileName( *((int*)unp_msg.msg_) ), recv_str.ip_);
+				SendFile( FM_->GetFilePath( *((int*)unp_msg.msg_) ), recv_str.ip_,  FM_->GetFileName( *((int*)unp_msg.msg_)) );
 				break;
             case FILE_LIST_REQUEST:
                 SendList(recv_str.ip_);

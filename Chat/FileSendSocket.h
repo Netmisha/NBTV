@@ -13,6 +13,6 @@ public:
 	~FileSendSocket();
 
 	bool Initialize();
-    bool SendFile(const std::string& pass, const std::string& ip);
+    bool SendFile(const std::string& pass, const std::string& ip, std::string& filename);
 };
 

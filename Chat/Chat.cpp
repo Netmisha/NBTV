@@ -14,11 +14,7 @@ using std::endl;
 
 Chat::Chat() : input_is_working_(true){}
 
-
-Chat::~Chat()
-{
-	connected_network_->StopNetwork();
-}
+Chat::~Chat(){}
 
 void Chat::IOnlineMsg()
 {
@@ -162,23 +158,23 @@ void Chat::PopBuffer(int num) //easy pop front
 
 bool Chat::CheckForCommands() //chat commands
 {
-	
-	if (buffer_[0] == '/')
-	{
-		PopBuffer(1);
 
-		if(!strncmp(buffer_.c_str(), "w ", 2))
-		{
-			PopBuffer(2);
-			ActivatePrivateChat(buffer_);
-		}
-		else if (!strncmp(buffer_.c_str(), "setname ", 8))
-		{
-			PopBuffer(8);
-			SetUserInfo(msg_color_, buffer_);
-			buffer_.clear();
-			ResetChat();
-		}
+    if (buffer_[0] == '/')
+    {
+        PopBuffer(1);
+
+        if (!strncmp(buffer_.c_str(), "w ", 2))
+        {
+            PopBuffer(2);
+            ActivatePrivateChat(buffer_);
+        }
+        else if (!strncmp(buffer_.c_str(), "setname ", 8))
+        {
+            PopBuffer(8);
+            SetUserInfo(msg_color_, buffer_);
+            buffer_.clear();
+            ResetChat();
+        }
         else if (!strncmp(buffer_.c_str(), "fl ", 3))
         {
             PopBuffer(3);
@@ -189,27 +185,29 @@ bool Chat::CheckForCommands() //chat commands
             ResetChat();
             if (name.empty())
             {
-                std::vector<std::string> list; 
+                std::vector<std::string> list;
                 FM_->GetFileNames(list);
                 PrintSomeoneList(list); //I print my list
             }
             else
             {
                 connected_network_->RequestSomeoneList(name); //asking for someone`s list
-                
+
             }
         }
-		else if (!strncmp(buffer_.c_str(), "getf ", 5))
-		{
-			PopBuffer(5);
+        else if (!strncmp(buffer_.c_str(), "getf ", 5))
+        {
+            PopBuffer(5);
             std::stringstream stream(buffer_);
             std::string name;
             int index;
             stream >> name;
-			stream >> index;
-			connected_network_->GetFile(name, index);
-			
-		}
+            stream >> index;
+            connected_network_->GetFile(name, index);
+            buffer_.clear();
+            ResetChat();
+
+        }
         else if (!strncmp(buffer_.c_str(), "addf ", 5))
         {
             PopBuffer(5);
@@ -221,28 +219,26 @@ bool Chat::CheckForCommands() //chat commands
             ResetChat();
 
         }
-		else if (!strncmp(buffer_.c_str(), "setcolor ", 9))
-		{
-			PopBuffer(9);
-			std::string color_str("COLOR 0");
-			color_str += std::to_string( atoi( &buffer_.front() ) );
-			system(color_str.c_str());
-			buffer_.clear();
-			ResetChat();
-			//system("COLOR 07"); white 
-		}
-		else if (!strncmp(buffer_.c_str(), "exit", 4))
-		{
-			IOfflineMsg();
-			input_is_working_ = false;
+        else if (!strncmp(buffer_.c_str(), "setcolor ", 9))
+        {
+            PopBuffer(9);
+            std::string color_str("COLOR 0");
+            color_str += std::to_string(atoi(&buffer_.front()));
+            system(color_str.c_str());
+            buffer_.clear();
+            ResetChat();
+            //system("COLOR 07"); white 
+        }
+        else if (!strncmp(buffer_.c_str(), "exit", 4))
+        {
+            input_is_working_ = false;
+        }
 
-		}
 
-		
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void Chat::Activate()

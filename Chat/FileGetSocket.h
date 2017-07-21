@@ -6,12 +6,14 @@
 class FileGetSocket :
     public AbstractSocket
 {
+    bool first_time;
+
 public:
     FileGetSocket();
     ~FileGetSocket();
 
     bool Initialize();
 
-    void GetFile(const std::string& filename);
+    bool GetFile();
 };
 

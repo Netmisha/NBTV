@@ -11,6 +11,11 @@ void AppManager::Work()
 	
     chat_.GetInputThread().Join();
 
+    network_.StopNetwork();
+    chat_.IOfflineMsg();
+    network_loop.Join();
+
+
 	std::cout << "ok";
 	//at the end
 }

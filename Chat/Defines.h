@@ -8,6 +8,8 @@
 //max buffer size without
 //possible data tearing
 #define BUFFER_SIZE 512
+#define CHUNK_SIZE 512
+
 //size of ip in chars
 #define IP_SIZE 16
 
@@ -17,7 +19,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK 0
+#define BROADCAST_LOOPBACK 1
 
 //ASCI buttons
 #define BACKSPACE_BUTTON 8 
