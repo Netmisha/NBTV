@@ -1,16 +1,17 @@
+
 #ifndef THREAD_H
 #define THREAD_H
 
 #include <process.h>
 #include <Windows.h>
 
-typedef unsigned int(*thread_function)(void*);
+typedef unsigned(*thread_function)(void*);
 
 class Thread
 {
 public:
     Thread();
-	Thread(thread_function func, void *params);
+    Thread(thread_function func, void *params);
     ~Thread();
 
     //starts thread with specific function

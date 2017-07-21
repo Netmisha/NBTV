@@ -1,10 +1,12 @@
 #ifndef NETWORK_H
 #define NETWORK_H
-
+#include "FileGetSocket.h"
+#include "FileSendSocket.h"
 #include "BroadcastSocket.h"
 #include "RecvSocket.h"
 #include "Parcer.h"
 
+#include "FileManager.h"
 #include "Chat.h"
 #include "NameSearch.h"
 
@@ -20,13 +22,13 @@ public:
     ~Network();
 
     //chat uses this function to broadcast messages
-    int SendMsg(UserMsg user_msg);
+    int SendMsg(const UserMsg& user_msg);
 
     int SendMsgTo(const std::string &user_name, const UserMsg &user_msg);
     //function to prepare network for working
     bool PrepareNetwork();
     //thread func for starting network
-    static unsigned int StartNetwork(void *network_ptr);
+    static unsigned StartNetwork(void *network_ptr);
     //function that loops recv and processes messages
     //to stop - call StopNetwork
     void LoopRecv();
@@ -34,15 +36,30 @@ public:
     void StopNetwork();
 
 	void SetChat(Chat* chat);
+    void SetFM(FileManager * fm);
+    
 
     void SendLogMsg(const std::string &name, const LogType &type);
+
+	void GetFile(const std::string& user_name, int index);
+	void SendFile(const std::string& pass, const std::string& ip, std::string& name);
+
+    void RequestSomeoneList(const std::string& name);
+    void SendList(const std::string& ip);
+
     
 private:
     Chat *chat_;
+	FileManager *FM_;
     //socket for broadcasting
     BroadcastSocket broadc_socket_;
     //socket for recieving messages
     RecvSocket recv_socket_;
+
+	//socket for sending files
+	FileSendSocket file_send_socket_;
+    //socket for getting files
+    FileGetSocket file_get_socket_;
 
     std::string my_ip_;
 
