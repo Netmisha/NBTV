@@ -63,8 +63,6 @@ bool FileGetSocket::GetFile()
                              FILE_ATTRIBUTE_NORMAL,
                              NULL);
     BOOL err_check;
-    int size = 0;
-    int recv_size = 0;
     DWORD bytes_written;
     int die = 0;
     while (true) //file getting
@@ -75,12 +73,7 @@ bool FileGetSocket::GetFile()
                                    recved_bytes,
                                    &bytes_written,
                                    NULL);
-        recv_size += recved_bytes;
-        size += 1;
-        if (size > 2195)
-        {
-            size+=0;
-        }
+     
         if (recved_bytes < CHUNK_SIZE)
         {
             break;
