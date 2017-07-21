@@ -47,6 +47,8 @@ public:
     void RequestSomeoneList(const std::string& name);
     void SendList(const std::string& ip);
 
+    void GetOnlineUsers(std::vector<std::string> &users);
+
     
 private:
     Chat *chat_;
