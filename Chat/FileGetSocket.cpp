@@ -50,10 +50,10 @@ bool FileGetSocket::GetFile()
         return false;
  
     char buffer[CHUNK_SIZE] = {};
-    char nbuffer[CHUNK_SIZE] = {};
+   
 
-    recv(file_getter, nbuffer, CHUNK_SIZE, 0); //gettinh file name
-    std::string dir(("Download\\") + std::string(nbuffer));
+    recv(file_getter, buffer, CHUNK_SIZE, 0); //gettinh file name
+    std::string dir(("Download\\") + std::string(buffer));
 
     HANDLE file = CreateFile(dir.c_str(),
                              GENERIC_WRITE,
@@ -77,6 +77,10 @@ bool FileGetSocket::GetFile()
                                    NULL);
         recv_size += recved_bytes;
         size += 1;
+        if (size > 2195)
+        {
+            size+=0;
+        }
         if (recved_bytes < CHUNK_SIZE)
         {
             break;

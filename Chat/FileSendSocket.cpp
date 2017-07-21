@@ -44,7 +44,7 @@ bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, st
     }
    
 
-    send(socket_, filename.c_str(), filename.size() + 1, 0); //sending file name
+    send(socket_, filename.c_str(), CHUNK_SIZE, 0); //sending file name
 
     char buffer[CHUNK_SIZE];
     HANDLE file = CreateFile(pass.c_str(),

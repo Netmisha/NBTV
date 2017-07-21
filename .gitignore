@@ -42,3 +42,5 @@
 # vs folders
 Chat/.vc
 Chat/Debug
+Chat/Download
+Chat/Data
