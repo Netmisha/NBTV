@@ -208,6 +208,19 @@ bool Chat::CheckForCommands() //chat commands
             ResetChat();
 
         }
+        else if (!strncmp(buffer_.c_str(), "userlist", 8))
+        {
+            PopBuffer(8);
+            std::vector<std::string> users;
+            connected_network_->GetOnlineUsers(users);
+            buffer_.clear();
+            cout << "\n ACTIVE USERS: \n";
+            for (auto i : users)
+                cout << i << '\n';
+            std::cerr << "Please enter message: " << buffer_;
+           
+
+        }
         else if (!strncmp(buffer_.c_str(), "addf ", 5))
         {
             PopBuffer(5);

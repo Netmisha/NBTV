@@ -254,3 +254,11 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
     }
 
 }
+
+void Network::GetOnlineUsers(std::vector<std::string> &out_users)
+{
+    for (std::pair<std::string, std::string> pair_ : user_ip_name_map_)
+    {
+        out_users.push_back(pair_.second);
+    }
+}
