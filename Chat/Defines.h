@@ -19,7 +19,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK 1
+#define BROADCAST_LOOPBACK 0
 
 //ASCI buttons
 #define BACKSPACE_BUTTON 8 

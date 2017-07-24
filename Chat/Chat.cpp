@@ -23,6 +23,13 @@ void Chat::IOnlineMsg()
 	SendMsg(msg);
 }
 
+void Chat::IChangedName(std::string& old_name)
+{
+    connected_network_->SendLogMsg(user_name_, LOG_UPDATE);
+    UserMsg msg = { msg_color_, user_name_, old_name + " changed name to " + user_name_ + " !"};
+    SendMsg(msg);
+}
+
 void Chat::IOfflineMsg()
 {
 	UserMsg msg = { msg_color_, user_name_, user_name_ + " left the chat!" };
@@ -171,7 +178,9 @@ bool Chat::CheckForCommands() //chat commands
         else if (!strncmp(buffer_.c_str(), "setname ", 8))
         {
             PopBuffer(8);
-            SetUserInfo(msg_color_, buffer_);
+            std::string old_name = user_name_;
+            user_name_ = buffer_;
+            IChangedName(old_name);
             buffer_.clear();
             ResetChat();
         }
@@ -246,8 +255,19 @@ bool Chat::CheckForCommands() //chat commands
         {
             input_is_working_ = false;
         }
-
-
+        else if (!strncmp(buffer_.c_str(), "removef ", 8))
+        {
+            PopBuffer(8);
+            std::stringstream stream(buffer_);
+            int index;
+            stream >> index;
+            FM_->RemoveFile(index-1);
+            buffer_.clear();
+            ResetChat();
+          
+        }
+        buffer_.clear();
+        ResetChat();
         return true;
     }
 

@@ -42,6 +42,7 @@ public:
 private:
 
 	void IOnlineMsg();	//sends online msg
+    void IChangedName(std::string& old_name);
 	
 	void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
 	int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
