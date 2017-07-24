@@ -7,7 +7,7 @@ enum LogType
 {
     LOG_OFFLINE = (unsigned char)0,
     LOG_ONLINE = (unsigned char)1,
-    LOG_RESPONCE = (unsigned char)2
+    LOG_UPDATE = (unsigned char)2
 };
 
 struct LogMessage

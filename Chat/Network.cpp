@@ -1,5 +1,6 @@
 #include "Network.h"
-#include <iostream>
+
+#include <stdlib.h>
 
 Network::Network() : is_working_(false){}
 
@@ -11,7 +12,8 @@ Network::~Network()
 bool Network::PrepareNetwork()
 {
     WSAData wsa_data;
-    int error_check = WSAStartup(WSA_VERSION, &wsa_data);
+    int error_check = WSAStartup(MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION), 
+                                &wsa_data);
     if(error_check != 0)
     {
         return false;
@@ -26,6 +28,11 @@ bool Network::PrepareNetwork()
     {
         return false;
     }
+
+    if (!file_get_socket_.Initialize())
+	{
+		return false;
+	}
 
     //getting local pc ip
     int rand_value = rand(), buffer = 0;
@@ -58,7 +65,7 @@ bool Network::PrepareNetwork()
     return true;
 }
 
-int Network::SendMsg(UserMsg user_msg)
+int Network::SendMsg(const UserMsg& user_msg)
 {
     void *packet = NULL;
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
@@ -78,7 +85,7 @@ void Network::Cleanup()
     WSACleanup();
 }
 
-unsigned int Network::StartNetwork(void *network_ptr)
+unsigned Network::StartNetwork(void *network_ptr)
 {
     ((Network*)network_ptr)->LoopRecv();
     return 0;
@@ -106,6 +113,11 @@ void Network::SetChat(Chat * chat)
 	chat_ = chat;
 }
 
+void Network::SetFM(FileManager * fm)
+{
+    FM_ = fm;
+}
+
 void Network::SendLogMsg(const std::string &name, const LogType &type)
 {
     LogMessage log_msg = { type, name };
@@ -115,19 +127,70 @@ void Network::SendLogMsg(const std::string &name, const LogType &type)
     broadc_socket_.Send(send_buffer, send_size); //err_check
 }
 
+void Network::GetFile(const std::string& user_name, int index)
+{
+	int file_index = index;
+	void *send_buffer = NULL;
+	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
+
+	//search for ip
+	std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
+		user_ip_name_map_.end(),
+		NameSearch(&user_name));
+
+	broadc_socket_.SendTo(send_buffer, send_size, it->first.c_str());
+    
+    file_get_socket_.GetFile();
+}
+
+void Network::SendFile(const std::string& pass, const std::string& ip, std::string& name)
+{
+	 FileSendSocket().SendFile(pass, ip, name);
+}
+
+
+void Network::RequestSomeoneList(const std::string& name)
+{
+    
+    void *send_buffer = NULL;
+    int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
+    
+    std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
+        user_ip_name_map_.end(),
+        NameSearch(&name));
+    if (it == user_ip_name_map_.end())
+    {
+        return ;
+    }
+    broadc_socket_.SendTo(send_buffer, send_size, it->first.c_str()); //err_check
+}
+
+void Network::SendList(const std::string& ip)
+{
+    std::vector<std::string> file_names;
+    FM_->GetFileNames(file_names);
+    void *send_buffer = NULL;
+    int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &file_names, send_buffer);
+
+
+    broadc_socket_.SendTo(send_buffer, send_size, ip.c_str()); //err_check
+}
+
+
+
 void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 {
     switch(msg.type_)
     {
     case LOG_ONLINE:
         {
-            LogMessage log_msg = { LOG_RESPONCE, chat_->GetName() };
+            LogMessage log_msg = { LOG_UPDATE, chat_->GetName() };
             void *answ_log_msg = NULL;
             int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
         }
         //do not put break here
-    case LOG_RESPONCE:
+    case LOG_UPDATE:
         user_ip_name_map_[ip] = msg.name_;
         break;
 
@@ -151,7 +214,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet); //allocation in heap
 
     send_mutex_.Lock();
-    packet_size = broadc_socket_.SendTo(packet, packet_size, it->second.c_str());
+    packet_size = broadc_socket_.SendTo(packet, packet_size, it->first.c_str());
     send_mutex_.Unlock();
 
     delete[] packet;
@@ -173,9 +236,26 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
             case LOG_MESSAGE:
                 ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
                 break;
+			case GET_FILE_MESSAGE:
+				SendFile( FM_->GetFilePath( *((int*)unp_msg.msg_) ), recv_str.ip_,  FM_->GetFileName( *((int*)unp_msg.msg_)) );
+				break;
+            case FILE_LIST_REQUEST:
+                SendList(recv_str.ip_);
+                break;
+                case FILE_LIST_MESSAGE:
+                chat_->PrintSomeoneList(*((std::vector<std::string>*)unp_msg.msg_));
+                break;
         }
 
         delete unp_msg.msg_;
     }
 
+}
+
+void Network::GetOnlineUsers(std::vector<std::string> &out_users)
+{
+    for (std::pair<std::string, std::string> pair_ : user_ip_name_map_)
+    {
+        out_users.push_back(pair_.second);
+    }
 }
