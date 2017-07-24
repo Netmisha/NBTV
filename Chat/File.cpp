@@ -18,15 +18,13 @@ bool File::SetFile(const std::string &path)
     }
 
     std::stringstream str_stream;
-    std::string temp_name;
 
     str_stream << path_;
     while(!str_stream.eof())
     {
         //shortening path to file name
-        std::getline(str_stream, temp_name, '\\');
+        std::getline(str_stream, name_, '\\');
     }
-    name_ = temp_name;
 
     return true;
 }

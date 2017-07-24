@@ -211,7 +211,8 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
     }
 
     void *packet = NULL;
-    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet); //allocation in heap
+    //allocation in heap
+    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet);
 
     send_mutex_.Lock();
     packet_size = broadc_socket_.SendTo(packet, packet_size, it->first.c_str());
@@ -230,21 +231,27 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
 
         switch(unp_msg.type_)
         {
-            case CHAT_MESSAGE:
-                chat_->AddMsg(*(UserMsg*)unp_msg.msg_);
-                break;
-            case LOG_MESSAGE:
-                ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
-                break;
-			case GET_FILE_MESSAGE:
-				SendFile( FM_->GetFilePath( *((int*)unp_msg.msg_) ), recv_str.ip_,  FM_->GetFileName( *((int*)unp_msg.msg_)) );
-				break;
-            case FILE_LIST_REQUEST:
-                SendList(recv_str.ip_);
-                break;
-                case FILE_LIST_MESSAGE:
-                chat_->PrintSomeoneList(*((std::vector<std::string>*)unp_msg.msg_));
-                break;
+        case CHAT_MESSAGE:
+            chat_->AddMsg(*(UserMsg*)unp_msg.msg_);
+            break;
+
+        case LOG_MESSAGE:
+            ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
+            break;
+
+        case GET_FILE_MESSAGE:
+            SendFile(FM_->GetFilePath(*((int*)unp_msg.msg_)),   //path to file
+                     recv_str.ip_,                              //ip where to send
+                     FM_->GetFileName(*((int*)unp_msg.msg_)));  //file name
+            break;
+
+        case FILE_LIST_REQUEST:
+            SendList(recv_str.ip_);
+            break;
+
+        case FILE_LIST_MESSAGE:
+            chat_->PrintSomeoneList(*((std::vector<std::string>*)unp_msg.msg_));
+            break;
         }
 
         delete unp_msg.msg_;

@@ -25,7 +25,13 @@ bool FileGetSocket::Initialize()
     {
         std::cout << GetLastError();
         std::cerr << "unable to bind socket!\n";
-        shutdown(socket_, 2);
+        Close();
+    }
+
+    if(listen(socket_, SOMAXCONN) != 0)
+    {
+        std::cerr << "unable to set listening socket mode!\n";
+        Close();
     }
 
     return true;
@@ -33,11 +39,6 @@ bool FileGetSocket::Initialize()
 
 bool FileGetSocket::GetFile()
 {
-    if(listen(socket_, 1) != 0)
-    {
-        std::cerr << "unable to set listening socket mode!\n";
-        shutdown(socket_, 2);
-    }
 
     SOCKET file_getter = accept(socket_, 0, 0);
    
@@ -46,7 +47,6 @@ bool FileGetSocket::GetFile()
         return false;
  
     char buffer[CHUNK_SIZE] = {};
-   
 
     recv(file_getter, buffer, CHUNK_SIZE, 0); //gettinh file name
     std::string dir(("Download\\") + std::string(buffer));
