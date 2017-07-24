@@ -1,5 +1,6 @@
 #ifndef NETWORK_H
 #define NETWORK_H
+
 #include "FileGetSocket.h"
 #include "FileSendSocket.h"
 #include "BroadcastSocket.h"
@@ -8,12 +9,13 @@
 
 #include "FileManager.h"
 #include "Chat.h"
-#include "NameSearch.h"
+#include "SendFileInfo.h"
+#include "IpNameList.h"
 
 #include "Mutex.h"
+#include "Thread.h"
 
-#include <map>
-#include <algorithm>
+#include <string>
 
 class Network
 {
@@ -23,8 +25,8 @@ public:
 
     //chat uses this function to broadcast messages
     int SendMsg(const UserMsg& user_msg);
-
     int SendMsgTo(const std::string &user_name, const UserMsg &user_msg);
+
     //function to prepare network for working
     bool PrepareNetwork();
     //thread func for starting network
@@ -38,26 +40,29 @@ public:
 	void SetChat(Chat* chat);
     void SetFM(FileManager * fm);
     
-
     void SendLogMsg(const std::string &name, const LogType &type);
 
 	void GetFile(const std::string& user_name, int index);
-	void SendFile(const std::string& pass, const std::string& ip, std::string& name);
+    static unsigned GetFileStartup(void *socket_ptr);
+    void SendFile(const std::string &path, const std::string &ip, const std::string &name);
+    static unsigned SendFileStartup(void *send_file_info);
 
     void RequestSomeoneList(const std::string& name);
     void SendList(const std::string& ip);
 
     void GetOnlineUsers(std::vector<std::string> &users);
 
+    static Mutex& GetSharingNumMutex();
+    static volatile int& GetSharingThreadsNum();
     
 private:
     Chat *chat_;
 	FileManager *FM_;
+
     //socket for broadcasting
     BroadcastSocket broadc_socket_;
     //socket for recieving messages
     RecvSocket recv_socket_;
-
     //socket for getting files
     FileGetSocket file_get_socket_;
 
@@ -69,7 +74,12 @@ private:
     //mutex on send
     Mutex send_mutex_;
 
-    std::map<std::string, std::string> user_ip_name_map_;
+    //num of active file sharing threads
+    static volatile int file_sharing_thread_num_;
+    //mutex to access ^
+    static Mutex threads_num_mutex_;
+
+    IpNameList ip_name_list_;
 
     //cleanup function, closes sockets
     void Cleanup();

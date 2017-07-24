@@ -11,7 +11,7 @@ public:
 	FileSendSocket();
 	~FileSendSocket();
 
-    bool SendFile(const std::string& pass, const std::string& ip, std::string& filename);
+    bool SendFile(const std::string& pass, const std::string& ip, const std::string& filename);
 
 private:
 

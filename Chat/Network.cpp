@@ -1,6 +1,10 @@
 #include "Network.h"
 
 #include <stdlib.h>
+#include <algorithm>
+
+volatile int Network::file_sharing_thread_num_ = 0;
+Mutex Network::threads_num_mutex_;
 
 Network::Network() : is_working_(false){}
 
@@ -82,6 +86,7 @@ void Network::Cleanup()
 {
     broadc_socket_.Close();
     recv_socket_.Close();
+    file_get_socket_.Close();
     WSACleanup();
 }
 
@@ -100,6 +105,12 @@ void Network::LoopRecv()
         recv_socket_.Recv(&packet);
         
         ProcessMessage(packet);
+    }
+
+    while(file_sharing_thread_num_)
+    {
+        //give process time to another thread
+        Sleep(1);
     }
 }
 
@@ -133,36 +144,22 @@ void Network::GetFile(const std::string& user_name, int index)
 	void *send_buffer = NULL;
 	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
 
-	//search for ip
-	std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
-		user_ip_name_map_.end(),
-		NameSearch(&user_name));
+	broadc_socket_.SendTo(send_buffer,
+                          send_size,
+                          ip_name_list_.GetIp(user_name).c_str());
 
-	broadc_socket_.SendTo(send_buffer, send_size, it->first.c_str());
-    
-    file_get_socket_.GetFile();
-}
+    delete[] send_buffer;
 
-void Network::SendFile(const std::string& pass, const std::string& ip, std::string& name)
-{
-	 FileSendSocket().SendFile(pass, ip, name);
+    Thread(FileGetSocket::GetFileStartup, &file_get_socket_);
 }
 
 
 void Network::RequestSomeoneList(const std::string& name)
 {
-    
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
     
-    std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
-        user_ip_name_map_.end(),
-        NameSearch(&name));
-    if (it == user_ip_name_map_.end())
-    {
-        return ;
-    }
-    broadc_socket_.SendTo(send_buffer, send_size, it->first.c_str()); //err_check
+    broadc_socket_.SendTo(send_buffer, send_size, ip_name_list_.GetIp(name).c_str()); //err_check
 }
 
 void Network::SendList(const std::string& ip)
@@ -190,22 +187,20 @@ void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
         }
         //do not put break here
-    case LOG_UPDATE:
-        user_ip_name_map_[ip] = msg.name_;
+    case LOG_UPDATE:;
+        ip_name_list_.Add(ip, msg.name_);
         break;
 
     case LOG_OFFLINE:
-        user_ip_name_map_.erase(ip);
+        ip_name_list_.Remove(ip);
         break;
     }
 }
 
 int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
 {
-    std::map<std::string, std::string>::iterator it = std::find_if(user_ip_name_map_.begin(),
-                                                                   user_ip_name_map_.end(),
-                                                                   NameSearch(&user_name));
-    if(it == user_ip_name_map_.end())
+    std::string ip = ip_name_list_.GetIp(user_name);
+    if(!ip.size())
     {
         return -1;
     }
@@ -215,7 +210,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet);
 
     send_mutex_.Lock();
-    packet_size = broadc_socket_.SendTo(packet, packet_size, it->first.c_str());
+    packet_size = broadc_socket_.SendTo(packet, packet_size, ip.c_str());
     send_mutex_.Unlock();
 
     delete[] packet;
@@ -224,7 +219,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
 
 void Network::ProcessMessage(const RecvStruct &recv_str)
 {
-    if(recv_str.ip_ != my_ip_ || BROADCAST_LOOPBACK)
+    if((recv_str.ip_ != my_ip_) || BROADCAST_LOOPBACK)
     {
         //allocation in heap
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_str.packet_);
@@ -240,9 +235,9 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
             break;
 
         case GET_FILE_MESSAGE:
-            SendFile(FM_->GetFilePath(*((int*)unp_msg.msg_)),   //path to file
-                     recv_str.ip_,                              //ip where to send
-                     FM_->GetFileName(*((int*)unp_msg.msg_)));  //file name
+            SendFile(FM_->GetFilePath(*((int*)unp_msg.msg_)),
+                     recv_str.ip_,
+                     FM_->GetFileName(*((int*)unp_msg.msg_)));
             break;
 
         case FILE_LIST_REQUEST:
@@ -261,8 +256,57 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
 
 void Network::GetOnlineUsers(std::vector<std::string> &out_users)
 {
-    for (std::pair<std::string, std::string> pair_ : user_ip_name_map_)
-    {
-        out_users.push_back(pair_.second);
-    }
+    ip_name_list_.GetNameList(out_users);
+}
+
+unsigned Network::SendFileStartup(void *send_file_info)
+{
+    threads_num_mutex_.Lock();
+    file_sharing_thread_num_++;
+    threads_num_mutex_.Unlock();
+
+    FileSendSocket().SendFile((*(SendFileInfo*)send_file_info).path_,
+                              (*(SendFileInfo*)send_file_info).ip_,
+                              (*(SendFileInfo*)send_file_info).name_);
+    delete send_file_info;
+
+    threads_num_mutex_.Lock();
+    file_sharing_thread_num_--;
+    threads_num_mutex_.Unlock();
+
+    return 0;
+}
+
+void Network::SendFile(const std::string &path,
+                       const std::string &ip,
+                       const std::string &name)
+{
+    SendFileInfo *sfi = new SendFileInfo({ path, name, ip });
+    Thread th(Network::SendFileStartup, sfi);
+}
+
+unsigned Network::GetFileStartup(void *params)
+{
+    threads_num_mutex_.Lock();
+    file_sharing_thread_num_++;
+    threads_num_mutex_.Unlock();
+
+    ((FileGetSocket*)params)->GetFile();
+
+    threads_num_mutex_.Lock();
+    file_sharing_thread_num_--;
+    threads_num_mutex_.Unlock();
+
+    delete[] params;
+    return 0;
+}
+
+Mutex& Network::GetSharingNumMutex()
+{
+    return threads_num_mutex_;
+}
+
+volatile int& Network::GetSharingThreadsNum()
+{
+    return file_sharing_thread_num_;
 }

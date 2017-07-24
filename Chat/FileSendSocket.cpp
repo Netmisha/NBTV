@@ -9,7 +9,7 @@ FileSendSocket::~FileSendSocket(){}
 
 void FileSendSocket::Initialize() {}
 
-bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, std::string& filename)
+bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, const std::string& filename)
 {
     if(!AbstractSocket::Initialize(TCP))
     {

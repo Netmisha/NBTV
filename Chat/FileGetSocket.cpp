@@ -1,7 +1,7 @@
 ﻿#include "FileGetSocket.h"
 #include "Defines.h"
 
-FileGetSocket::FileGetSocket():first_time(true){}
+FileGetSocket::FileGetSocket(){}
 
 
 FileGetSocket::~FileGetSocket(){}
@@ -37,9 +37,14 @@ bool FileGetSocket::Initialize()
     return true;
 }
 
+unsigned FileGetSocket::GetFileStartup(void *this_ptr)
+{
+    (*(FileGetSocket*)this_ptr).GetFile();
+    return 0;
+}
+
 bool FileGetSocket::GetFile()
 {
-
     SOCKET file_getter = accept(socket_, 0, 0);
    
     if (!((CreateDirectory("Download", NULL)) ||

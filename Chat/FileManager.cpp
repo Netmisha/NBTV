@@ -1,5 +1,7 @@
 #include "FileManager.h"
 
+#include <Windows.h>
+
 FileManager::FileManager()
 {
     Load();

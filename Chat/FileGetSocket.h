@@ -6,7 +6,6 @@
 class FileGetSocket :
     public AbstractSocket
 {
-    bool first_time;
 
 public:
     FileGetSocket();
@@ -14,6 +13,7 @@ public:
 
     bool Initialize();
 
+    static unsigned GetFileStartup(void *this_ptr);
     bool GetFile();
 };
 

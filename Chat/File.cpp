@@ -1,5 +1,8 @@
 #include "File.h"
 
+#include <sstream>
+#include <fstream>
+
 File::File() {}
 
 File::File(const std::string &path)
