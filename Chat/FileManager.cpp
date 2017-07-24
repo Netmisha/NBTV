@@ -1,5 +1,7 @@
 #include "FileManager.h"
 
+#include <Windows.h>
+
 FileManager::FileManager()
 {
     Load();
@@ -113,10 +115,10 @@ void FileManager::Load()
     {
         int path_size;
         BOOL error_flag = ReadFile(file,
-                                         &path_size,
-                                         sizeof(path_size),
-                                         &bytes_read,
-                                         NULL);
+                                   &path_size,
+                                   sizeof(path_size),
+                                   &bytes_read,
+                                   NULL);
         if(error_flag && bytes_read < (int)sizeof(path_size))
         {
             //eof
@@ -126,10 +128,10 @@ void FileManager::Load()
         path.resize(path_size);
 
         error_flag = ReadFile(file,
-                                    &path[0],
-                                    path_size,
-                                    &bytes_read,
-                                    NULL);
+                              &path[0],
+                              path_size,
+                              &bytes_read,
+                              NULL);
 
         if(shared_file.SetFile(path))
             shared_files_.push_back(shared_file);

@@ -1,7 +1,7 @@
 ﻿#include "FileGetSocket.h"
 #include "Defines.h"
 
-FileGetSocket::FileGetSocket():first_time(true){}
+FileGetSocket::FileGetSocket(){}
 
 
 FileGetSocket::~FileGetSocket(){}
@@ -25,7 +25,13 @@ bool FileGetSocket::Initialize()
     {
         std::cout << GetLastError();
         std::cerr << "unable to bind socket!\n";
-        shutdown(socket_, 2);
+        Close();
+    }
+
+    if(listen(socket_, SOMAXCONN) != 0)
+    {
+        std::cerr << "unable to set listening socket mode!\n";
+        Close();
     }
 
     if (listen(socket_, SOMAXCONN) != 0)
@@ -36,10 +42,18 @@ bool FileGetSocket::Initialize()
     return true;
 }
 
+unsigned FileGetSocket::GetFileStartup(void *this_ptr)
+{
+<<<<<<< HEAD
+    
+=======
+    (*(FileGetSocket*)this_ptr).GetFile();
+    return 0;
+}
+>>>>>>> 89701688294841fb1170ad85bd542b245258ae02
+
 bool FileGetSocket::GetFile()
 {
-    
-
     SOCKET file_getter = accept(socket_, 0, 0);
    
     if (!((CreateDirectory("Download", NULL)) ||
@@ -47,7 +61,6 @@ bool FileGetSocket::GetFile()
         return false;
  
     char buffer[CHUNK_SIZE] = {};
-   
 
     recv(file_getter, buffer, CHUNK_SIZE, 0); //gettinh file name
     std::string dir(("Download\\") + std::string(buffer));

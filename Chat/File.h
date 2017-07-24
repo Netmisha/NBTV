@@ -2,8 +2,6 @@
 #define FILE_H
 
 #include <string>
-#include <sstream>
-#include <fstream>
 
 class File
 {

@@ -4,11 +4,8 @@
 #include "File.h"
 #include "Defines.h"
 
-#include <Windows.h>
-
 #include <vector>
 #include <string>
-#include <fstream>
 
 class FileManager
 {
@@ -33,7 +30,9 @@ private:
     //vector of shared files
     std::vector<File> shared_files_;
 
+    //saves shared file info
     void Save();
+    //loads shared file info
     void Load();
 };
 
