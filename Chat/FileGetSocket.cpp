@@ -13,37 +13,33 @@ bool FileGetSocket::Initialize()
         return false;
     }
 
+    sockaddr_in sock_addr = { AF_INET, htons(FILE_PORT), INADDR_ANY };
+
+    if(socket_ == INVALID_SOCKET)
+    {
+        std::cerr << "socket is not exist!\n";
+        return false;
+    }
+
+    if(bind(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
+    {
+        std::cout << GetLastError();
+        std::cerr << "unable to bind socket!\n";
+        shutdown(socket_, 2);
+    }
+
     return true;
 }
 
 bool FileGetSocket::GetFile()
 {
-    if (first_time)
+    if(listen(socket_, 1) != 0)
     {
-        sockaddr_in sock_addr = { AF_INET, htons(FILE_PORT), INADDR_ANY };
-
-        if (socket_ == INVALID_SOCKET)
-        {
-            std::cerr << "socket is not exist!\n";
-            return false;
-        }
-
-        if (bind(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
-        {
-            std::cout << GetLastError();
-            std::cerr << "unable to bind socket!\n";
-            shutdown(socket_, 2);
-        }
-
-        if (listen(socket_, SOMAXCONN) != 0)
-        {
-            std::cerr << "unable to set listening socket mode!\n";
-            shutdown(socket_, 2);
-        }
-        first_time = false;
+        std::cerr << "unable to set listening socket mode!\n";
+        shutdown(socket_, 2);
     }
+
     SOCKET file_getter = accept(socket_, 0, 0);
-    int ppop = WSAGetLastError();
    
     if (!((CreateDirectory("Download", NULL)) ||
         (GetLastError() == ERROR_ALREADY_EXISTS)))

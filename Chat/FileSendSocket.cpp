@@ -5,23 +5,16 @@
 
 FileSendSocket::FileSendSocket(){}
 
-
 FileSendSocket::~FileSendSocket(){}
 
-bool FileSendSocket::Initialize()
-{
-	if (!AbstractSocket::Initialize(TCP))
-	{
-		return false;
-	}
-       
-	return true;
-}
+void FileSendSocket::Initialize() {}
 
 bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, std::string& filename)
 {
-    if (socket_ == INVALID_SOCKET)
-        exit(1);
+    if(!AbstractSocket::Initialize(TCP))
+    {
+        return false;
+    }
 
     sockaddr_in sock_addr;
 
@@ -67,5 +60,9 @@ bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, st
         if (bytes_read < CHUNK_SIZE)
             break;
     }
+
+    Close();
+    CloseHandle(file);
+
     return err_check;
 }

@@ -7,12 +7,14 @@
 #include <string>
 class FileSendSocket : public AbstractSocket
 {
-
 public:
 	FileSendSocket();
 	~FileSendSocket();
 
-	bool Initialize();
     bool SendFile(const std::string& pass, const std::string& ip, std::string& filename);
+
+private:
+
+    void Initialize();
 };
 

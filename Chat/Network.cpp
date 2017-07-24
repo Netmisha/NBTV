@@ -29,14 +29,11 @@ bool Network::PrepareNetwork()
         return false;
     }
 
-	if (!file_send_socket_.Initialize())
-	{
-		return false;
-	}
     if (!file_get_socket_.Initialize())
 	{
 		return false;
 	}
+
     //getting local pc ip
     int rand_value = rand(), buffer = 0;
     void *rand_value_send = NULL;
@@ -148,7 +145,7 @@ void Network::GetFile(const std::string& user_name, int index)
 
 void Network::SendFile(const std::string& pass, const std::string& ip, std::string& name)
 {
-	 file_send_socket_.SendFile(pass, ip, name);
+	 FileSendSocket().SendFile(pass, ip, name);
 }
 
 
@@ -187,13 +184,13 @@ void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
     {
     case LOG_ONLINE:
         {
-            LogMessage log_msg = { LOG_RESPONCE, chat_->GetName() };
+            LogMessage log_msg = { LOG_UPDATE, chat_->GetName() };
             void *answ_log_msg = NULL;
             int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
         }
         //do not put break here
-    case LOG_RESPONCE:
+    case LOG_UPDATE:
         user_ip_name_map_[ip] = msg.name_;
         break;
 

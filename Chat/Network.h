@@ -58,8 +58,6 @@ private:
     //socket for recieving messages
     RecvSocket recv_socket_;
 
-	//socket for sending files
-	FileSendSocket file_send_socket_;
     //socket for getting files
     FileGetSocket file_get_socket_;
 
