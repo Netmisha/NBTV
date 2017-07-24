@@ -28,16 +28,17 @@ bool FileGetSocket::Initialize()
         shutdown(socket_, 2);
     }
 
+    if (listen(socket_, SOMAXCONN) != 0)
+    {
+        std::cerr << "unable to set listening socket mode!\n";
+      Close();
+    }
     return true;
 }
 
 bool FileGetSocket::GetFile()
 {
-    if(listen(socket_, 1) != 0)
-    {
-        std::cerr << "unable to set listening socket mode!\n";
-        shutdown(socket_, 2);
-    }
+    
 
     SOCKET file_getter = accept(socket_, 0, 0);
    
