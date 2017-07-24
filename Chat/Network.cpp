@@ -200,7 +200,7 @@ void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
 {
     std::string ip = ip_name_list_.GetIp(user_name);
-    if(!ip.size())
+    if(ip.empty())
     {
         return -1;
     }
@@ -281,7 +281,9 @@ void Network::SendFile(const std::string &path,
                        const std::string &ip,
                        const std::string &name)
 {
-    SendFileInfo *sfi = new SendFileInfo({ path, name, ip });
+    //explisit conversion to object
+    //then copying it to heap
+    SendFileInfo *sfi = new SendFileInfo(SendFileInfo{ path, name, ip });
     Thread th(Network::SendFileStartup, sfi);
 }
 
