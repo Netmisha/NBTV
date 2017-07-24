@@ -44,13 +44,9 @@ bool FileGetSocket::Initialize()
 
 unsigned FileGetSocket::GetFileStartup(void *this_ptr)
 {
-<<<<<<< HEAD
-    
-=======
-    (*(FileGetSocket*)this_ptr).GetFile();
+   (*(FileGetSocket*)this_ptr).GetFile();
     return 0;
 }
->>>>>>> 89701688294841fb1170ad85bd542b245258ae02
 
 bool FileGetSocket::GetFile()
 {
