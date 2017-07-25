@@ -7,7 +7,7 @@
 #define BROADCAST_IP "255.255.255.255"
 //max buffer size without
 //possible data tearing
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 4092
 #define CHUNK_SIZE 512
 
 //size of ip in chars
@@ -26,5 +26,8 @@
 
 #define FILE_DATA_SAVE_DIR  "Data"
 #define FILE_DATA_SAVE_FULLPATH "Data/shared_files.shif"
+
+//unix one is 1000, surprisingly
+#define WINDOWS_KILOBYTE 1024
 
 #endif // !DEFINES_H

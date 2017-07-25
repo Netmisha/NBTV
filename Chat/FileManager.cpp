@@ -39,6 +39,16 @@ std::string FileManager::GetFileName(int file_index)const
     return shared_files_[file_index].GetName();
 }
 
+const double FileManager::GetFileSizeKB(int file_index)const
+{
+    return shared_files_[file_index].GetSizeKB();
+}
+
+const double FileManager::GetFileSizeKB(int file_index)const
+{
+    return shared_files_[file_index].GetSizeMB();
+}
+
 void FileManager::GetFilePaths(std::vector<std::string> &out_result)const
 {
     for(File it : shared_files_)
@@ -52,6 +62,14 @@ void FileManager::GetFileNames(std::vector<std::string> &out_result)const
     for(File it : shared_files_)
     {
         out_result.push_back(it.GetName());
+    }
+}
+
+void FileManager::GetFiles(std::vector<File> &out_result)const
+{
+    for(File file : shared_files_)
+    {
+        out_result.push_back(file);
     }
 }
 

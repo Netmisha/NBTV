@@ -17,14 +17,22 @@ public:
     bool AddFile(const std::string &path);
     //remove file by index
     void RemoveFile(int file_index);
+
+
     //get specific file path
     std::string GetFilePath(int file_index)const;
     //get specific file name
     std::string GetFileName(int file_index)const;
+    //get size in kilobytes
+    const double GetFileSizeKB(int file_index)const;
+    //get size in megabytes
+    const double GetFileSizeMB(int file_index)const;
     //get all file paths
     void GetFilePaths(std::vector<std::string> &out_result)const;
     //get all file names
     void GetFileNames(std::vector<std::string> &out_result)const;
+    //get vector of all files
+    void GetFiles(std::vector<File> &out_result)const;
 
 private:
     //vector of shared files

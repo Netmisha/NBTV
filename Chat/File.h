@@ -15,12 +15,15 @@ public:
     bool SetFile(const std::string &path);
     bool IsValid();
 
-    std::string GetName()const;
-    std::string GetPath()const;
+    const std::string GetName()const;
+    const std::string GetPath()const;
+    const double GetSizeKB()const;
+    const double GetSizeMB()const;
 
 private:
     std::string name_,
                 path_;
+    double size_KB_;
 };
 
 #endif // !FILE_STRUCT_H

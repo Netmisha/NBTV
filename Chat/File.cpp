@@ -1,7 +1,13 @@
 #include "File.h"
 
 #include <sstream>
-#include <fstream>
+
+#include "Defines.h"
+
+#include <Shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
+#include <Windows.h>
 
 File::File() {}
 
@@ -29,20 +35,40 @@ bool File::SetFile(const std::string &path)
         std::getline(str_stream, name_, '\\');
     }
 
+    HANDLE file = CreateFile(path_.c_str(),             //path
+                             GENERIC_READ,              //to read
+                             0,                         //non-share
+                             NULL,                      //security
+                             OPEN_EXISTING,             //only existing
+                             FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
+                             NULL);
+    //bytes divided by kilobyte size
+    size_KB_ = GetFileSize(file, NULL) / (double)WINDOWS_KILOBYTE;
+
     return true;
 }
 
 bool File::IsValid()
 {
-    return (std::ifstream(path_).good());
+    return (bool)PathFileExistsA(path_.c_str());
 }
 
-std::string File::GetName()const
+const std::string File::GetName()const
 {
     return name_;
 }
 
-std::string File::GetPath()const
+const std::string File::GetPath()const
 {
     return path_;
+}
+
+const double File::GetSizeKB()const
+{
+    return size_KB_;
+}
+
+const double File::GetSizeMB()const
+{
+    return size_KB_ / WINDOWS_KILOBYTE;
 }
