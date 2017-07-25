@@ -224,7 +224,9 @@ bool Chat::CheckForCommands() //chat commands
             else
             {
                 connected_network_->RequestSomeoneList(name); //asking for someone`s list
+
                 std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
+                connected_network_->GetRecvSocket().GetList(*list);
                 for (auto i : *list)
                 {
                     cout << "\n" << i.name_ << " \t" << i.size_KB_;
