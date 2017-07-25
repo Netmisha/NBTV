@@ -38,7 +38,7 @@ public:
 	bool CheckForCommands();
 
 	void Activate(); //starts input thread
-	void ActivatePrivateChat(std::string name); //private chat input mode
+	void ActivatePrivateChat(std::string& name); //private chat input mode
 
     void IOfflineMsg();	//sends online msg
 
@@ -46,7 +46,6 @@ public:
     void IChangedName(std::string& old_name);
 
     void PrepareSendMsg(std::string& old_name); //instead of console input
-    void PrepareAddMsg(std::string& str_msg);
 
     void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
     int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user

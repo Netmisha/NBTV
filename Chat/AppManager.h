@@ -21,18 +21,28 @@ public:
     
     std::vector<UserMsg> GetCurrentChat();
 
-    void GetMsgLoop(); //message getting
+   // void GetMsgLoop(); //message getting
+
+    void SendFile(const std::string &path, const std::string &ip, const std::string &name);
+
+    std::string GetFilePath(int i);
+    std::string GetFileName(int i);
+
+    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
+    void SendList(const std::string& ip);
 
     void SendMsg(std::string& msg); //after user wrote message in chat
-    void AddMsg(std::string& ms); //will be used by recv loop
+    void AddMsg(UserMsg& ms); //will be used by recv loop
 
     void* ActivateCommand(std::string& msg); //called by buttons with different commands
-                                     //example: ChangeMsgColor, ChangeName, ChangeHomeDir, DownloadSomeone`sFile
-                                     //AddFile, RemoveFile
+                                             //ChangeName, On/Off private mode, filelists, get someone`s file,
+                                             //add/remove file, online users list, setcolor, exit
+    std::string GetIP();
     void PopBuffer(int num, std::string& buffer); //easy pop front
  
     void ActivatePrivateChat();
     void ExitPrivateChat();
+
     void EXIT();
 };
 

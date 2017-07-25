@@ -261,6 +261,16 @@ void Network::GetOnlineUsers(std::vector<std::string> &out_users)
     ip_name_list_.GetNameList(out_users);
 }
 
+std::string Network::GetIP()
+{
+    return my_ip_;
+}
+
+FileManager * Network::GetFM()
+{
+    return FM_;
+}
+
 unsigned Network::SendFileStartup(void *send_file_info)
 {
     threads_num_mutex_.Lock();

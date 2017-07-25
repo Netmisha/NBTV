@@ -53,11 +53,15 @@ public:
     void SendList(const std::string& ip);
 
     void GetOnlineUsers(std::vector<std::string> &users);
+    std::string GetIP();
+    FileManager* GetFM();
 
     static Mutex& GetSharingNumMutex();
     static volatile int& GetSharingThreadsNum();
     
     FileGetSocket& GetRecvSocket();
+
+    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
 private:
     Chat *chat_;
 	FileManager *FM_;
@@ -89,7 +93,6 @@ private:
 
     void ProcessMessage(const RecvStruct &recv_str);
 
-    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
 };
 
 #endif // !NETWORK_H

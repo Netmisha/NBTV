@@ -28,6 +28,8 @@
 #define FILE_DATA_SAVE_DIR  "Data"
 #define FILE_DATA_SAVE_FULLPATH "Data/shared_files.shif"
 
+#define DOWNLOAD_DIR "Download"
+
 //unix one is 1000, surprisingly
 #define WINDOWS_KILOBYTE 1024
 

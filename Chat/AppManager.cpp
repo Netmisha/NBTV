@@ -43,15 +43,41 @@ AppManager::AppManager()
     network_.SetFM(&fm_);
 }
 
+void AppManager::SendFile(const std::string & path, const std::string & ip, const std::string & name)
+{
+    network_.SendFile(path, ip, name);
+}
+
+std::string AppManager::GetFilePath(int i)
+{
+
+    return network_.GetFM()->GetFilePath(i);
+}
+
+std::string AppManager::GetFileName(int i)
+{
+    return network_.GetFM()->GetFileName(i);
+}
+
+void AppManager::ProcessLogMessage(const LogMessage & msg, const std::string & ip)
+{
+    network_.ProcessLogMessage(msg, ip);
+}
+
+void AppManager::SendList(const std::string & ip)
+{
+    network_.SendList(ip);
+}
+
 void AppManager::SendMsg(std::string& msg)
 {
     
     chat_.PrepareSendMsg(msg);
 }
 
-void AppManager::AddMsg(std::string& ms)
+void AppManager::AddMsg(UserMsg& ms)
 {
-    chat_.PrepareAddMsg(ms);
+    chat_.AddMsg(ms);
 }
 
 void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off private mode, filelists, get someone`s file,
@@ -157,6 +183,11 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
     }
 
     return false;
+}
+
+std::string AppManager::GetIP()
+{
+    return network_.GetIP();
 }
 
 void AppManager::PopBuffer(int num, std::string& buffer) //easy pop front

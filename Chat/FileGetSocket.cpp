@@ -47,14 +47,14 @@ bool FileGetSocket::GetFile()
 {
     SOCKET file_getter = accept(socket_, 0, 0);
    
-    if (!((CreateDirectory("Download", NULL)) ||
+    if (!((CreateDirectory(DOWNLOAD_DIR, NULL)) ||
         (GetLastError() == ERROR_ALREADY_EXISTS)))
         return false;
  
     char buffer[CHUNK_SIZE] = {};
 
     recv(file_getter, buffer, CHUNK_SIZE, 0); //gettinh file name
-    std::string dir(("Download\\") + std::string(buffer));
+    std::string dir(DOWNLOAD_DIR + std::string("\\") + std::string(buffer));
 
     HANDLE file = CreateFile(dir.c_str(),
                              GENERIC_WRITE,

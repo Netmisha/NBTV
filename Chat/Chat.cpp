@@ -40,15 +40,15 @@ void Chat::IOfflineMsg()
 
 void Chat::PrepareSendMsg(std::string& str_msg)
 {
-    UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
-    SendMsg(msg);
+
+    if (!str_msg.empty())
+    {
+        UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
+        SendMsg(msg);
+
+    }
 }
 
-void Chat::PrepareAddMsg(std::string& str_msg)
-{
-    UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
-    AddMsg(msg);
-}
 
 void Chat::SendMsg(const UserMsg& msg)
 {
@@ -153,11 +153,15 @@ void Chat::InputStream()
 	{
 		ReadFromKeyboard();
 		
-		if (!CheckForCommands())
-		{
-			UserMsg msg = { PUBLIC, msg_color_, user_name_, buffer_ };
-			SendMsg(msg);
-		}
+        if (!CheckForCommands())
+        {
+            if (!buffer_.empty())
+            {
+                UserMsg msg = { PUBLIC, msg_color_, user_name_, buffer_ };
+                SendMsg(msg);
+
+            }
+        }
 	}
 }
 
@@ -310,7 +314,7 @@ void Chat::Activate()
 	input_thread_.BeginThread(ActivateChat, this);
 }
 
-void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes directly to the chosen user
+void Chat::ActivatePrivateChat(std::string& name) //all msgs user write goes directly to the chosen user
 {
 	buffer_.clear();
 	AddMsg(UserMsg{ PUBLIC, 7, "PRIVATE CHAT WITH", name });
