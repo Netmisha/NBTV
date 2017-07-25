@@ -34,7 +34,7 @@ bool File::SetFile(const std::string &path)
         //shortening path to file name
         std::getline(str_stream, name_, '\\');
     }
-
+    //path is valid, so no need to check here
     HANDLE file = CreateFile(path_.c_str(),             //path
                              GENERIC_READ,              //to read
                              0,                         //non-share

@@ -155,7 +155,6 @@ void* Parcer::ParceLogMessage(const void *in_packet)
 
 int Parcer::PackGetFileMessage(const void * in_msg, void *& out_packet)
 {
-	
 	int msg_size = GET_FILE_MESSAGE_SIZE;
 	out_packet = new char[msg_size]();
 
@@ -178,7 +177,8 @@ void * Parcer::ParceGetFileMessage(const void * in_packet)
 
 int Parcer::PackFileListRequest(const void *in_msg, void* &out_packet)
 {
-    out_packet = new char();
+    //[1] for delete[] not to be UB
+    out_packet = new char[1]();
     *(unsigned char*)out_packet = FILE_LIST_REQUEST;
     return FILE_LIST_REQUEST_SIZE;
 }

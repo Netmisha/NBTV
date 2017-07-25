@@ -40,15 +40,15 @@ public:
 	void SetChat(Chat* chat);
     void SetFM(FileManager * fm);
     
-    void SendLogMsg(const std::string &name, const LogType &type);
+    int SendLogMsg(const std::string &name, const LogType &type);
 
 	void GetFile(const std::string& user_name, int index);
     static unsigned GetFileStartup(void *socket_ptr);
     void SendFile(const std::string &path, const std::string &ip, const std::string &name);
     static unsigned SendFileStartup(void *send_file_info);
 
-    void RequestSomeoneList(const std::string& name);
-    void SendList(const std::string& ip);
+    int RequestSomeoneList(const std::string& name);
+    int SendList(const std::string& ip);
 
     void GetOnlineUsers(std::vector<std::string> &users);
 

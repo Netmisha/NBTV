@@ -88,6 +88,8 @@ void FileManager::GetFiles(std::vector<File> &out_result)const
 
 void FileManager::Save()
 {
+    //if directory to save shared files data
+    //doesn't exist -> create it
     if((CreateDirectory(FILE_DATA_SAVE_DIR, NULL)) ||
        (GetLastError() == ERROR_ALREADY_EXISTS))
     {
@@ -98,30 +100,44 @@ void FileManager::Save()
                                  CREATE_ALWAYS,             //always create
                                  FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
                                  NULL);                     //why no default arguments
+        //if failed to create file
         if(file == INVALID_HANDLE_VALUE)
         {
             return;
         }
+
         int bytes_written;
         std::vector<std::string> file_paths;
         GetFilePaths(file_paths);
-
+        BOOL err_check;
         for(std::string path : file_paths)
         {
             int path_size = path.length();
-            WriteFile(file,
+            err_check = WriteFile(file,
                       &path_size,
                       sizeof(path_size),
                       (DWORD*)&bytes_written,
                       NULL);
+            
+            if(!err_check)
+                break;
 
-            WriteFile(file,
+            err_check = WriteFile(file,
                       &path[0],
                       path_size,
                       (DWORD*)&bytes_written,
                       NULL);
+
+            if(!err_check)
+                break;
         }
+
         CloseHandle(file);
+
+        //if writing failed - delete file
+        //as it is corrupted
+        if(!err_check)
+            DeleteFileA(FILE_DATA_SAVE_FULLPATH);
     }
 }
 
@@ -134,6 +150,7 @@ void FileManager::Load()
                              OPEN_EXISTING,             //only existing
                              FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
                              NULL);
+    //if there is no existing file
     if(file == INVALID_HANDLE_VALUE)
     {
         return;
@@ -150,7 +167,12 @@ void FileManager::Load()
                                    sizeof(path_size),
                                    &bytes_read,
                                    NULL);
-        if(error_flag && bytes_read < (int)sizeof(path_size))
+
+        if(!error_flag)
+        {
+            break;
+        }
+        else if(bytes_read < (int)sizeof(path_size))
         {
             //eof
             break;
@@ -164,7 +186,11 @@ void FileManager::Load()
                               &bytes_read,
                               NULL);
 
-        if(shared_file.SetFile(path))
+        if(!error_flag)
+        {
+            break;
+        }
+        else if(shared_file.SetFile(path))
             shared_files_.push_back(shared_file);
     }
 

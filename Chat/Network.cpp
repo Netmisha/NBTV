@@ -48,10 +48,14 @@ bool Network::PrepareNetwork()
         return false;
     }
     
+    int err_check;
     while(true)
     {
         RecvStruct recv_struct;
-        recv_socket_.Recv(&recv_struct);
+        err_check = recv_socket_.Recv(&recv_struct);
+
+        if(err_check == SOCKET_ERROR)
+            return false;
 
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_struct.packet_);
         if((unp_msg.type_ == PREPARE_MESSAGE) &&
@@ -107,6 +111,7 @@ void Network::LoopRecv()
         ProcessMessage(packet);
     }
 
+    //wait for threads num to become 0
     while(file_sharing_thread_num_)
     {
         //give process time to another thread
@@ -129,13 +134,14 @@ void Network::SetFM(FileManager * fm)
     FM_ = fm;
 }
 
-void Network::SendLogMsg(const std::string &name, const LogType &type)
+int Network::SendLogMsg(const std::string &name, const LogType &type)
 {
     LogMessage log_msg = { type, name };
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
-    broadc_socket_.Send(send_buffer, send_size); //err_check
+    send_size = broadc_socket_.Send(send_buffer, send_size);
+    return send_size;
 }
 
 void Network::GetFile(const std::string& user_name, int index)
@@ -144,7 +150,7 @@ void Network::GetFile(const std::string& user_name, int index)
 	void *send_buffer = NULL;
 	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
 
-	broadc_socket_.SendTo(send_buffer,
+    broadc_socket_.SendTo(send_buffer,
                           send_size,
                           ip_name_list_.GetIp(user_name).c_str());
 
@@ -154,26 +160,30 @@ void Network::GetFile(const std::string& user_name, int index)
 }
 
 
-void Network::RequestSomeoneList(const std::string& name)
+int Network::RequestSomeoneList(const std::string& name)
 {
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
     
-    broadc_socket_.SendTo(send_buffer, send_size, ip_name_list_.GetIp(name).c_str()); //err_check
+    send_size = broadc_socket_.SendTo(send_buffer,
+                                      send_size,
+                                      ip_name_list_.GetIp(name).c_str());
+    delete[] send_buffer;
+    return send_size;
 }
 
-void Network::SendList(const std::string& ip)
+int Network::SendList(const std::string& ip)
 {
     std::vector<std::string> files;
     FM_->GetFileNames(files);
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &files, send_buffer);
 
+    send_size = broadc_socket_.SendTo(send_buffer, send_size, ip.c_str());
 
-    broadc_socket_.SendTo(send_buffer, send_size, ip.c_str()); //err_check
+    delete[] send_buffer;
+    return send_size;
 }
-
-
 
 void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 {
@@ -187,7 +197,7 @@ void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
         }
         //do not put break here
-    case LOG_UPDATE:;
+    case LOG_UPDATE:
         ip_name_list_.Add(ip, msg.name_);
         break;
 

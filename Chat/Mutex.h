@@ -9,12 +9,14 @@ public:
     Mutex();
     ~Mutex();
 
-    void Lock()const;
-    void Unlock()const;
+    inline void Lock()const;
+    inline void Unlock()const;
     //tries to lock the thread
     //returns true if success
     //false otherwise, don't block thread execution
-    bool TryLock()const;
+    inline bool TryLock()const;
+
+    inline bool IsValid()const;
 
 private:
     HANDLE mutex_handle_;

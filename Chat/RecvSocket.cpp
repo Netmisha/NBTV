@@ -15,6 +15,7 @@ bool RecvSocket::Initialize(int port)
 {
     if(!AbstractSocket::Initialize(UDP))
     {
+        Close();
         return false;
     }
 
@@ -25,6 +26,7 @@ bool RecvSocket::Initialize(int port)
                   &broadcast_enabled,
                   sizeof(broadcast_enabled) != 0))
     {
+        Close();
         return false;
     }
 
@@ -34,7 +36,13 @@ bool RecvSocket::Initialize(int port)
     port_bind.sin_port = htons(port != -1 ? (unsigned int)port : PORT);
     port_bind.sin_addr.s_addr = INADDR_ANY;
     
-    return bind(socket_, (SOCKADDR*)&port_bind, (int)sizeof(port_bind)) == 0;
+    if(bind(socket_, (SOCKADDR*)&port_bind, (int)sizeof(port_bind)) != 0)
+    {
+        Close();
+        return false;
+    }
+
+    return true;
 }
 
 int RecvSocket::Recv(RecvStruct* out_result)
