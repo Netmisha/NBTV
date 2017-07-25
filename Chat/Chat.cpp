@@ -114,6 +114,19 @@ void Chat::PrintSomeoneList(std::vector<std::string>& list) const
     chat_mutex_.Unlock();
 }
 
+void Chat::PrintMyList(std::vector<File>& list) const
+{
+    chat_mutex_.Lock();
+    cout << endl;
+    for (size_t i = 0; i < list.size(); i++)
+    {
+        cout << i + 1 << " \ts" + list[i].GetName() << " \t\t " << list[i].GetSizeMB() << "MB" << endl;
+    }
+    std::cerr << "Please enter message: " << buffer_;
+
+    chat_mutex_.Unlock();
+}
+
 void Chat::AddMsg(const UserMsg& msg)
 {
 	chat_mutex_.Lock();
@@ -194,15 +207,16 @@ bool Chat::CheckForCommands() //chat commands
             ResetChat();
             if (name.empty())
             {
-                std::vector<std::string> list;
-                FM_->GetFileNames(list);
-                PrintSomeoneList(list); //I print my list
+                std::vector<File> list;
+                FM_->GetFiles(list);
+                PrintMyList(list); //I print my list
             }
             else
             {
                 connected_network_->RequestSomeoneList(name); //asking for someone`s list
 
             }
+            return true;
         }
         else if (!strncmp(buffer_.c_str(), "getf ", 5))
         {
@@ -228,7 +242,7 @@ bool Chat::CheckForCommands() //chat commands
                 cout << i << '\n';
             std::cerr << "Please enter message: " << buffer_;
            
-
+            return true;
         }
         else if (!strncmp(buffer_.c_str(), "addf ", 5))
         {

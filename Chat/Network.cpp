@@ -164,10 +164,10 @@ void Network::RequestSomeoneList(const std::string& name)
 
 void Network::SendList(const std::string& ip)
 {
-    std::vector<std::string> file_names;
-    FM_->GetFileNames(file_names);
+    std::vector<File> files;
+    FM_->GetFiles(files);
     void *send_buffer = NULL;
-    int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &file_names, send_buffer);
+    int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &files, send_buffer);
 
 
     broadc_socket_.SendTo(send_buffer, send_size, ip.c_str()); //err_check

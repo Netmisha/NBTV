@@ -27,6 +27,7 @@ public:
 	void ResetChat() const;
 	void PutMsg(const UserMsg& msg) const; // show msg to the screen
     void PrintSomeoneList(std::vector<std::string>& list) const;
+    void PrintMyList(std::vector<File>& list) const;
 
 	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
 	void InputStream(); 
