@@ -33,12 +33,6 @@ bool FileGetSocket::Initialize()
         std::cerr << "unable to set listening socket mode!\n";
         Close();
     }
-
-    if (listen(socket_, SOMAXCONN) != 0)
-    {
-        std::cerr << "unable to set listening socket mode!\n";
-      Close();
-    }
     return true;
 }
 

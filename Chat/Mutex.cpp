@@ -23,11 +23,13 @@ void Mutex::Unlock()const
         ReleaseMutex(mutex_handle_);
 }
 
-bool Mutex::TryLock()const
+int Mutex::TryLock()const
 {
     //WAIT_OBJECT_0 - object is signaled
     if(IsValid())
-        return (WAIT_OBJECT_0 == WaitForSingleObject(mutex_handle_, 0));
+        return (int)(WAIT_OBJECT_0 == WaitForSingleObject(mutex_handle_, 0));
+
+    return -1;
 }
 
 bool Mutex::IsValid()const
