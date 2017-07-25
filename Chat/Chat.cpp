@@ -19,20 +19,20 @@ Chat::~Chat(){}
 void Chat::IOnlineMsg()
 {
 	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
-	UserMsg msg = { msg_color_, user_name_, user_name_ + " is online!" };
+	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " is online!" };
 	SendMsg(msg);
 }
 
 void Chat::IChangedName(std::string& old_name)
 {
     connected_network_->SendLogMsg(user_name_, LOG_UPDATE);
-    UserMsg msg = { msg_color_, user_name_, old_name + " changed name to " + user_name_ + " !"};
+    UserMsg msg = { PUBLIC, msg_color_, user_name_, old_name + " changed name to " + user_name_ + " !"};
     SendMsg(msg);
 }
 
 void Chat::IOfflineMsg()
 {
-	UserMsg msg = { msg_color_, user_name_, user_name_ + " left the chat!" };
+	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " left the chat!" };
 	SendMsg(msg);
 	cout << "\n Please wait... ";
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
@@ -138,7 +138,7 @@ void Chat::InputStream()
 		
 		if (!CheckForCommands())
 		{
-			UserMsg msg = { msg_color_, user_name_, buffer_ };
+			UserMsg msg = { PUBLIC, msg_color_, user_name_, buffer_ };
 			SendMsg(msg);
 		}
 	}
@@ -289,7 +289,7 @@ void Chat::Activate()
 void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes directly to the chosen user
 {
 	buffer_.clear();
-	AddMsg(UserMsg{ 7, "PRIVATE CHAT WITH", name });
+	AddMsg(UserMsg{ PUBLIC, 7, "PRIVATE CHAT WITH", name });
 
 	while (true)
 	{
@@ -300,10 +300,10 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 			buffer_.clear();
 			break;
 		}
-		UserMsg msg = { msg_color_, user_name_, buffer_ };
+		UserMsg msg = { PRIVATE, msg_color_, user_name_, buffer_ };
 		if (SendMsgTo(name, msg) == -1)
 		{
-			AddMsg(UserMsg{ 7, "THERE NO USER WITH THIS NAME ", name });
+			AddMsg(UserMsg{ PUBLIC, 7, "THERE NO USER WITH THIS NAME ", name });
 			break;
 		}
 	}

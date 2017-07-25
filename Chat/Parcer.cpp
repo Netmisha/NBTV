@@ -80,6 +80,7 @@ int Parcer::PackChatMessage(const void *in_msg, void* &out_packet)
 
     unsigned char *temp_ptr = (unsigned char*)out_packet;
     *temp_ptr++ = (unsigned char)CHAT_MESSAGE;
+    *temp_ptr++ = (unsigned char)user_msg->type_;
     *temp_ptr++ = (unsigned char)user_msg->name_.length();
     *temp_ptr++ = user_msg->color_;
     *temp_ptr++ = (unsigned char)user_msg->msg_.length();
@@ -100,6 +101,7 @@ void* Parcer::ParceChatMessage(const void *in_packet)
     UserMsg *result = new UserMsg();
     unsigned char name_size, msg_size;
     unsigned char *temp_ptr = (unsigned char*)in_packet;
+    result->type_ = (ChatMsgType)*temp_ptr++;
     name_size = *temp_ptr++;
     result->color_ = *temp_ptr++;
     msg_size = *temp_ptr++;
@@ -208,7 +210,6 @@ int Parcer::PackFileList(const void *in_msg, void* &out_packet)
     memcpy(temp_ptr, &name[0], name.length());
 
     return FILE_LIST_MESSAGE_SIZE;
-
 }
 
 void* Parcer::ParceFileList(const void *in_packet)
@@ -224,6 +225,4 @@ void* Parcer::ParceFileList(const void *in_packet)
     memcpy(&recv_file_info->name_[0], temp_ptr + sizeof(short), name_size);
 
     return recv_file_info;
-
-  
 }

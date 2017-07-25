@@ -10,8 +10,8 @@ enum ConstantSizes
 {
     //1B flag + 4B int
     PREPARE_MESSAGE_SIZE = 5,   
-    //1B flag, 1B name size, 1B name color, 1B msg size
-    CHAT_MESSAGE_HEADER_SIZE = 4,
+    //1B flag, 1B type, 1B name size, 1B name color, 1B msg size
+    CHAT_MESSAGE_HEADER_SIZE = 5,
     //1B flag + 1B type + 1B name size
     LOG_MESSAGE_HEADER_SIZE = 3,
 	
