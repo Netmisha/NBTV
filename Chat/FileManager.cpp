@@ -54,7 +54,7 @@ const double FileManager::GetFileSizeKB(int file_index)const
     return 0;
 }
 
-const double FileManager::GetFileSizeKB(int file_index)const
+const double FileManager::GetFileSizeMB(int file_index)const
 {
     if(file_index < shared_files_.size())
         return shared_files_[file_index].GetSizeMB();
