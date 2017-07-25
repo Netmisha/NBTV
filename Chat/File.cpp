@@ -43,7 +43,7 @@ bool File::SetFile(const std::string &path)
                              FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
                              NULL);
     //bytes divided by kilobyte size
-    if(file == NULL)
+    if(file == INVALID_HANDLE_VALUE)
     {
         return false;
     }
