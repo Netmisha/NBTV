@@ -88,7 +88,7 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 {
     SOCKET list_getter = accept(socket_, 0, 0);
 
-    char buffer[BUFFER_SIZE] = {};
+    char buffer[FILE_LIST_MESSAGE_SIZE] = {};
     while(true)
     {
         int bytes_recved = recv(list_getter, buffer, BUFFER_SIZE, 0);

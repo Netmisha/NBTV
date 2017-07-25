@@ -193,9 +193,8 @@ int Parcer::PackFileList(const void *in_msg, void* &out_packet)
 {
     File *file_info = (File*)in_msg;
     std::string name = file_info->GetName();
-    int msg_size = name.length() + sizeof(double) + sizeof(short) + 1;
 
-    out_packet = new char[msg_size]();
+    out_packet = new char[FILE_LIST_MESSAGE_SIZE]();
     unsigned char *temp_ptr = (unsigned char*)out_packet;
 
     *temp_ptr++ = FILE_LIST_MESSAGE;
@@ -208,7 +207,7 @@ int Parcer::PackFileList(const void *in_msg, void* &out_packet)
 
     memcpy(temp_ptr, &name[0], name.length());
 
-    return msg_size;
+    return FILE_LIST_MESSAGE_SIZE;
 
     /*std::vector<std::string> *file_names = (std::vector<std::string>*)in_msg;
     int size = FILE_LIST_HEADER_SIZE;

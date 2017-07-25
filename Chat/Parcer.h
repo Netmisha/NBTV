@@ -19,8 +19,8 @@ enum ConstantSizes
 	GET_FILE_MESSAGE_SIZE = 5,
 
     FILE_LIST_REQUEST_SIZE = 1,
-    
-    FILE_LIST_HEADER_SIZE = 3
+
+    FILE_LIST_MESSAGE_SIZE = 64
 };
 
 class Parcer

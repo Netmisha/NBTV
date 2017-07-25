@@ -38,11 +38,11 @@ bool FileListSendSocket::SendFileList(const std::vector<File> &to_send, const st
 
     for(File f : to_send)
     {
-        void *to_send = NULL;
-        int msg_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &f, to_send);
-        send(socket_, (const char*)to_send, msg_size, 0);
+        void *send_msg = NULL;
+        int msg_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &f, send_msg);
+        send(socket_, (const char*)send_msg, msg_size, 0);
 
-        delete[] to_send;
+        delete[] send_msg;
     }
 
     //closing msg
