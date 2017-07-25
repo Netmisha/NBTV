@@ -172,17 +172,12 @@ int Network::RequestSomeoneList(const std::string& name)
     return send_size;
 }
 
-int Network::SendList(const std::string& ip)
+void Network::SendList(const std::string& ip)
 {
-    std::vector<std::string> files;
-    FM_->GetFileNames(files);
-    void *send_buffer = NULL;
-    int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &files, send_buffer);
+    std::vector<File> files;
+    FM_->GetFiles(files);
 
-    send_size = broadc_socket_.SendTo(send_buffer, send_size, ip.c_str());
-
-    delete[] send_buffer;
-    return send_size;
+    FileListSendSocket().SendFileList(files, ip);
 }
 
 void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)

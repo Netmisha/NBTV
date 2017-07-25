@@ -7,7 +7,8 @@
 #define BROADCAST_IP "255.255.255.255"
 //max buffer size without
 //possible data tearing
-#define BUFFER_SIZE 4096
+#define RECV_BUFFER_SIZE 4096
+#define BUFFER_SIZE 512
 #define CHUNK_SIZE 512
 
 //size of ip in chars

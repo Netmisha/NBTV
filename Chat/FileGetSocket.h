@@ -2,6 +2,9 @@
 #include "AbstractSocket.h"
 #include <iostream>
 #include <string>
+#include <vector>
+
+#include "RecvFileInfo.h"
 
 class FileGetSocket :
     public AbstractSocket
@@ -14,6 +17,7 @@ public:
     bool Initialize();
 
     static unsigned GetFileStartup(void *this_ptr);
+    void GetList(std::vector<RecvFileInfo> &out_result)const;
     bool GetFile();
 };
 

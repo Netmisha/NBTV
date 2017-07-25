@@ -15,7 +15,7 @@ enum MessageType
 struct UnpackedMessage
 {
     int type_ = INVALID_TYPE;
-    void *msg_ = NULL;
+    void *msg_ = 0;
 };
 
 #endif // !UNPACKED_MESSAGE_H

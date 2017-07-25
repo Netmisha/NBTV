@@ -62,6 +62,16 @@ const double FileManager::GetFileSizeMB(int file_index)const
     return 0;
 }
 
+bool FileManager::GetFile(int file_index, File &out_result)const
+{
+    if(file_index < shared_files_.size())
+    {
+        out_result = shared_files_[file_index];
+        return true;
+    }
+    return false;
+}
+
 void FileManager::GetFilePaths(std::vector<std::string> &out_result)const
 {
     for(File it : shared_files_)

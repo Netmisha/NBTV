@@ -1,4 +1,10 @@
 #include "Parcer.h"
+
+#include "File.h"
+#include "UserMsg.h"
+#include "LogMessage.h"
+#include "RecvFileInfo.h"
+
 #include <iostream>
 
 int Parcer::PackMessage(const MessageType &type, const void *in_msg, void* &out_result)
@@ -185,7 +191,26 @@ int Parcer::PackFileListRequest(const void *in_msg, void* &out_packet)
 
 int Parcer::PackFileList(const void *in_msg, void* &out_packet)
 {
-    std::vector<std::string> *file_names = (std::vector<std::string>*)in_msg;
+    File *file_info = (File*)in_msg;
+    std::string name = file_info->GetName();
+    int msg_size = name.length() + sizeof(double) + sizeof(short) + 1;
+
+    out_packet = new char[msg_size]();
+    unsigned char *temp_ptr = (unsigned char*)out_packet;
+
+    *temp_ptr++ = FILE_LIST_MESSAGE;
+
+    *(double*)temp_ptr = file_info->GetSizeKB();
+    temp_ptr += sizeof(double);
+
+    *(short*)temp_ptr = name.length();
+    temp_ptr += sizeof(short);
+
+    memcpy(temp_ptr, &name[0], name.length());
+
+    return msg_size;
+
+    /*std::vector<std::string> *file_names = (std::vector<std::string>*)in_msg;
     int size = FILE_LIST_HEADER_SIZE;
     for (std::string str : *file_names)
     {
@@ -206,12 +231,24 @@ int Parcer::PackFileList(const void *in_msg, void* &out_packet)
         temp_ptr += str.length();
     }
 
-    return size;
+    return size;*/
 }
 
 void* Parcer::ParceFileList(const void *in_packet)
 {
-    std::vector<std::string> *file_names = new std::vector<std::string>;
+    RecvFileInfo *recv_file_info = new RecvFileInfo();
+    char *temp_ptr = (char*)in_packet;
+
+    recv_file_info->size_KB_ = *(double*)temp_ptr;
+    temp_ptr += sizeof(double);
+
+    short name_size = *(short*)temp_ptr;
+    recv_file_info->name_.resize(name_size);
+    memcpy(&recv_file_info->name_[0], temp_ptr + sizeof(short), name_size);
+
+    return recv_file_info;
+
+    /*std::vector<std::string> *file_names = new std::vector<std::string>;
     char *temp_ptr = (char*)in_packet;
 
     int names_num = *(short*)temp_ptr;
@@ -231,5 +268,5 @@ void* Parcer::ParceFileList(const void *in_packet)
         temp_ptr += name_size;
     }
 
-    return file_names;
+    return file_names;*/
 }

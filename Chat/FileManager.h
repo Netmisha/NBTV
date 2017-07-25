@@ -27,6 +27,8 @@ public:
     const double GetFileSizeKB(int file_index)const;
     //get size in megabytes
     const double GetFileSizeMB(int file_index)const;
+    //get File struct
+    bool GetFile(int file_index, File &out_result)const;
     //get all file paths
     void GetFilePaths(std::vector<std::string> &out_result)const;
     //get all file names

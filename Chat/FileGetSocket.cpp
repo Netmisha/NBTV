@@ -1,5 +1,6 @@
 ﻿#include "FileGetSocket.h"
 #include "Defines.h"
+#include "Parcer.h"
 
 FileGetSocket::FileGetSocket(){}
 
@@ -81,4 +82,26 @@ bool FileGetSocket::GetFile()
     }
     CloseHandle(file);
     return err_check;
+}
+
+void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
+{
+    SOCKET list_getter = accept(socket_, 0, 0);
+
+    char buffer[BUFFER_SIZE] = {};
+    while(true)
+    {
+        int bytes_recved = recv(list_getter, buffer, BUFFER_SIZE, 0);
+
+        if(!bytes_recved)
+            break;
+
+        UnpackedMessage msg = Parcer::UnpackMessage(buffer);
+
+        out_result.push_back(*(RecvFileInfo*)msg.msg_);
+
+        delete msg.msg_;
+    }
+
+    closesocket(list_getter);
 }

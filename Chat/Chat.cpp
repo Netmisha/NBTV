@@ -1,6 +1,7 @@
 
 #include "Network.h"
 #include "Chat.h"
+#include "LogMessage.h"
 
 #include <iostream>
 #include <chrono>

@@ -1,8 +1,6 @@
 #ifndef PARCER_H
 #define PARCER_H
 
-#include "UserMsg.h"
-#include "LogMessage.h"
 #include "UnpackedMessage.h"
 
 #include <vector>

@@ -3,7 +3,7 @@
 RecvSocket::RecvSocket() : buffer_(NULL)
 {
     //'()' for zero`ing alocated memory
-    buffer_ = new char[BUFFER_SIZE]();
+    buffer_ = new char[RECV_BUFFER_SIZE]();
 }
 
 RecvSocket::~RecvSocket()
@@ -47,13 +47,13 @@ bool RecvSocket::Initialize(int port)
 
 int RecvSocket::Recv(RecvStruct* out_result)
 {
-    memset(buffer_, 0, BUFFER_SIZE);
+    memset(buffer_, 0, RECV_BUFFER_SIZE);
     sockaddr_in recv_info;
     int recv_info_size = sizeof(recv_info);
     
     int recv_size = recvfrom(socket_,
                              buffer_,
-                             BUFFER_SIZE,
+                             RECV_BUFFER_SIZE,
                              0,
                              (SOCKADDR*)&recv_info,
                              &recv_info_size);

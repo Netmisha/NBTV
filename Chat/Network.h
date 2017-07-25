@@ -6,11 +6,13 @@
 #include "BroadcastSocket.h"
 #include "RecvSocket.h"
 #include "Parcer.h"
+#include "FileListSendSocket.h"
 
 #include "FileManager.h"
 #include "Chat.h"
 #include "SendFileInfo.h"
 #include "IpNameList.h"
+#include "LogMessage.h"
 
 #include "Mutex.h"
 #include "Thread.h"
@@ -48,7 +50,7 @@ public:
     static unsigned SendFileStartup(void *send_file_info);
 
     int RequestSomeoneList(const std::string& name);
-    int SendList(const std::string& ip);
+    void SendList(const std::string& ip);
 
     void GetOnlineUsers(std::vector<std::string> &users);
 
