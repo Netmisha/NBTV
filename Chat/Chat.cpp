@@ -38,6 +38,18 @@ void Chat::IOfflineMsg()
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
+void Chat::PrepareSendMsg(std::string& str_msg)
+{
+    UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
+    SendMsg(msg);
+}
+
+void Chat::PrepareAddMsg(std::string& str_msg)
+{
+    UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
+    AddMsg(msg);
+}
+
 void Chat::SendMsg(const UserMsg& msg)
 {
 
@@ -53,6 +65,11 @@ int Chat::SendMsgTo(const std::string& name, UserMsg& msg)
 	AddMsg(msg);
 
 	return result;
+}
+
+std::vector<UserMsg>& Chat::GetCurrentChat()
+{
+    return messages_;
 }
 
 void Chat::SetNetwork(Network * net)
@@ -207,6 +224,11 @@ bool Chat::CheckForCommands() //chat commands
             else
             {
                 connected_network_->RequestSomeoneList(name); //asking for someone`s list
+                std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
+                for (auto i : *list)
+                {
+                    cout << "\n" << i.name_ << " \t" << i.size_KB_;
+                }
 
             }
             return true;

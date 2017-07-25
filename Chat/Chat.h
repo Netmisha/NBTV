@@ -45,12 +45,15 @@ public:
     void IOnlineMsg();	//sends online msg
     void IChangedName(std::string& old_name);
 
+    void PrepareSendMsg(std::string& old_name); //instead of console input
+    void PrepareAddMsg(std::string& str_msg);
+
     void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
     int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
+
+    std::vector<UserMsg>& GetCurrentChat();
+
 private:
-
-
-
 
 	char msg_color_;
 	std::string user_name_;

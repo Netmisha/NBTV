@@ -28,6 +28,13 @@ AppManager::~AppManager()
 
 }
 
+std::vector<UserMsg> AppManager::GetCurrentChat()
+{
+
+    return chat_.GetCurrentChat();
+}
+
+
 AppManager::AppManager()
 {
     chat_.SetNetwork(&network_);
@@ -36,7 +43,19 @@ AppManager::AppManager()
     network_.SetFM(&fm_);
 }
 
-void* AppManager::ActivateCommand(std::string buffer)
+void AppManager::SendMsg(std::string& msg)
+{
+    
+    chat_.PrepareSendMsg(msg);
+}
+
+void AppManager::AddMsg(std::string& ms)
+{
+    chat_.PrepareAddMsg(ms);
+}
+
+void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off private mode, filelists, get someone`s file,
+                                                        //add/remove file, online users list, setcolor, exit
 {
     if (buffer[0] == '/')
     {
@@ -48,7 +67,7 @@ void* AppManager::ActivateCommand(std::string buffer)
            // ActivatePrivateChat(buffer);
             return NULL;
         }
-        else if (!strncmp(buffer.c_str(), "setname ", 8))
+        else if (!strncmp(buffer.c_str(), "setname ", 8)) //change name command
         {
             PopBuffer(8, buffer);
             std::string old_name = chat_.GetName();
@@ -57,7 +76,7 @@ void* AppManager::ActivateCommand(std::string buffer)
             return NULL;
            // ResetChat();
         }
-        else if (!strncmp(buffer.c_str(), "fl ", 3))
+        else if (!strncmp(buffer.c_str(), "fl ", 3))  //my and someones file list
         {
             PopBuffer(3, buffer);
             std::stringstream stream(buffer);
@@ -80,7 +99,7 @@ void* AppManager::ActivateCommand(std::string buffer)
 
             }
         }
-        else if (!strncmp(buffer.c_str(), "getf ", 5))
+        else if (!strncmp(buffer.c_str(), "getf ", 5)) //get file by request
         {
             PopBuffer(5, buffer);
             std::stringstream stream(buffer);
@@ -92,14 +111,14 @@ void* AppManager::ActivateCommand(std::string buffer)
             //ResetChat();
 
         }
-        else if (!strncmp(buffer.c_str(), "userlist", 8))
+        else if (!strncmp(buffer.c_str(), "userlist", 8)) //get user list
         {
             PopBuffer(8, buffer);
             std::vector<std::string> *users = new std::vector<std::string>;
             network_.GetOnlineUsers(*users);
             return users;
         }
-        else if (!strncmp(buffer.c_str(), "addf ", 5))
+        else if (!strncmp(buffer.c_str(), "addf ", 5)) //add file
         {
             PopBuffer(5, buffer);
             std::stringstream stream(buffer);
