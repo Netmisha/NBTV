@@ -45,6 +45,7 @@ bool File::SetFile(const std::string &path)
     //bytes divided by kilobyte size
     size_KB_ = GetFileSize(file, NULL) / (double)WINDOWS_KILOBYTE;
 
+    CloseHandle(file);
     return true;
 }
 

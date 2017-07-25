@@ -164,8 +164,8 @@ void Network::RequestSomeoneList(const std::string& name)
 
 void Network::SendList(const std::string& ip)
 {
-    std::vector<File> files;
-    FM_->GetFiles(files);
+    std::vector<std::string> files;
+    FM_->GetFileNames(files);
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_MESSAGE, &files, send_buffer);
 

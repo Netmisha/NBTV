@@ -120,7 +120,7 @@ void Chat::PrintMyList(std::vector<File>& list) const
     cout << endl;
     for (size_t i = 0; i < list.size(); i++)
     {
-        cout << i + 1 << " \ts" + list[i].GetName() << " \t\t " << list[i].GetSizeMB() << "MB" << endl;
+        cout << i + 1 << " \t" + list[i].GetName() << " \t\t " << list[i].GetSizeMB() << "MB" << endl;
     }
     std::cerr << "Please enter message: " << buffer_;
 
