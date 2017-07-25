@@ -26,9 +26,13 @@ public:
     void GetMsgLoop(); //message getting
 
     void SendMsg(std::string msg); //after user wrote message in chat
-    void ActivateCommand(std::string msg); //called by buttons with different commands
+    void PutMsg(); //will be used by recv loop
+
+    void* ActivateCommand(std::string msg); //called by buttons with different commands
                                      //example: ChangeMsgColor, ChangeName, ChangeHomeDir, DownloadSomeone`sFile
                                      //AddFile, RemoveFile
+    void PopBuffer(int num, std::string& buffer); //easy pop front
+ 
     void ActivatePrivateChat();
     void ExitPrivateChat();
     void EXIT();

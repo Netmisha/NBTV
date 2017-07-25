@@ -57,6 +57,7 @@ public:
     static Mutex& GetSharingNumMutex();
     static volatile int& GetSharingThreadsNum();
     
+    FileGetSocket& GetRecvSocket();
 private:
     Chat *chat_;
 	FileManager *FM_;

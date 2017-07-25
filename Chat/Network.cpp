@@ -249,9 +249,6 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
             SendList(recv_str.ip_);
             break;
 
-        case FILE_LIST_MESSAGE:
-            chat_->PrintSomeoneList(*((std::vector<std::string>*)unp_msg.msg_));
-            break;
         }
 
         delete unp_msg.msg_;
@@ -316,4 +313,9 @@ Mutex& Network::GetSharingNumMutex()
 volatile int& Network::GetSharingThreadsNum()
 {
     return file_sharing_thread_num_;
+}
+
+FileGetSocket& Network::GetRecvSocket()
+{
+    return file_get_socket_;
 }

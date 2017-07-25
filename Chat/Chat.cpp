@@ -65,6 +65,11 @@ void Chat::SetFM(FileManager * fm)
     FM_ = fm;
 }
 
+void Chat::SetName(const std::string& name)
+{
+    user_name_ = name;
+}
+
 void Chat::SetUserInfo(char color, const std::string& name)
 {
 	msg_color_ = color;
@@ -101,18 +106,6 @@ void Chat::PutMsg(const UserMsg& msg) const
 	
 }
 
-void Chat::PrintSomeoneList(std::vector<std::string>& list) const
-{
-    chat_mutex_.Lock();
-    cout << endl;
-    for (size_t i = 0; i < list.size(); i++)
-    {
-        cout << i + 1 << " " + list[i] << endl;
-    }
-    std::cerr << "Please enter message: " << buffer_;
-
-    chat_mutex_.Unlock();
-}
 
 void Chat::PrintMyList(std::vector<File>& list) const
 {

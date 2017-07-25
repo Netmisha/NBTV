@@ -20,13 +20,15 @@ public:
 	void SetNetwork(Network* net);
     void SetFM(FileManager* fm);
 
+    void SetName(const std::string& name);
+    const std::string& GetName(); //name getter
+
 	void SetUserInfo(char color, const std::string& name);
 	Thread& GetInputThread(); //thread descriptor getter
-    const std::string& GetName(); //name getter
+   
 
 	void ResetChat() const;
 	void PutMsg(const UserMsg& msg) const; // show msg to the screen
-    void PrintSomeoneList(std::vector<std::string>& list) const;
     void PrintMyList(std::vector<File>& list) const;
 
 	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
@@ -40,13 +42,14 @@ public:
 
     void IOfflineMsg();	//sends online msg
 
+    void IOnlineMsg();	//sends online msg
+    void IChangedName(std::string& old_name);
+
+    void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
+    int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
 private:
 
-	void IOnlineMsg();	//sends online msg
-    void IChangedName(std::string& old_name);
-	
-	void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
-	int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
+
 
 
 	char msg_color_;
