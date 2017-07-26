@@ -4,6 +4,7 @@
 #include "Chat.h"
 #include "FileManager.h"
 #include <vector>
+
 class AppManager
 {
 	Chat chat_;
