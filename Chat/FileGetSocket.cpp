@@ -76,7 +76,7 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
     char buffer[FILE_LIST_MESSAGE_SIZE] = {};
     while(true)
     {
-        int bytes_recved = list_getter.Recv(buffer, BUFFER_SIZE);
+        int bytes_recved = list_getter.Recv(buffer, FILE_LIST_MESSAGE_SIZE);
 
         if(!bytes_recved)
             break;
