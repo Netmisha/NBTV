@@ -13,7 +13,7 @@ bool FileListSendSocket::SendFileList(const std::vector<File> &to_send, const st
         return false;
     }
 
-    if(!Connect(ip.c_str))
+    if(!Connect(ip.c_str()))
     {
         return false;
     }
@@ -29,6 +29,5 @@ bool FileListSendSocket::SendFileList(const std::vector<File> &to_send, const st
 
     //closing msg
     Send(NULL, 0);
-    Close();
     return true;
 }

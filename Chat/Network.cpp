@@ -88,9 +88,6 @@ int Network::SendMsg(const UserMsg& user_msg)
 
 void Network::Cleanup()
 {
-    broadc_socket_.Close();
-    recv_socket_.Close();
-    file_get_socket_.Close();
     WSACleanup();
 }
 

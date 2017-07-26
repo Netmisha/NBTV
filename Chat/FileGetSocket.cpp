@@ -50,22 +50,21 @@ bool FileGetSocket::GetFile()
                              NULL);
     BOOL err_check;
     DWORD bytes_written;
-    while (true) //file getting
+    while(true) //file getting
     {
         int recved_bytes = file_getter.Recv(buffer, CHUNK_SIZE);
         err_check = WriteFile(file,
-                                   buffer,
-                                   recved_bytes,
-                                   &bytes_written,
-                                   NULL);
-     
-        if (recved_bytes < CHUNK_SIZE)
+                              buffer,
+                              recved_bytes,
+                              &bytes_written,
+                              NULL);
+
+        if(recved_bytes < CHUNK_SIZE)
         {
             break;
         }
     }
 
-    file_getter.Close();
     CloseHandle(file);
     return err_check;
 }
@@ -88,6 +87,4 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 
         delete msg.msg_;
     }
-
-    list_getter.Close();
 }

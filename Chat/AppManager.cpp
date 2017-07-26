@@ -183,7 +183,7 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
     return false;
 }
 
-std::string AppManager::GetIP()
+const std::string AppManager::GetIP()const
 {
     return network_.GetIP();
 }

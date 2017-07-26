@@ -1,11 +1,11 @@
 #pragma once
-#include "AbstractSocket.h"
+#include "TCPSocket.h"
 
 #include <WS2tcpip.h>
 
 #include <iostream>
 #include <string>
-class FileSendSocket : public AbstractSocket
+class FileSendSocket : public TCPSocket
 {
 public:
 	FileSendSocket();

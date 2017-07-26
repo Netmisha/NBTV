@@ -26,13 +26,13 @@ bool FileManager::AddFile(const std::string &path)
 
 void FileManager::RemoveFile(int file_index)
 {
-    if(file_index < shared_files_.size())
+    if((unsigned)file_index < shared_files_.size())
         shared_files_.erase(shared_files_.begin() + file_index);
 }
 
 std::string FileManager::GetFilePath(int file_index)const
 {
-    if(file_index < shared_files_.size())
+    if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetPath();
 
     return std::string("");
@@ -40,7 +40,7 @@ std::string FileManager::GetFilePath(int file_index)const
 
 std::string FileManager::GetFileName(int file_index)const
 {
-    if(file_index < shared_files_.size())
+    if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetName();
 
     return std::string("");
@@ -48,7 +48,7 @@ std::string FileManager::GetFileName(int file_index)const
 
 const double FileManager::GetFileSizeKB(int file_index)const
 {
-    if(file_index < shared_files_.size())
+    if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetSizeKB();
 
     return 0;
@@ -56,7 +56,7 @@ const double FileManager::GetFileSizeKB(int file_index)const
 
 const double FileManager::GetFileSizeMB(int file_index)const
 {
-    if(file_index < shared_files_.size())
+    if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetSizeMB();
 
     return 0;
@@ -64,7 +64,7 @@ const double FileManager::GetFileSizeMB(int file_index)const
 
 bool FileManager::GetFile(int file_index, File &out_result)const
 {
-    if(file_index < shared_files_.size())
+    if((unsigned)file_index < shared_files_.size())
     {
         out_result = shared_files_[file_index];
         return true;

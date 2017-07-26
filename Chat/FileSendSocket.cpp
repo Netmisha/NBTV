@@ -16,28 +16,12 @@ bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, co
         return false;
     }
 
-    sockaddr_in sock_addr;
-
-    //set server port and IP
-    sock_addr.sin_family = AF_INET;
-    sock_addr.sin_port = htons(FILE_PORT); //Host TO Network Short
-    sock_addr.sin_addr.s_addr = inet_addr(ip.c_str());
-
-
-    //trying to connect 
-    for (int i = 0; i < 10; ++i)
+    if(!Connect(ip.c_str()))
     {
-        if (connect(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
-        {
-            std::cerr << "Unable to connect!\n";
-            Sleep(1000);
-        }
-        else
-            break;
+        return false;
     }
-   
 
-    send(socket_, filename.c_str(), CHUNK_SIZE, 0); //sending file name
+    Send(filename.c_str(), CHUNK_SIZE); //sending file name
 
     char buffer[CHUNK_SIZE];
     HANDLE file = CreateFile(pass.c_str(),
@@ -56,12 +40,11 @@ bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, co
                              CHUNK_SIZE,
                              &bytes_read,
                              NULL);
-        send(socket_, buffer, bytes_read, 0);
+        Send(buffer, bytes_read);
         if (bytes_read < CHUNK_SIZE)
             break;
     }
 
-    Close();
     CloseHandle(file);
 
     return err_check;
