@@ -1,30 +1,54 @@
 #pragma once
 
-#include "Network.h"
-#include "Chat.h"
-#include "FileManager.h"
-#include <vector>
-
 #define DLL_EXP __declspec(dllexport)
+
+#include <vector>
+#include <string>
+
+enum ChatMsgType
+{
+    PUBLIC = 0,
+    PRIVATE = 1
+};
+
+enum LogType
+{
+    LOG_OFFLINE = (unsigned char)0,
+    LOG_ONLINE = (unsigned char)1,
+    LOG_UPDATE = (unsigned char)2
+};
+
+struct UserMsg
+{
+    ChatMsgType type_;
+    //color as enum
+    char color_;
+    //user name
+    std::string name_;
+    //user message
+    std::string msg_;
+};
+
+struct LogMessage
+{
+    LogType type_;
+    std::string name_;
+};
 
 class AppManager
 {
-	Chat chat_;
-	Network network_;
-    FileManager fm_;
-
 public:
-	void DLL_EXP Work();
+    void DLL_EXP Work();
     DLL_EXP AppManager();
     DLL_EXP ~AppManager();
 
 
 
     //function to use from UI (.DLL)
-    
+
     std::vector<UserMsg> DLL_EXP GetCurrentChat();
 
-   // void GetMsgLoop(); //message getting
+    // void GetMsgLoop(); //message getting
 
     void DLL_EXP SendFile(const std::string &path, const std::string &ip, const std::string &name);
 
@@ -38,11 +62,11 @@ public:
     void DLL_EXP AddMsg(const UserMsg& ms); //will be used by recv loop
 
     void DLL_EXP *ActivateCommand(std::string& msg); //called by buttons with different commands
-                                             //ChangeName, On/Off private mode, filelists, get someone`s file,
-                                             //add/remove file, online users list, setcolor, exit
+    //ChangeName, On/Off private mode, filelists, get someone`s file,
+    //add/remove file, online users list, setcolor, exit
     const DLL_EXP std::string GetIP()const;
     void DLL_EXP PopBuffer(int num, std::string& buffer); //easy pop front
- 
+
     void DLL_EXP ActivatePrivateChat();
     void DLL_EXP ExitPrivateChat();
 

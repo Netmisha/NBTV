@@ -6,7 +6,7 @@
 void AppManager::Work()
 {
     network_.PrepareNetwork();
-    Thread network_loop(Network::StartNetwork, &network_);
+    Thread network__loop(Network::StartNetwork, &network_);
 
     chat_.SetUserInfo(6, "Anton");
     chat_.Activate();
@@ -15,28 +15,23 @@ void AppManager::Work()
 
     network_.StopNetwork();
     chat_.IOfflineMsg();
-    network_loop.Join();
+    network__loop.Join();
 
 
 	std::cout << "ok";
 	//at the end
 }
 
-
-AppManager::~AppManager()
-{
-
-}
+AppManager::~AppManager(){}
 
 std::vector<UserMsg> AppManager::GetCurrentChat()
 {
-
     return chat_.GetCurrentChat();
 }
 
-
 AppManager::AppManager()
 {
+
     chat_.SetNetwork(&network_);
     network_.SetChat(&chat_);
     chat_.SetFM(&fm_);
