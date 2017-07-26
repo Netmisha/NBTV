@@ -1,7 +1,9 @@
 #include "AppManager.h"
+#include "RecvSocket.h"
+
 void ProcessMessage(const RecvStruct &recv_str, AppManager& am)
 {
-    if ((recv_str.ip_ != am.GetIP()) || BROADCAST_LOOPBACK)
+    if ((recv_str.ip_ != am.GetIP()))
     {
         //allocation in heap
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_str.packet_);

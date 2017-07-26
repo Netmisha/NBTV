@@ -36,4 +36,6 @@
 
 #define DOWNLOAD_DIR "Download"
 
+#define DLL_EXP __declspec(dllexport)
+
 #endif // !DEFINES_H

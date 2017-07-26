@@ -2,6 +2,7 @@
 #define PARCER_H
 
 #include "UnpackedMessage.h"
+#include "Defines.h"
 
 #include <vector>
 #include <string>
@@ -23,35 +24,35 @@ enum ConstantSizes
     FILE_LIST_MESSAGE_SIZE = 64
 };
 
-class Parcer
+namespace Parcer
 {
-public:
+
 
     //packs message and sets out_result as
     //pointer to it, message is allocated in heap
     //returns size of message
-    static int PackMessage(const MessageType &type, const void *in_msg, void* &out_result);
+    int PackMessage(const MessageType &type, const void *in_msg, void* &out_result);
     //returns processed message from packet
-    static UnpackedMessage UnpackMessage(const void *packet);
+    UnpackedMessage DLL_EXP UnpackMessage(const void *packet);
 
-private:
-    static int PackChatMessage(const void *in_msg, void* &out_packet);
-    static void* ParceChatMessage(const void *in_packet);
 
-    static int PackPrepMessage(const void *in_msg, void* &out_packet);
-    static void* ParcePrepMessage(const void *in_packet);
+    int PackChatMessage(const void *in_msg, void* &out_packet);
+    void* ParceChatMessage(const void *in_packet);
 
-    static int PackLogMessage(const void *in_msg, void* &out_packet);
-    static void* ParceLogMessage(const void *in_packet);
+    int PackPrepMessage(const void *in_msg, void* &out_packet);
+    void* ParcePrepMessage(const void *in_packet);
 
-	static int PackGetFileMessage(const void *in_msg, void* &out_packet);
-	static void* ParceGetFileMessage(const void *in_packet);
+    int PackLogMessage(const void *in_msg, void* &out_packet);
+    void* ParceLogMessage(const void *in_packet);
 
-    static int PackFileListRequest(const void *in_msg, void* &out_packet);
-        //no need for parcer
-        
-    static int PackFileList(const void *in_msg, void* &out_packet);
-    static void* ParceFileList(const void *in_packet);
+    int PackGetFileMessage(const void *in_msg, void* &out_packet);
+    void* ParceGetFileMessage(const void *in_packet);
+
+    int PackFileListRequest(const void *in_msg, void* &out_packet);
+    //no need for parcer
+
+    int PackFileList(const void *in_msg, void* &out_packet);
+    void* ParceFileList(const void *in_packet);
 };
 
 #endif // !PARCER_H

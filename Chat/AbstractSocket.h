@@ -3,7 +3,7 @@
 
 #include <WinSock2.h>
 #include <Windows.h>
-
+#include "Defines.h"
 #pragma comment(lib, "Ws2_32.lib")
 
 enum SocketConnectionType
