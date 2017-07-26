@@ -48,15 +48,14 @@ void AppManager::SendFile(const std::string & path, const std::string & ip, cons
     network_.SendFile(path, ip, name);
 }
 
-std::string AppManager::GetFilePath(int i)
+const std::string AppManager::GetFilePath(int file_index)const
 {
-
-    return network_.GetFM()->GetFilePath(i);
+    return network_.GetFM()->GetFilePath(file_index);
 }
 
-std::string AppManager::GetFileName(int i)
+const std::string AppManager::GetFileName(int file_index)const
 {
-    return network_.GetFM()->GetFileName(i);
+    return network_.GetFM()->GetFileName(file_index);
 }
 
 void AppManager::ProcessLogMessage(const LogMessage & msg, const std::string & ip)
@@ -69,13 +68,12 @@ void AppManager::SendList(const std::string & ip)
     network_.SendList(ip);
 }
 
-void AppManager::SendMsg(std::string& msg)
+void AppManager::SendMsg(const std::string& msg)
 {
-    
     chat_.PrepareSendMsg(msg);
 }
 
-void AppManager::AddMsg(UserMsg& ms)
+void AppManager::AddMsg(const UserMsg& ms)
 {
     chat_.AddMsg(ms);
 }

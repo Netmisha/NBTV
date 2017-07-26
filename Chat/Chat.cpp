@@ -38,21 +38,18 @@ void Chat::IOfflineMsg()
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
-void Chat::PrepareSendMsg(std::string& str_msg)
+void Chat::PrepareSendMsg(const std::string& str_msg)
 {
-
     if (!str_msg.empty())
     {
         UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
         SendMsg(msg);
-
     }
 }
 
 
 void Chat::SendMsg(const UserMsg& msg)
 {
-
 	connected_network_->SendMsg(msg);
 	buffer_.clear();
 	AddMsg(msg);

@@ -16,6 +16,7 @@ class AbstractSocket
 {
 public:
     AbstractSocket();
+    AbstractSocket(const SOCKET &sock);
     virtual ~AbstractSocket() = 0;  //to make it abstract
 
     //initializes socket as

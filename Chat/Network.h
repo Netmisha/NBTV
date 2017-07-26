@@ -53,12 +53,14 @@ public:
     void SendList(const std::string& ip);
 
     void GetOnlineUsers(std::vector<std::string> &users);
-    std::string GetIP();
-    FileManager* GetFM();
+    const std::string GetIP()const ;
+    const FileManager* GetFM()const;
 
+    //not used currently
     static Mutex& GetSharingNumMutex();
     static volatile int& GetSharingThreadsNum();
-    
+    //----------
+
     FileGetSocket& GetRecvSocket();
 
     void ProcessLogMessage(const LogMessage &msg, const std::string &ip);

@@ -1,5 +1,5 @@
 #pragma once
-#include "AbstractSocket.h"
+#include "TCPSocket.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,7 +7,7 @@
 #include "RecvFileInfo.h"
 
 class FileGetSocket :
-    public AbstractSocket
+    public TCPSocket
 {
 
 public:

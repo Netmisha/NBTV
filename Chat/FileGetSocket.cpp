@@ -9,31 +9,16 @@ FileGetSocket::~FileGetSocket(){}
 
 bool FileGetSocket::Initialize()
 {
-    if (!AbstractSocket::Initialize(TCP))
+    if (!TCPSocket::Initialize())
     {
         return false;
     }
 
-    sockaddr_in sock_addr = { AF_INET, htons(FILE_PORT), INADDR_ANY };
-
-    if(socket_ == INVALID_SOCKET)
+    if(!SetListen())
     {
-        std::cerr << "socket is not exist!\n";
         return false;
     }
 
-    if(bind(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
-    {
-        std::cout << GetLastError();
-        std::cerr << "unable to bind socket!\n";
-        Close();
-    }
-
-    if(listen(socket_, SOMAXCONN) != 0)
-    {
-        std::cerr << "unable to set listening socket mode!\n";
-        Close();
-    }
     return true;
 }
 
@@ -45,7 +30,7 @@ unsigned FileGetSocket::GetFileStartup(void *this_ptr)
 
 bool FileGetSocket::GetFile()
 {
-    SOCKET file_getter = accept(socket_, 0, 0);
+    TCPSocket file_getter = Accept();
    
     if (!((CreateDirectory(DOWNLOAD_DIR, NULL)) ||
         (GetLastError() == ERROR_ALREADY_EXISTS)))
@@ -53,7 +38,7 @@ bool FileGetSocket::GetFile()
  
     char buffer[CHUNK_SIZE] = {};
 
-    recv(file_getter, buffer, CHUNK_SIZE, 0); //gettinh file name
+    file_getter.Recv(buffer, CHUNK_SIZE); //gettinh file name
     std::string dir(DOWNLOAD_DIR + std::string("\\") + std::string(buffer));
 
     HANDLE file = CreateFile(dir.c_str(),
@@ -65,10 +50,9 @@ bool FileGetSocket::GetFile()
                              NULL);
     BOOL err_check;
     DWORD bytes_written;
-    int die = 0;
     while (true) //file getting
     {
-        int recved_bytes = recv(file_getter, buffer, CHUNK_SIZE, 0);
+        int recved_bytes = file_getter.Recv(buffer, CHUNK_SIZE);
         err_check = WriteFile(file,
                                    buffer,
                                    recved_bytes,
@@ -80,18 +64,20 @@ bool FileGetSocket::GetFile()
             break;
         }
     }
+
+    file_getter.Close();
     CloseHandle(file);
     return err_check;
 }
 
 void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 {
-    SOCKET list_getter = accept(socket_, 0, 0);
+    TCPSocket list_getter = Accept();
 
     char buffer[FILE_LIST_MESSAGE_SIZE] = {};
     while(true)
     {
-        int bytes_recved = recv(list_getter, buffer, BUFFER_SIZE, 0);
+        int bytes_recved = list_getter.Recv(buffer, BUFFER_SIZE);
 
         if(!bytes_recved)
             break;
@@ -103,5 +89,5 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
         delete msg.msg_;
     }
 
-    closesocket(list_getter);
+    list_getter.Close();
 }

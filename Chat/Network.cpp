@@ -261,12 +261,12 @@ void Network::GetOnlineUsers(std::vector<std::string> &out_users)
     ip_name_list_.GetNameList(out_users);
 }
 
-std::string Network::GetIP()
+const std::string Network::GetIP()const
 {
     return my_ip_;
 }
 
-FileManager * Network::GetFM()
+const FileManager* Network::GetFM()const
 {
     return FM_;
 }

@@ -17,7 +17,7 @@ public:
     void Remove(const std::string &ip);
     std::string GetName(const std::string &ip)const;
     std::string GetIp(const std::string &name)const;
-    void GetNameList(std::vector<std::string> &out_result);
+    void GetNameList(std::vector<std::string> &out_result)const;
 
 private:
 

@@ -2,6 +2,8 @@
 
 AbstractSocket::AbstractSocket() : socket_(INVALID_SOCKET) {}
 
+AbstractSocket::AbstractSocket(const SOCKET &sock) : socket_(sock) {}
+
 AbstractSocket::~AbstractSocket() {}
 
 bool AbstractSocket::Initialize(const SocketConnectionType &type)

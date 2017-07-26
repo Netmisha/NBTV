@@ -1,12 +1,12 @@
 #ifndef FILE_LIST_SEND_SOCKET_H
 #define FILE_LIST_SEND_SOCKET_H
 
-#include "AbstractSocket.h"
+#include "TCPSocket.h"
 #include "File.h"
 
 #include <vector>
 
-class FileListSendSocket : public AbstractSocket
+class FileListSendSocket : public TCPSocket
 {
 public:
     FileListSendSocket();

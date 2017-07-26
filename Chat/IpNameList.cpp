@@ -31,7 +31,7 @@ std::string IpNameList::GetIp(const std::string &name)const
     return std::string("");
 }
 
-void IpNameList::GetNameList(std::vector<std::string> &out_result)
+void IpNameList::GetNameList(std::vector<std::string> &out_result)const
 {
     for(std::pair<std::string, std::string> pair_ : ip_name_map_)
     {
