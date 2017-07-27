@@ -30,7 +30,7 @@ void FileManager::RemoveFile(int file_index)
         shared_files_.erase(shared_files_.begin() + file_index);
 }
 
-std::string FileManager::GetFilePath(int file_index)const
+const std::string FileManager::GetFilePath(int file_index)const
 {
     if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetPath();
@@ -38,7 +38,7 @@ std::string FileManager::GetFilePath(int file_index)const
     return std::string("");
 }
 
-std::string FileManager::GetFileName(int file_index)const
+const std::string FileManager::GetFileName(int file_index)const
 {
     if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetName();

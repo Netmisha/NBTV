@@ -35,7 +35,7 @@ bool BroadcastSocket::Initialize()
     return true;
 }
 
-int BroadcastSocket::Send(const void* buffer, int size)
+int BroadcastSocket::Send(const void* buffer, int size)const
 {
     return sendto(socket_,
                   (const char*)buffer,
@@ -50,7 +50,7 @@ void BroadcastSocket::SetBroadcastPort(int port)
     broadcast_addr_.sin_port = htons(port);
 }
 
-int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)
+int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)const
 {
     //copy broadcast addr
     sockaddr_in send_to_addr = broadcast_addr_;

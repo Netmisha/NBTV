@@ -75,7 +75,7 @@ bool Network::PrepareNetwork()
     return true;
 }
 
-int Network::SendMsg(const UserMsg& user_msg)
+int Network::SendMsg(const UserMsg& user_msg)const
 {
     void *packet = NULL;
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
@@ -170,7 +170,7 @@ int Network::RequestSomeoneList(const std::string& name)
     return send_size;
 }
 
-void Network::SendList(const std::string& ip)
+void Network::SendList(const std::string& ip)const
 {
     std::vector<File> files;
     FM_->GetFiles(files);
@@ -200,7 +200,7 @@ void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
     }
 }
 
-int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)
+int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)const
 {
     std::string ip = ip_name_list_.GetIp(user_name);
     if(ip.empty())
@@ -254,7 +254,7 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
 
 }
 
-void Network::GetOnlineUsers(std::vector<std::string> &out_users)
+void Network::GetOnlineUsers(std::vector<std::string> &out_users)const
 {
     ip_name_list_.GetNameList(out_users);
 }

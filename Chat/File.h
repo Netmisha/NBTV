@@ -13,7 +13,7 @@ public:
     //true if path is value
     //false otherwise
     bool SetFile(const std::string &path);
-    bool IsValid();
+    bool IsValid()const;
 
     const std::string GetName()const;
     const std::string GetPath()const;

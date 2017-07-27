@@ -42,19 +42,19 @@ bool File::SetFile(const std::string &path)
                              OPEN_EXISTING,             //only existing
                              FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
                              NULL);
-    //bytes divided by kilobyte size
     if(file == INVALID_HANDLE_VALUE)
     {
         return false;
     }
 
+    //bytes divided by kilobyte size
     size_KB_ = GetFileSize(file, NULL) / (double)WINDOWS_KILOBYTE;
 
     CloseHandle(file);
     return true;
 }
 
-bool File::IsValid()
+bool File::IsValid()const
 {
     return (bool)PathFileExistsA(path_.c_str());
 }

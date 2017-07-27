@@ -26,8 +26,8 @@ public:
     ~Network();
 
     //chat uses this function to broadcast messages
-    int SendMsg(const UserMsg& user_msg);
-    int SendMsgTo(const std::string &user_name, const UserMsg &user_msg);
+    int SendMsg(const UserMsg& user_msg)const;
+    int SendMsgTo(const std::string &user_name, const UserMsg &user_msg)const;
 
     //function to prepare network for working
     bool PrepareNetwork();
@@ -50,9 +50,9 @@ public:
     static unsigned SendFileStartup(void *send_file_info);
 
     int RequestSomeoneList(const std::string& name);
-    void SendList(const std::string& ip);
+    void SendList(const std::string& ip)const;
 
-    void GetOnlineUsers(std::vector<std::string> &users);
+    void GetOnlineUsers(std::vector<std::string> &users)const;
     const std::string GetIP()const ;
     const FileManager* GetFM()const;
 

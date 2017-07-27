@@ -20,9 +20,9 @@ public:
 
 
     //get specific file path
-    std::string GetFilePath(int file_index)const;
+    const std::string GetFilePath(int file_index)const;
     //get specific file name
-    std::string GetFileName(int file_index)const;
+    const std::string GetFileName(int file_index)const;
     //get size in kilobytes
     const double GetFileSizeKB(int file_index)const;
     //get size in megabytes
