@@ -17,9 +17,9 @@ public:
     bool Initialize();
 
     //broadcasts message to the network
-    int Send(const void *buffer, int size);
+    int Send(const void *buffer, int size)const;
 
-    int SendTo(const void *buffer, int size, const char* ip);
+    int SendTo(const void *buffer, int size, const char* ip)const;
 
     void SetBroadcastPort(int port);
 

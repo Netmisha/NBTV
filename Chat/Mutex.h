@@ -12,9 +12,12 @@ public:
     void Lock()const;
     void Unlock()const;
     //tries to lock the thread
-    //returns true if success
-    //false otherwise, don't block thread execution
-    bool TryLock()const;
+    //returns 1 if success
+    //0 otherwise, don't block thread execution
+    //-1 if mutex is not valid
+    int TryLock()const;
+
+    bool IsValid()const;
 
 private:
     HANDLE mutex_handle_;

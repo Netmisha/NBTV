@@ -3,9 +3,9 @@
 
 #include <WinSock2.h>
 #include <Windows.h>
-
+#include "Defines.h"
 #pragma comment(lib, "Ws2_32.lib")
-#define FILE_PORT 12000
+
 enum SocketConnectionType
 {
     TCP = 0,
@@ -16,6 +16,7 @@ class AbstractSocket
 {
 public:
     AbstractSocket();
+    AbstractSocket(const SOCKET &sock);
     virtual ~AbstractSocket() = 0;  //to make it abstract
 
     //initializes socket as

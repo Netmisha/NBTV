@@ -1,5 +1,14 @@
 #include "File.h"
 
+#include <sstream>
+
+#include "Defines.h"
+
+#include <Shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+
+#include <Windows.h>
+
 File::File() {}
 
 File::File(const std::string &path)
@@ -18,30 +27,54 @@ bool File::SetFile(const std::string &path)
     }
 
     std::stringstream str_stream;
-    std::string temp_name;
 
     str_stream << path_;
     while(!str_stream.eof())
     {
         //shortening path to file name
-        std::getline(str_stream, temp_name, '\\');
+        std::getline(str_stream, name_, '\\');
     }
-    name_ = temp_name;
+    
+    HANDLE file = CreateFile(path_.c_str(),             //path
+                             GENERIC_READ,              //to read
+                             0,                         //non-share
+                             NULL,                      //security
+                             OPEN_EXISTING,             //only existing
+                             FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
+                             NULL);
+    if(file == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
 
+    //bytes divided by kilobyte size
+    size_KB_ = GetFileSize(file, NULL) / (double)WINDOWS_KILOBYTE;
+
+    CloseHandle(file);
     return true;
 }
 
-bool File::IsValid()
+bool File::IsValid()const
 {
-    return (std::ifstream(path_).good());
+    return (bool)PathFileExistsA(path_.c_str());
 }
 
-std::string File::GetName()const
+const std::string File::GetName()const
 {
     return name_;
 }
 
-std::string File::GetPath()const
+const std::string File::GetPath()const
 {
     return path_;
+}
+
+const double File::GetSizeKB()const
+{
+    return size_KB_;
+}
+
+const double File::GetSizeMB()const
+{
+    return size_KB_ / WINDOWS_KILOBYTE;
 }

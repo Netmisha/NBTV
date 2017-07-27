@@ -2,7 +2,12 @@
 
 AbstractSocket::AbstractSocket() : socket_(INVALID_SOCKET) {}
 
-AbstractSocket::~AbstractSocket() {}
+AbstractSocket::AbstractSocket(const SOCKET &sock) : socket_(sock) {}
+
+AbstractSocket::~AbstractSocket() 
+{
+    Close();
+}
 
 bool AbstractSocket::Initialize(const SocketConnectionType &type)
 {
@@ -22,6 +27,11 @@ bool AbstractSocket::Initialize(const SocketConnectionType &type)
 
 bool AbstractSocket::Close()
 {
+    if(socket_ == INVALID_SOCKET)
+    {
+        return false;
+    }
+
     int error_check = shutdown(socket_, SD_BOTH);
     if(error_check == SOCKET_ERROR)
         return false;

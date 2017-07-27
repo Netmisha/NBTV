@@ -17,6 +17,7 @@ bool BroadcastSocket::Initialize()
 {
     if(!AbstractSocket::Initialize(UDP))
     {
+        Close();
         return false;
     }
 
@@ -27,13 +28,14 @@ bool BroadcastSocket::Initialize()
                   &broadcast_enabled,
                   sizeof(broadcast_enabled)) != 0)
     {
+        Close();
         return false;
     }
 
     return true;
 }
 
-int BroadcastSocket::Send(const void* buffer, int size)
+int BroadcastSocket::Send(const void* buffer, int size)const
 {
     return sendto(socket_,
                   (const char*)buffer,
@@ -48,10 +50,13 @@ void BroadcastSocket::SetBroadcastPort(int port)
     broadcast_addr_.sin_port = htons(port);
 }
 
-int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)
+int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)const
 {
+    //copy broadcast addr
     sockaddr_in send_to_addr = broadcast_addr_;
+    //change ip to recieved one
     inet_pton(send_to_addr.sin_family, ip, &(send_to_addr.sin_addr));
+
     return sendto(socket_,
                   (const char*)buffer,
                   size,

@@ -19,21 +19,37 @@ Chat::~Chat(){}
 void Chat::IOnlineMsg()
 {
 	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
-	UserMsg msg = { msg_color_, user_name_, user_name_ + " is online!" };
+	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " is online!" };
 	SendMsg(msg);
+}
+
+void Chat::IChangedName(std::string& old_name)
+{
+    connected_network_->SendLogMsg(user_name_, LOG_UPDATE);
+    UserMsg msg = { PUBLIC, msg_color_, user_name_, old_name + " changed name to " + user_name_ + " !"};
+    SendMsg(msg);
 }
 
 void Chat::IOfflineMsg()
 {
-	UserMsg msg = { msg_color_, user_name_, user_name_ + " left the chat!" };
+	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " left the chat!" };
 	SendMsg(msg);
 	cout << "\n Please wait... ";
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
+void Chat::PrepareSendMsg(const std::string& str_msg)
+{
+    if (!str_msg.empty())
+    {
+        UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
+        SendMsg(msg);
+    }
+}
+
+
 void Chat::SendMsg(const UserMsg& msg)
 {
-
 	connected_network_->SendMsg(msg);
 	buffer_.clear();
 	AddMsg(msg);
@@ -48,6 +64,11 @@ int Chat::SendMsgTo(const std::string& name, UserMsg& msg)
 	return result;
 }
 
+std::vector<UserMsg>& Chat::GetCurrentChat()
+{
+    return messages_;
+}
+
 void Chat::SetNetwork(Network * net)
 {
 	connected_network_ = net;
@@ -56,6 +77,11 @@ void Chat::SetNetwork(Network * net)
 void Chat::SetFM(FileManager * fm)
 {
     FM_ = fm;
+}
+
+void Chat::SetName(const std::string& name)
+{
+    user_name_ = name;
 }
 
 void Chat::SetUserInfo(char color, const std::string& name)
@@ -94,13 +120,14 @@ void Chat::PutMsg(const UserMsg& msg) const
 	
 }
 
-void Chat::PrintSomeoneList(std::vector<std::string>& list) const
+
+void Chat::PrintMyList(std::vector<File>& list) const
 {
     chat_mutex_.Lock();
     cout << endl;
     for (size_t i = 0; i < list.size(); i++)
     {
-        cout << i + 1 << " " + list[i] << endl;
+        cout << i + 1 << " \t" + list[i].GetName() << " \t\t " << list[i].GetSizeMB() << "MB" << endl;
     }
     std::cerr << "Please enter message: " << buffer_;
 
@@ -123,11 +150,15 @@ void Chat::InputStream()
 	{
 		ReadFromKeyboard();
 		
-		if (!CheckForCommands())
-		{
-			UserMsg msg = { msg_color_, user_name_, buffer_ };
-			SendMsg(msg);
-		}
+        if (!CheckForCommands())
+        {
+            if (!buffer_.empty())
+            {
+                UserMsg msg = { PUBLIC, msg_color_, user_name_, buffer_ };
+                SendMsg(msg);
+
+            }
+        }
 	}
 }
 
@@ -171,7 +202,9 @@ bool Chat::CheckForCommands() //chat commands
         else if (!strncmp(buffer_.c_str(), "setname ", 8))
         {
             PopBuffer(8);
-            SetUserInfo(msg_color_, buffer_);
+            std::string old_name = user_name_;
+            user_name_ = buffer_;
+            IChangedName(old_name);
             buffer_.clear();
             ResetChat();
         }
@@ -185,15 +218,23 @@ bool Chat::CheckForCommands() //chat commands
             ResetChat();
             if (name.empty())
             {
-                std::vector<std::string> list;
-                FM_->GetFileNames(list);
-                PrintSomeoneList(list); //I print my list
+                std::vector<File> list;
+                FM_->GetFiles(list);
+                PrintMyList(list); //I print my list
             }
             else
             {
                 connected_network_->RequestSomeoneList(name); //asking for someone`s list
 
+                std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
+                connected_network_->GetRecvSocket().GetList(*list);
+                for (auto i : *list)
+                {
+                    cout << "\n" << i.name_ << " \t" << i.size_KB_;
+                }
+
             }
+            return true;
         }
         else if (!strncmp(buffer_.c_str(), "getf ", 5))
         {
@@ -219,7 +260,7 @@ bool Chat::CheckForCommands() //chat commands
                 cout << i << '\n';
             std::cerr << "Please enter message: " << buffer_;
            
-
+            return true;
         }
         else if (!strncmp(buffer_.c_str(), "addf ", 5))
         {
@@ -246,8 +287,19 @@ bool Chat::CheckForCommands() //chat commands
         {
             input_is_working_ = false;
         }
-
-
+        else if (!strncmp(buffer_.c_str(), "removef ", 8))
+        {
+            PopBuffer(8);
+            std::stringstream stream(buffer_);
+            int index;
+            stream >> index;
+            FM_->RemoveFile(index-1);
+            buffer_.clear();
+            ResetChat();
+          
+        }
+        buffer_.clear();
+        ResetChat();
         return true;
     }
 
@@ -259,10 +311,10 @@ void Chat::Activate()
 	input_thread_.BeginThread(ActivateChat, this);
 }
 
-void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes directly to the chosen user
+void Chat::ActivatePrivateChat(std::string& name) //all msgs user write goes directly to the chosen user
 {
 	buffer_.clear();
-	AddMsg(UserMsg{ 7, "PRIVATE CHAT WITH", name });
+	AddMsg(UserMsg{ PUBLIC, 7, "PRIVATE CHAT WITH", name });
 
 	while (true)
 	{
@@ -273,10 +325,10 @@ void Chat::ActivatePrivateChat(std::string name) //all msgs user write goes dire
 			buffer_.clear();
 			break;
 		}
-		UserMsg msg = { msg_color_, user_name_, buffer_ };
+		UserMsg msg = { PRIVATE, msg_color_, user_name_, buffer_ };
 		if (SendMsgTo(name, msg) == -1)
 		{
-			AddMsg(UserMsg{ 7, "THERE NO USER WITH THIS NAME ", name });
+			AddMsg(UserMsg{ PUBLIC, 7, "THERE NO USER WITH THIS NAME ", name });
 			break;
 		}
 	}

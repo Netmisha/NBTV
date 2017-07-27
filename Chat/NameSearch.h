@@ -12,7 +12,7 @@ public:
     ~NameSearch();
 
     void SetNameToSearch(const std::string *name_to_search);
-    bool operator()(std::pair<std::string, std::string> ip_name_pair)const;
+    bool operator()(const std::pair<std::string, std::string> &ip_name_pair)const;
 
 private:
     const std::string *name_to_search_;

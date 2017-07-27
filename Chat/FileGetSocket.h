@@ -1,12 +1,14 @@
 #pragma once
-#include "AbstractSocket.h"
+#include "TCPSocket.h"
 #include <iostream>
 #include <string>
+#include <vector>
+
+#include "RecvFileInfo.h"
 
 class FileGetSocket :
-    public AbstractSocket
+    public TCPSocket
 {
-    bool first_time;
 
 public:
     FileGetSocket();
@@ -14,6 +16,8 @@ public:
 
     bool Initialize();
 
+    static unsigned GetFileStartup(void *this_ptr);
+    void GetList(std::vector<RecvFileInfo> &out_result)const;
     bool GetFile();
 };
 

@@ -11,8 +11,13 @@ Thread::~Thread(){}
 
 bool Thread::BeginThread(thread_function function, void *params)
 {
-    thread_handle_ = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, params, 0, NULL);
-    return thread_handle_ != INVALID_HANDLE_VALUE;
+    thread_handle_ = CreateThread(NULL,                             //security
+                                  0,                                //default stack size
+                                  (LPTHREAD_START_ROUTINE)function, //function
+                                  params,                           //params
+                                  0,                                //flags
+                                  NULL);                            //out - thread id
+    return (thread_handle_ != NULL);
 }
 
 void Thread::Join()const
