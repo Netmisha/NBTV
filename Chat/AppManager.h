@@ -4,7 +4,8 @@
 #include "Chat.h"
 #include "FileManager.h"
 #include <vector>
-class __declspec(dllexport)  AppManager
+
+class DLL_EXP AppManager
 {
 	Chat chat_;
 	Network network_;
@@ -33,6 +34,8 @@ public:
 
     void SendMsg(const std::string& msg); //after user wrote message in chat
     void AddMsg(const UserMsg& ms); //will be used by recv loop
+
+    RecvStruct RecieveMessage()const;
 
     void* ActivateCommand(std::string& msg); //called by buttons with different commands
                                              //ChangeName, On/Off private mode, filelists, get someone`s file,

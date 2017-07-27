@@ -1,6 +1,6 @@
 #pragma once
 
-#define DLL_EXP __declspec(dllexport)
+#define DLL_IMP __declspec(dllimport)
 
 //size of ip in chars
 #define IP_SIZE 16
@@ -20,7 +20,6 @@ enum LogType
     LOG_ONLINE = (unsigned char)1,
     LOG_UPDATE = (unsigned char)2
 };
-
 
 enum MessageType
 {
@@ -50,25 +49,6 @@ struct UserMsg
     std::string msg_;
 };
 
-class AbstractSocket
-{
-public:
-    AbstractSocket();
-    AbstractSocket(const SOCKET &sock);
-    virtual ~AbstractSocket() = 0;  //to make it abstract
-
-    //initializes socket as
-    //SOCK_STREAM/tcp or DGRAM/udp
-    //depending on 'type'
-    bool Initialize(const SocketConnectionType &type);
-
-    //closes socket
-    bool Close();
-
-protected:
-    SOCKET socket_;
-};
-
 struct RecvStruct
 {
     //string with ip
@@ -77,25 +57,9 @@ struct RecvStruct
     char *packet_ = NULL;
 
     RecvStruct() { ip_.resize(IP_SIZE); }
-    ~RecvStruct() { delete[] packet_; }
-};
+    ~RecvStruct() {}
 
-class RecvSocket : public AbstractSocket
-{
-public:
-    RecvSocket();
-    ~RecvSocket();
-
-    //initializes socket to specific port
-    //if no specific port stated - to standart
-    //one, in Defines.h
-    bool Initialize(int port = -1);
-    //recvs message, returns size of it
-    //sets parameter as pointer to it
-    int Recv(RecvStruct* out_result);
-
-private:
-    char *buffer_;
+    inline void Clear() { delete[] packet_; }
 };
 
 
@@ -107,44 +71,43 @@ struct LogMessage
 
 namespace Parcer
 {
-    UnpackedMessage DLL_EXP UnpackMessage(const void *packet);
+    UnpackedMessage DLL_IMP UnpackMessage(const void *packet);
 };
 
-class AppManager
+class DLL_IMP AppManager
 {
 public:
-    void DLL_EXP Work();
-    DLL_EXP AppManager();
-    DLL_EXP ~AppManager();
-
-
+    void Work();
+    AppManager();
+    ~AppManager();
 
     //function to use from UI (.DLL)
 
-    std::vector<UserMsg> DLL_EXP GetCurrentChat();
+    std::vector<UserMsg> GetCurrentChat();
 
     // void GetMsgLoop(); //message getting
 
-    void DLL_EXP SendFile(const std::string &path, const std::string &ip, const std::string &name);
+    void SendFile(const std::string &path, const std::string &ip, const std::string &name);
 
-    const std::string DLL_EXP GetFilePath(int file_index)const;
+    const std::string GetFilePath(int file_index)const;
     const std::string GetFileName(int file_index)const;
 
-    void DLL_EXP ProcessLogMessage(const LogMessage &msg, const std::string &ip);
-    void DLL_EXP SendList(const std::string& ip);
+    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
+    void SendList(const std::string& ip);
 
-    void DLL_EXP SendMsg(const std::string& msg); //after user wrote message in chat
-    void DLL_EXP AddMsg(const UserMsg& ms); //will be used by recv loop
+    void SendMsg(const std::string& msg); //after user wrote message in chat
+    void AddMsg(const UserMsg& ms); //will be used by recv loop
 
-    void DLL_EXP *ActivateCommand(std::string& msg); //called by buttons with different commands
+    RecvStruct RecieveMessage()const;
+
+    void *ActivateCommand(std::string& msg); //called by buttons with different commands
     //ChangeName, On/Off private mode, filelists, get someone`s file,
     //add/remove file, online users list, setcolor, exit
-    const DLL_EXP std::string GetIP()const;
-    void DLL_EXP PopBuffer(int num, std::string& buffer); //easy pop front
+    const std::string GetIP()const;
+    void PopBuffer(int num, std::string& buffer); //easy pop front
 
-    void DLL_EXP ActivatePrivateChat();
-    void DLL_EXP ExitPrivateChat();
+    void ActivatePrivateChat();
+    void ExitPrivateChat();
 
-    void DLL_EXP EXIT();
+    void EXIT();
 };
-

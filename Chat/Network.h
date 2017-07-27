@@ -64,6 +64,8 @@ public:
     FileGetSocket& GetRecvSocket();
 
     void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
+
+    RecvStruct RecieveMessage()const;
 private:
     Chat *chat_;
 	FileManager *FM_;

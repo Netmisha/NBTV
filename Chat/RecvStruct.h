@@ -14,7 +14,9 @@ struct RecvStruct
     char *packet_ = NULL;
 
     RecvStruct() { ip_.resize(IP_SIZE); }
-    ~RecvStruct() { delete[] packet_; }
+    ~RecvStruct() {}
+
+    inline void Clear() { delete[] packet_; }
 };
 
 #endif // !RECVSTRUCT_H

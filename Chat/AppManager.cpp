@@ -190,3 +190,8 @@ void AppManager::PopBuffer(int num, std::string& buffer) //easy pop front
         buffer.erase(buffer.begin());
     }
 }
+
+RecvStruct AppManager::RecieveMessage()const
+{
+    return network_.RecieveMessage();
+}

@@ -16,6 +16,8 @@ struct UnpackedMessage
 {
     int type_ = INVALID_TYPE;
     void *msg_ = 0;
+
+    inline void Clear() { delete msg_; }
 };
 
 #endif // !UNPACKED_MESSAGE_H

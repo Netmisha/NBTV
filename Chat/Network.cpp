@@ -58,6 +58,8 @@ bool Network::PrepareNetwork()
             return false;
 
         UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_struct.packet_);
+        recv_struct.Clear();
+
         if((unp_msg.type_ == PREPARE_MESSAGE) &&
            (*(int*)unp_msg.msg_ == rand_value))
         {
@@ -66,7 +68,7 @@ bool Network::PrepareNetwork()
             break;
         }
 
-        delete[] unp_msg.msg_;
+        unp_msg.Clear();
     }
     //-----------------------
 
@@ -102,10 +104,9 @@ void Network::LoopRecv()
     is_working_ = true;
     while(is_working_)
     {
-        RecvStruct packet;
-        recv_socket_.Recv(&packet);
-        
+        RecvStruct packet = RecieveMessage();
         ProcessMessage(packet);
+        packet.Clear();
     }
 
     //wait for threads num to become 0
@@ -248,7 +249,7 @@ void Network::ProcessMessage(const RecvStruct &recv_str)
 
         }
 
-        delete unp_msg.msg_;
+        unp_msg.Clear();
     }
 
 }
@@ -325,4 +326,11 @@ volatile int& Network::GetSharingThreadsNum()
 FileGetSocket& Network::GetRecvSocket()
 {
     return file_get_socket_;
+}
+
+RecvStruct Network::RecieveMessage()const
+{
+    RecvStruct packet;
+    recv_socket_.Recv(&packet);
+    return packet;
 }

@@ -45,7 +45,7 @@ bool RecvSocket::Initialize(int port)
     return true;
 }
 
-int RecvSocket::Recv(RecvStruct* out_result)
+int RecvSocket::Recv(RecvStruct* out_result)const
 {
     memset(buffer_, 0, RECV_BUFFER_SIZE);
     sockaddr_in recv_info;

@@ -40,12 +40,11 @@ void RecvLoop(AppManager& am)
     static bool is_working_ = true;
     while (is_working_)
     {
-        RecvStruct packet;
-        RecvSocket recv_socket;
-        recv_socket.Recv(&packet);
-        
+        RecvStruct packet = am.RecieveMessage();
         //TODO
         ProcessMessage(packet, am);
+
+        packet.Clear();
       //Send new info to AppManager
     // And AFTER THAT refresh UI (will use GetCurrentChat() func)
     }
