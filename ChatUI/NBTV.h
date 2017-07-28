@@ -36,6 +36,8 @@ struct UnpackedMessage
 {
     int type_ = INVALID_TYPE;
     void *msg_ = 0;
+
+    inline void Clear() { delete msg_; }
 };
 
 struct UserMsg
@@ -77,7 +79,6 @@ namespace Parcer
 class DLL_IMP AppManager
 {
 public:
-    void Work();
     AppManager();
     ~AppManager();
 
@@ -93,14 +94,14 @@ public:
     const std::string GetFileName(int file_index)const;
 
     void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
-    void SendList(const std::string& ip); 
+    void SendList(const std::string& ip);
 
     void SendMsg(const std::string& msg); //after user wrote message in chat
     void AddMsg(const UserMsg& ms); //will be used by recv loop
 
-    RecvStruct RecieveMessage()const;
+    UnpackedMessage RecieveMessage();
 
-    void *ActivateCommand(std::string& msg); //called by buttons with different commands
+    void* ActivateCommand(std::string& msg); //called by buttons with different commands
     //ChangeName, On/Off private mode, filelists, get someone`s file,
     //add/remove file, online users list, setcolor, exit
     const std::string GetIP()const;

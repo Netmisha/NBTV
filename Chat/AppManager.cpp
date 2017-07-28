@@ -3,25 +3,6 @@
 #include <iostream>
 #include <sstream>
 
-void AppManager::Work()
-{
-    network_.PrepareNetwork();
-    Thread network__loop(Network::StartNetwork, &network_);
-
-    chat_.SetUserInfo(6, "Anton");
-    chat_.Activate();
-	
-    chat_.GetInputThread().Join();
-
-    network_.StopNetwork();
-    chat_.IOfflineMsg();
-    network__loop.Join();
-
-
-	std::cout << "ok";
-	//at the end
-}
-
 AppManager::~AppManager(){}
 
 std::vector<UserMsg> AppManager::GetCurrentChat()
@@ -66,7 +47,7 @@ void AppManager::SendList(const std::string & ip)
 
 void AppManager::SendMsg(const std::string& msg)
 {
-    network_.SendMsg({ PUBLIC, 5, "huehue", std::string(msg) });
+    network_.SendMsg({ PUBLIC, 5, "huehue", msg });
 }
 
 void AppManager::AddMsg(const UserMsg& ms)
@@ -192,7 +173,7 @@ void AppManager::PopBuffer(int num, std::string& buffer) //easy pop front
     }
 }
 
-RecvStruct AppManager::RecieveMessage()const
+UnpackedMessage AppManager::RecieveMessage()
 {
     return network_.RecieveMessage();
 }

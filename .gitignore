@@ -45,3 +45,8 @@ Chat/Debug
 Chat/Release
 Chat/Download
 Chat/Data
+Chat/ipch
+ChatUI/Debug
+ChatUI/Release
+ChatUI/Download
+ChatUI/Data

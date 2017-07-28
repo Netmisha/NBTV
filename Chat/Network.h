@@ -31,11 +31,6 @@ public:
 
     //function to prepare network for working
     bool PrepareNetwork();
-    //thread func for starting network
-    static unsigned StartNetwork(void *network_ptr);
-    //function that loops recv and processes messages
-    //to stop - call StopNetwork
-    void LoopRecv();
     //stops network
     void StopNetwork();
 
@@ -65,7 +60,7 @@ public:
 
     void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
 
-    RecvStruct RecieveMessage()const;
+    UnpackedMessage RecieveMessage();
 private:
     Chat *chat_;
 	FileManager *FM_;
@@ -95,7 +90,7 @@ private:
     //cleanup function, closes sockets
     void Cleanup();
 
-    void ProcessMessage(const RecvStruct &recv_str);
+    bool ProcessMessage(const RecvStruct &recv_str, UnpackedMessage out_unp_msg);
 
 };
 

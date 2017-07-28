@@ -51,9 +51,9 @@ void  CChatUIDlg::RecvLoop(AppManager& am)
     static bool is_working_ = true;
     while (is_working_)
     {
-        RecvStruct packet = am.RecieveMessage();
+        UnpackedMessage packet = am.RecieveMessage();
         //TODO
-        ProcessMessage(packet, am);
+        //ProcessMessage(packet, am);
 
         packet.Clear();
         //Send new info to AppManager

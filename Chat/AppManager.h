@@ -12,7 +12,6 @@ class DLL_EXP AppManager
     FileManager fm_;
 
 public:
-	void Work();
 	AppManager();
     ~AppManager();
 
@@ -33,7 +32,7 @@ public:
     void SendMsg(const std::string& msg); //after user wrote message in chat
     void AddMsg(const UserMsg& ms); //will be used by recv loop
 
-    RecvStruct RecieveMessage()const;
+    UnpackedMessage RecieveMessage();
 
     void* ActivateCommand(std::string& msg); //called by buttons with different commands
                                              //ChangeName, On/Off private mode, filelists, get someone`s file,

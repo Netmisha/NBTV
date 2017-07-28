@@ -72,7 +72,7 @@ bool Network::PrepareNetwork()
         unp_msg.Clear();
     }
     //-----------------------
-
+    is_working_ = true;
     return true;
 }
 
@@ -92,30 +92,6 @@ int Network::SendMsg(const UserMsg& user_msg)const
 void Network::Cleanup()
 {
     WSACleanup();
-}
-
-unsigned Network::StartNetwork(void *network_ptr)
-{
-    ((Network*)network_ptr)->LoopRecv();
-    return 0;
-}
-
-void Network::LoopRecv()
-{
-    is_working_ = true;
-    while(is_working_)
-    {
-        RecvStruct packet = RecieveMessage();
-        ProcessMessage(packet);
-        packet.Clear();
-    }
-
-    //wait for threads num to become 0
-    while(file_sharing_thread_num_)
-    {
-        //give process time to another thread
-        Sleep(1);
-    }
 }
 
 void Network::StopNetwork()
@@ -223,38 +199,42 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)con
     return packet_size;
 }
 
-void Network::ProcessMessage(const RecvStruct &recv_str)
+bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage out_unp_msg)
 {
+    bool is_fully_processed = true;
+
     if((recv_str.ip_ != my_ip_) || BROADCAST_LOOPBACK)
     {
         //allocation in heap
-        UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_str.packet_);
+        out_unp_msg = Parcer::UnpackMessage(recv_str.packet_);
 
-        switch(unp_msg.type_)
+        switch(out_unp_msg.type_)
         {
-        case CHAT_MESSAGE:
-            chat_->AddMsg(*(UserMsg*)unp_msg.msg_);
-            break;
 
         case LOG_MESSAGE:
-            ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
+            ProcessLogMessage(*(LogMessage*)out_unp_msg.msg_, recv_str.ip_);
+            is_fully_processed = false;
             break;
 
         case GET_FILE_MESSAGE:
-            SendFile(FM_->GetFilePath(*((int*)unp_msg.msg_)),
+            SendFile(FM_->GetFilePath(*((int*)out_unp_msg.msg_)),
                      recv_str.ip_,
-                     FM_->GetFileName(*((int*)unp_msg.msg_)));
+                     FM_->GetFileName(*((int*)out_unp_msg.msg_)));
             break;
 
         case FILE_LIST_REQUEST:
             SendList(recv_str.ip_);
             break;
 
+        default:
+            is_fully_processed = false;
+            break;
         }
 
-        unp_msg.Clear();
+        out_unp_msg.Clear();
     }
 
+    return is_fully_processed;
 }
 
 void Network::GetOnlineUsers(std::vector<std::string> &out_users)const
@@ -331,9 +311,23 @@ FileGetSocket& Network::GetRecvSocket()
     return file_get_socket_;
 }
 
-RecvStruct Network::RecieveMessage()const
+UnpackedMessage Network::RecieveMessage()
 {
     RecvStruct packet;
-    recv_socket_.Recv(&packet);
-    return packet;
+    UnpackedMessage unp_msg;
+
+    while(is_working_)
+    {
+        unp_msg.type_ = INVALID_TYPE;
+        recv_socket_.Recv(&packet);
+        bool is_fully_processed = ProcessMessage(packet, unp_msg);
+        packet.Clear();
+        if(is_fully_processed)
+        {
+            unp_msg.Clear();
+            continue;
+        }
+        break;
+    }
+    return unp_msg;
 }
