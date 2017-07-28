@@ -13,7 +13,7 @@
 
 //max buffer size without
 //possible data tearing
-#define RECV_BUFFER_SIZE (WINDOWS_KILOBYTE * 4)
+#define RECV_BUFFER_SIZE (WINDOWS_KILOBYTE)
 #define BUFFER_SIZE 512
 #define CHUNK_SIZE 512
 

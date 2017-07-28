@@ -31,11 +31,12 @@ std::vector<UserMsg> AppManager::GetCurrentChat()
 
 AppManager::AppManager()
 {
-
     chat_.SetNetwork(&network_);
     network_.SetChat(&chat_);
     chat_.SetFM(&fm_);
     network_.SetFM(&fm_);
+    network_.PrepareNetwork();
+    chat_.SetUserInfo(6, "Anton");
 }
 
 void AppManager::SendFile(const std::string & path, const std::string & ip, const std::string & name)
@@ -65,7 +66,7 @@ void AppManager::SendList(const std::string & ip)
 
 void AppManager::SendMsg(const std::string& msg)
 {
-    chat_.PrepareSendMsg(msg);
+    network_.SendMsg({ PUBLIC, 5, "huehue", std::string(msg) });
 }
 
 void AppManager::AddMsg(const UserMsg& ms)

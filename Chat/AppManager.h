@@ -14,9 +14,7 @@ class DLL_EXP AppManager
 public:
 	void Work();
 	AppManager();
-	~AppManager();
-
-
+    ~AppManager();
 
     //function to use from UI (.DLL)
     

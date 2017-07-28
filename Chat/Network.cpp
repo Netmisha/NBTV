@@ -43,6 +43,7 @@ bool Network::PrepareNetwork()
     void *rand_value_send = NULL;
     buffer = Parcer::PackMessage(PREPARE_MESSAGE, &rand_value, rand_value_send);
     error_check = broadc_socket_.Send(rand_value_send, buffer);
+    delete[] rand_value_send;
     if(error_check == SOCKET_ERROR)
     {
         return false;
@@ -139,6 +140,7 @@ int Network::SendLogMsg(const std::string &name, const LogType &type)
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
     send_size = broadc_socket_.Send(send_buffer, send_size);
+    delete[] send_buffer;
     return send_size;
 }
 
@@ -188,6 +190,7 @@ void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
             void *answ_log_msg = NULL;
             int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
+            delete[] answ_log_msg;
         }
         //do not put break here
     case LOG_UPDATE:
