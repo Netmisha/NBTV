@@ -40,6 +40,6 @@ public:
     CListBox Chat;
 
 private:
-    void ProcessMessage(const RecvStruct &recv_str, AppManager& am);
+    void ProcessMessage(const UnpackedMessage &um, AppManager& am);
  
 };

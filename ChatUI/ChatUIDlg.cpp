@@ -12,40 +12,34 @@
 #include "NBTV.h"
 
 
-void CChatUIDlg::ProcessMessage(const RecvStruct &recv_str, AppManager& am)
+void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
 {
-    if ((recv_str.ip_ != am.GetIP()))
-    {
+  
         //allocation in heap
-        UnpackedMessage unp_msg = Parcer::UnpackMessage(recv_str.packet_);
+       
 
-        switch (unp_msg.type_)
+        switch (um.type_)
         {
         case CHAT_MESSAGE:
-            am.AddMsg(*(UserMsg*)unp_msg.msg_);
-            Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)unp_msg.msg_).msg_.c_str()));
+            am.AddMsg(*(UserMsg*)um.msg_);
+            Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).msg_.c_str()));
             break;
 
         case LOG_MESSAGE:
-            am.ProcessLogMessage(*(LogMessage*)unp_msg.msg_, recv_str.ip_);
+           // am.ProcessLogMessage(*(LogMessage*)um.msg_, recv_str.ip_);
             break;
 
-        case GET_FILE_MESSAGE:
-            am.SendFile(am.GetFilePath(*((int*)unp_msg.msg_)),
-                        recv_str.ip_,
-                        am.GetFileName(*((int*)unp_msg.msg_)));
-            break;
-
-        case FILE_LIST_REQUEST:
-            am.SendList(recv_str.ip_);
-            break;
-
-        }
-
-        delete unp_msg.msg_;
+        
     }
 
 }
+
+AppManager* GetAM()
+{
+    static AppManager am;
+    return &am;
+}
+
 void  CChatUIDlg::RecvLoop(AppManager& am)
 {
     static bool is_working_ = true;
@@ -53,7 +47,7 @@ void  CChatUIDlg::RecvLoop(AppManager& am)
     {
         UnpackedMessage packet = am.RecieveMessage();
         //TODO
-        //ProcessMessage(packet, am);
+        ProcessMessage(packet, am);
 
         packet.Clear();
         //Send new info to AppManager
@@ -61,9 +55,12 @@ void  CChatUIDlg::RecvLoop(AppManager& am)
     }
 }
 
+
+void StartRecvLoop(void* vptr)
+{
+    ((CChatUIDlg*)vptr)->RecvLoop(*GetAM());
+}
 // CChatUIDlg dialog
-
-
 
 CChatUIDlg::CChatUIDlg(CWnd* pParent /*=NULL*/)
 : CDialogEx(CChatUIDlg::IDD, pParent)
@@ -138,14 +135,14 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-AppManager* GetAM()
-{
-    static AppManager am ;
-    return &am;
-}
-
 void CChatUIDlg::OnBnClickedMainbutton()
 {
+    static bool first_time = true;
+    if (first_time)
+    {
+        _beginthread(StartRecvLoop, 0, this);
+    }
+
     CString str;
     ChatEdit.GetWindowTextW(str); 
     const WCHAR* wc = str;
