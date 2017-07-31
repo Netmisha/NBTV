@@ -6,6 +6,9 @@
 #include "RecvFileInfo.h"
 
 #include <iostream>
+#include <vector>
+#include <string>
+
 namespace Parcer
 {
     int  PackMessage(const MessageType &type, const void *in_msg, void* &out_result)
@@ -186,13 +189,12 @@ namespace Parcer
 
         unsigned char *temp_ptr = (unsigned char*)out_packet;
         *temp_ptr++ = GET_FILE_MESSAGE;
-        *temp_ptr++ = *((int*)in_msg) - 1;
-
+        *temp_ptr++ = *((int*)in_msg);
 
         return msg_size;
     }
 
-    void *  ParceGetFileMessage(const void * in_packet)
+    void* ParceGetFileMessage(const void * in_packet)
     {
         int *result = new int;
         *result = *((int*)in_packet);

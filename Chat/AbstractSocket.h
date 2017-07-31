@@ -8,7 +8,14 @@
 
 enum SocketConnectionType
 {
+    // AF_INET address family
+    // SOCK_STREAM type
+    // IPPROTO_TCP protocol
     TCP = 0,
+
+    // AF_INET address family
+    // SOCK_DGRAM sock type
+    // IPPROTO_UDP protocol
     UDP = 1
 };
 
@@ -19,12 +26,13 @@ public:
     AbstractSocket(const SOCKET &sock);
     virtual ~AbstractSocket() = 0;  //to make it abstract
 
-    //initializes socket as
-    //SOCK_STREAM/tcp or DGRAM/udp
-    //depending on 'type'
+    //initializes socket depending on passed SocketConnectionType
+    //returns false if failed to initialize socket
     bool Initialize(const SocketConnectionType &type);
 
     //closes socket
+    //returns false if failed to close socket
+    //or socket is invalid, and thus can't be closed
     bool Close();
 
 protected:
