@@ -95,6 +95,7 @@ public:
 
     void SendMsg(const std::string& msg); //after user wrote message in chat
     void AddMsg(const UserMsg& ms); //will be used by recv loop
+    const std::string& GetName();
 
     UnpackedMessage RecieveMessage();
 

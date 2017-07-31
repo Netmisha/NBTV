@@ -18,11 +18,25 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
     {
     case CHAT_MESSAGE:
         am.AddMsg(*(UserMsg*)um.msg_);
-        Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).msg_.c_str()));
+        Chat.InsertString(Chat.GetCount(), '\n'+ CString((*(UserMsg*)um.msg_).name_.c_str())  + " : " + CString((*(UserMsg*)um.msg_).msg_.c_str()));
         break;
 
     case LOG_MESSAGE:
-        // am.ProcessLogMessage(*(LogMessage*)um.msg_, recv_str.ip_);
+    
+        switch (((LogMessage*)um.msg_)->type_)
+        {
+        case LOG_OFFLINE:
+            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " left the chat ");
+            break;
+
+        case LOG_ONLINE:
+            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " left the chat ");
+            break;
+
+        case LOG_UPDATE:
+            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of ... ");
+            break;
+        }
         break;
     }
 }
@@ -75,7 +89,7 @@ END_MESSAGE_MAP()
 BOOL CChatUIDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
+    _beginthread(StartRecvLoop, 0, this);
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
@@ -124,21 +138,25 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 
 void CChatUIDlg::OnBnClickedMainbutton()
 {
-    static bool first_time = true;
+  /*  static bool first_time = true;
     if (first_time)
     {
         _beginthread(StartRecvLoop, 0, this);
         first_time = false;
-    }
+    }*/
 
     CString str;
     ChatEdit.GetWindowTextW(str); 
+    
     const WCHAR* wc = str;
     _bstr_t b(wc);
     const char* c = b;
+    
     app_man.SendMsg(c);
 
     ChatEdit.SetWindowTextW(TEXT(""));
 
-    Chat.InsertString(Chat.GetCount(), str);
+    std::string name = app_man.GetName();
+   
+    Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : " ) + str );
 }
