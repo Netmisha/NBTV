@@ -29,17 +29,12 @@ void AppManager::SendFile(const std::string & path, const std::string & ip, cons
 
 const std::string AppManager::GetFilePath(int file_index)const
 {
-    return network_.GetFM()->GetFilePath(file_index);
+    return fm_.GetFilePath(file_index);
 }
 
 const std::string AppManager::GetFileName(int file_index)const
 {
-    return network_.GetFM()->GetFileName(file_index);
-}
-
-void AppManager::ProcessLogMessage(const LogMessage & msg, const std::string & ip)
-{
-    network_.ProcessLogMessage(msg, ip);
+    return fm_.GetFileName(file_index);
 }
 
 void AppManager::SendList(const std::string & ip)
@@ -100,9 +95,9 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             }
             else
             {
-                network_.RequestSomeoneList(name); //asking for someone`s list
+                network_.RequestList(name); //asking for someone`s list
                 std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
-                network_.GetRecvSocket().GetList(*list);
+                network_.GetList(*list);
                 return list;
 
             }

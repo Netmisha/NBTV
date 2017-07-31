@@ -46,21 +46,12 @@ public:
     void SendFile(const std::string &path, const std::string &ip, const std::string &name);
     static unsigned SendFileStartup(void *send_file_info);
 
-    int RequestSomeoneList(const std::string& name);
+    int RequestList(const std::string& user_name);
     void SendList(const std::string& ip)const;
+    void GetList(std::vector<RecvFileInfo> &out_result)const;
 
     void GetOnlineUsers(std::vector<std::string> &users)const;
-    const std::string GetIP()const ;
-    const FileManager* GetFM()const;
-
-    //not used currently
-    static Mutex& GetSharingNumMutex();
-    static volatile int& GetSharingThreadsNum();
-    //----------
-
-    FileGetSocket& GetRecvSocket();
-
-    bool ProcessLogMessage(const LogMessage &msg, const std::string &ip);
+    const std::string GetIP()const;
 
     UnpackedMessage RecieveMessage();
 private:
@@ -94,6 +85,7 @@ private:
 
     bool ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_unp_msg);
 
+    bool ProcessLogMessage(const LogMessage &msg, const std::string &ip);
 };
 
 #endif // !NETWORK_H

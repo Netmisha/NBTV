@@ -138,14 +138,14 @@ void Network::GetFile(const std::string& user_name, int index)
 }
 
 
-int Network::RequestSomeoneList(const std::string& name)
+int Network::RequestList(const std::string& user_name)
 {
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
     
     send_size = broadc_socket_.SendTo(send_buffer,
                                       send_size,
-                                      ip_name_list_.GetIp(name).c_str());
+                                      ip_name_list_.GetIp(user_name).c_str());
     delete[] send_buffer;
     return send_size;
 }
@@ -256,11 +256,6 @@ const std::string Network::GetIP()const
     return my_ip_;
 }
 
-const FileManager* Network::GetFM()const
-{
-    return FM_;
-}
-
 unsigned Network::SendFileStartup(void *send_file_info)
 {
     threads_num_mutex_.Lock();
@@ -305,21 +300,6 @@ unsigned Network::GetFileStartup(void *params)
     return 0;
 }
 
-Mutex& Network::GetSharingNumMutex()
-{
-    return threads_num_mutex_;
-}
-
-volatile int& Network::GetSharingThreadsNum()
-{
-    return file_sharing_thread_num_;
-}
-
-FileGetSocket& Network::GetRecvSocket()
-{
-    return file_get_socket_;
-}
-
 UnpackedMessage Network::RecieveMessage()
 {
     RecvStruct packet;
@@ -339,4 +319,9 @@ UnpackedMessage Network::RecieveMessage()
         break;
     }
     return unp_msg;
+}
+
+void Network::GetList(std::vector<RecvFileInfo> &out_result)const
+{
+    file_get_socket_.GetList(out_result);
 }
