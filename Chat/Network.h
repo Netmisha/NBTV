@@ -37,7 +37,9 @@ public:
 	void SetChat(Chat* chat);
     void SetFM(FileManager * fm);
     
-    int SendLogMsg(const std::string &name, const LogType &type);
+    int SendLogMsg(const std::string &name,
+                   const LogType &type,
+                   const std::string &prev_name = "");
 
 	void GetFile(const std::string& user_name, int index);
     static unsigned GetFileStartup(void *socket_ptr);
@@ -58,7 +60,7 @@ public:
 
     FileGetSocket& GetRecvSocket();
 
-    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
+    bool ProcessLogMessage(const LogMessage &msg, const std::string &ip);
 
     UnpackedMessage RecieveMessage();
 private:

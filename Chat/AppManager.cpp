@@ -57,6 +57,11 @@ void AppManager::AddMsg(const UserMsg& ms)
     chat_.AddMsg(ms);
 }
 
+const std::string& AppManager::GetName()
+{
+    return chat_.GetName();
+}
+
 void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off private mode, filelists, get someone`s file,
                                                         //add/remove file, online users list, setcolor, exit
 {

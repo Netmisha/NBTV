@@ -109,9 +109,11 @@ void Network::SetFM(FileManager * fm)
     FM_ = fm;
 }
 
-int Network::SendLogMsg(const std::string &name, const LogType &type)
+int Network::SendLogMsg(const std::string &name,
+                        const LogType &type,
+                        const std::string &prev_name)
 {
-    LogMessage log_msg = { type, name };
+    LogMessage log_msg = { type, name, prev_name };
     void *send_buffer = NULL;
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
@@ -156,27 +158,36 @@ void Network::SendList(const std::string& ip)const
     FileListSendSocket().SendFileList(files, ip);
 }
 
-void Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
+bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 {
+    bool is_fully_processed = false;
     switch(msg.type_)
     {
     case LOG_ONLINE:
         {
-            LogMessage log_msg = { LOG_UPDATE, chat_->GetName() };
+            LogMessage log_msg = { LOG_RESPONCE, chat_->GetName() };
             void *answ_log_msg = NULL;
             int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
             delete[] answ_log_msg;
         }
         //do not put break here
+    
     case LOG_UPDATE:
+    case LOG_RESPONCE:
         ip_name_list_.Add(ip, msg.name_);
+        
+        if(msg.type_ == LOG_RESPONCE)
+            is_fully_processed = true;
+
         break;
 
     case LOG_OFFLINE:
         ip_name_list_.Remove(ip);
         break;
     }
+
+    return is_fully_processed;
 }
 
 int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)const
@@ -212,8 +223,8 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
         {
 
         case LOG_MESSAGE:
-            ProcessLogMessage(*(LogMessage*)out_unp_msg.msg_, recv_str.ip_);
-            is_fully_processed = false;
+            is_fully_processed = ProcessLogMessage(*(LogMessage*)out_unp_msg.msg_,
+                                                   recv_str.ip_);
             break;
 
         case GET_FILE_MESSAGE:

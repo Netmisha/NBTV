@@ -145,6 +145,14 @@ namespace Parcer
         *temp_ptr++ = (unsigned char)log_msg->name_.length();
         memcpy(temp_ptr, &log_msg->name_[0], log_msg->name_.length());
 
+        if(log_msg->type_ == LOG_UPDATE)
+        {
+            msg_size += sizeof(unsigned char)+log_msg->prev_name_.length();
+            temp_ptr += log_msg->name_.length();
+            *temp_ptr++ = (unsigned char)log_msg->prev_name_.length();
+            memcpy(temp_ptr, &log_msg->prev_name_[0], log_msg->prev_name_.length());
+        }
+
         return msg_size;
     }
 
@@ -158,6 +166,15 @@ namespace Parcer
         result->name_.resize(name_size);
 
         memcpy(&result->name_[0], temp_ptr, name_size);
+
+        if(result->type_ == LOG_UPDATE)
+        {
+            temp_ptr += name_size;
+            name_size = *temp_ptr++;
+
+            result->prev_name_.resize(name_size);
+            memcpy(&result->prev_name_[0], temp_ptr, name_size);
+        }
 
         return (void*)result;
     }
