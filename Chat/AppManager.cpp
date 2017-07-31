@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 
+DLL_EXP AppManager app_man;
+
 AppManager::~AppManager(){}
 
 std::vector<UserMsg> AppManager::GetCurrentChat()
@@ -47,7 +49,7 @@ void AppManager::SendList(const std::string & ip)
 
 void AppManager::SendMsg(const std::string& msg)
 {
-    network_.SendMsg({ PUBLIC, 5, "huehue", msg });
+    network_.SendMsg(UserMsg{ PUBLIC, 5, chat_.GetName(), msg });
 }
 
 void AppManager::AddMsg(const UserMsg& ms)

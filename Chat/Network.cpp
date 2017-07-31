@@ -199,7 +199,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)con
     return packet_size;
 }
 
-bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage out_unp_msg)
+bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_unp_msg)
 {
     bool is_fully_processed = true;
 
@@ -230,8 +230,6 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage out_unp
             is_fully_processed = false;
             break;
         }
-
-        out_unp_msg.Clear();
     }
 
     return is_fully_processed;

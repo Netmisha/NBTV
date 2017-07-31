@@ -79,9 +79,6 @@ namespace Parcer
 class DLL_IMP AppManager
 {
 public:
-    AppManager();
-    ~AppManager();
-
     //function to use from UI (.DLL)
 
     std::vector<UserMsg> GetCurrentChat();
@@ -112,3 +109,5 @@ public:
 
     void EXIT();
 };
+
+DLL_IMP AppManager app_man;

@@ -90,7 +90,7 @@ private:
     //cleanup function, closes sockets
     void Cleanup();
 
-    bool ProcessMessage(const RecvStruct &recv_str, UnpackedMessage out_unp_msg);
+    bool ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_unp_msg);
 
 };
 

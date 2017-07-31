@@ -14,30 +14,17 @@
 
 void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
 {
-  
-        //allocation in heap
-       
+    switch(um.type_)
+    {
+    case CHAT_MESSAGE:
+        am.AddMsg(*(UserMsg*)um.msg_);
+        Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).msg_.c_str()));
+        break;
 
-        switch (um.type_)
-        {
-        case CHAT_MESSAGE:
-            am.AddMsg(*(UserMsg*)um.msg_);
-            Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).msg_.c_str()));
-            break;
-
-        case LOG_MESSAGE:
-           // am.ProcessLogMessage(*(LogMessage*)um.msg_, recv_str.ip_);
-            break;
-
-        
+    case LOG_MESSAGE:
+        // am.ProcessLogMessage(*(LogMessage*)um.msg_, recv_str.ip_);
+        break;
     }
-
-}
-
-AppManager* GetAM()
-{
-    static AppManager am;
-    return &am;
 }
 
 void  CChatUIDlg::RecvLoop(AppManager& am)
@@ -58,7 +45,7 @@ void  CChatUIDlg::RecvLoop(AppManager& am)
 
 void StartRecvLoop(void* vptr)
 {
-    ((CChatUIDlg*)vptr)->RecvLoop(*GetAM());
+    ((CChatUIDlg*)vptr)->RecvLoop(app_man);
 }
 // CChatUIDlg dialog
 
@@ -141,6 +128,7 @@ void CChatUIDlg::OnBnClickedMainbutton()
     if (first_time)
     {
         _beginthread(StartRecvLoop, 0, this);
+        first_time = false;
     }
 
     CString str;
@@ -148,9 +136,7 @@ void CChatUIDlg::OnBnClickedMainbutton()
     const WCHAR* wc = str;
     _bstr_t b(wc);
     const char* c = b;
-    GetAM()->SendMsg(c);
-
-    str+= '\n';
+    app_man.SendMsg(c);
 
     ChatEdit.SetWindowTextW(TEXT(""));
 
