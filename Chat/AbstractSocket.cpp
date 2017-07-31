@@ -29,7 +29,8 @@ bool AbstractSocket::Close()
 {
     if(socket_ == INVALID_SOCKET)
     {
-        return false;
+        //if socket is invalid there is no need to close it
+        return true;
     }
 
     int error_check = shutdown(socket_, SD_BOTH);

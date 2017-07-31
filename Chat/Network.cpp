@@ -6,7 +6,7 @@
 volatile int Network::file_sharing_thread_num_ = 0;
 Mutex Network::threads_num_mutex_;
 
-Network::Network() : is_working_(false){}
+Network::Network() : is_working_(false), my_ip_(""){}
 
 Network::~Network()
 {
@@ -41,6 +41,7 @@ bool Network::PrepareNetwork()
     //getting local pc ip
     int rand_value = rand(), buffer = 0;
     void *rand_value_send = NULL;
+    //allocation in heap
     buffer = Parcer::PackMessage(PREPARE_MESSAGE, &rand_value, rand_value_send);
     error_check = broadc_socket_.Send(rand_value_send, buffer);
     delete[] rand_value_send;
@@ -79,7 +80,8 @@ bool Network::PrepareNetwork()
 int Network::SendMsg(const UserMsg& user_msg)const
 {
     void *packet = NULL;
-    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet); //allocation in heap
+    //allocation in heap
+    int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet);
 
     send_mutex_.Lock();
     packet_size = broadc_socket_.Send(packet, packet_size);
@@ -115,6 +117,7 @@ int Network::SendLogMsg(const std::string &name,
 {
     LogMessage log_msg = { type, name, prev_name };
     void *send_buffer = NULL;
+    //allocation in heap
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
 
     send_size = broadc_socket_.Send(send_buffer, send_size);
@@ -126,6 +129,7 @@ void Network::GetFile(const std::string& user_name, int index)
 {
 	int file_index = index;
 	void *send_buffer = NULL;
+    //allocation in heap
 	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
 
     broadc_socket_.SendTo(send_buffer,
@@ -140,12 +144,20 @@ void Network::GetFile(const std::string& user_name, int index)
 
 int Network::RequestList(const std::string& user_name)
 {
+    std::string user_ip = ip_name_list_.GetIp(user_name);
+    if(user_ip.empty())
+    {
+        return 0;
+    }
+
     void *send_buffer = NULL;
+    //allocation in heap
     int send_size = Parcer::PackMessage(FILE_LIST_REQUEST, NULL, send_buffer);
+    
     
     send_size = broadc_socket_.SendTo(send_buffer,
                                       send_size,
-                                      ip_name_list_.GetIp(user_name).c_str());
+                                      user_ip.c_str());
     delete[] send_buffer;
     return send_size;
 }
@@ -167,6 +179,7 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
         {
             LogMessage log_msg = { LOG_RESPONCE, chat_->GetName() };
             void *answ_log_msg = NULL;
+            //allocation in heap
             int msg_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, answ_log_msg);
             broadc_socket_.SendTo(answ_log_msg, msg_size, ip.c_str());
             delete[] answ_log_msg;
