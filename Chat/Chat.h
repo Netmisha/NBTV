@@ -43,8 +43,7 @@ public:
     void IOfflineMsg();	//sends online msg
 
     void IOnlineMsg();	//sends online msg
-    void IChangedName(std::string& old_name);
-
+   
     void PrepareSendMsg(const std::string& old_name); //instead of console input
 
     void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()

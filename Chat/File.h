@@ -1,9 +1,10 @@
 #ifndef FILE_H
 #define FILE_H
 
+#include "Defines.h"
 #include <string>
 
-class File
+class DLL_EXP File
 {
 public:
     File();

@@ -23,12 +23,6 @@ void Chat::IOnlineMsg()
 	SendMsg(msg);
 }
 
-void Chat::IChangedName(std::string& old_name)
-{
-    connected_network_->SendLogMsg(user_name_, LOG_UPDATE);
-    UserMsg msg = { PUBLIC, msg_color_, user_name_, old_name + " changed name to " + user_name_ + " !"};
-    SendMsg(msg);
-}
 
 void Chat::IOfflineMsg()
 {
@@ -204,7 +198,7 @@ bool Chat::CheckForCommands() //chat commands
             PopBuffer(8);
             std::string old_name = user_name_;
             user_name_ = buffer_;
-            IChangedName(old_name);
+           
             buffer_.clear();
             ResetChat();
         }

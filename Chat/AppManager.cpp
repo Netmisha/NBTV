@@ -75,7 +75,8 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             PopBuffer(8, buffer);
             std::string old_name = chat_.GetName();
             chat_.SetName(buffer);
-            chat_.IChangedName(old_name);
+            network_.SendLogMsg(chat_.GetName() , LOG_UPDATE, old_name);
+
             return NULL;
            // ResetChat();
         }

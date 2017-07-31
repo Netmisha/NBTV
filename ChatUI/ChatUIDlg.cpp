@@ -138,25 +138,71 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 
 void CChatUIDlg::OnBnClickedMainbutton()
 {
-  /*  static bool first_time = true;
-    if (first_time)
-    {
-        _beginthread(StartRecvLoop, 0, this);
-        first_time = false;
-    }*/
+    /*  static bool first_time = true;
+      if (first_time)
+      {
+          _beginthread(StartRecvLoop, 0, this);
+          first_time = false;
+      }*/
 
     CString str;
-    ChatEdit.GetWindowTextW(str); 
-    
+    ChatEdit.GetWindowTextW(str);
+
     const WCHAR* wc = str;
     _bstr_t b(wc);
     const char* c = b;
-    
-    app_man.SendMsg(c);
+
+   
 
     ChatEdit.SetWindowTextW(TEXT(""));
 
     std::string name = app_man.GetName();
-   
-    Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : " ) + str );
+    if (*c == '/')
+    {
+        if (!strncmp(c, "/userlist", 9))
+        {
+            std::vector<std::string> *users = (std::vector<std::string>*) app_man.ActivateCommand(std::string(c));
+            for(auto i : *users)
+            {
+                std::string str = '\n' + i;
+                Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
+            }
+        }
+        else if (!strncmp(c, "/setname", 9))
+            app_man.ActivateCommand(std::string(c));
+        else if (!strncmp(c, "/fl ", 4))
+        {
+            if (c[4] == '\0')
+            {
+                std::vector<File>* list = (std::vector<File>*) app_man.ActivateCommand(std::string(c));
+                for (size_t i = 0; i < list->size(); i++)
+                {
+                    std::string str = std::to_string(i + 1) + ' ' + (*list)[i].GetName() + ' ' + std::to_string((*list)[i].GetSizeMB());
+                    Chat.InsertString( Chat.GetCount(), CString( str.c_str() )  );
+                }
+                delete list;
+            }
+            else
+            {
+                std::vector<RecvFileInfo> *list = (std::vector<RecvFileInfo>*) app_man.ActivateCommand(std::string(c));
+                for (size_t i = 0; i < list->size(); i++)
+                {
+                    std::string str = std::to_string(i + 1) + ' ' + (*list)[i].name_ + ' ' + std::to_string((*list)[i].size_KB_ * 1024);
+                    Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
+                }
+                delete list;
+            }
+        }
+        else if (!strncmp(c, "/getf", 5))
+            app_man.ActivateCommand(std::string(c));
+        else if (!strncmp(c, "/addf", 5))
+            app_man.ActivateCommand(std::string(c));
+        else if (!strncmp(c, "/removef", 8))
+            app_man.ActivateCommand(std::string(c));
+    }
+    else
+    {
+        app_man.SendMsg(c);
+        Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
+    }
 }
