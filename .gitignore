@@ -38,6 +38,7 @@
 *.v12.suo
 *.opensdf
 *.sln
+*.txt
 
 # vs folders
 Chat/.vc

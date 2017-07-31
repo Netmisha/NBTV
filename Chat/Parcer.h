@@ -33,7 +33,7 @@ namespace Parcer
     //returns size of message
     int PackMessage(const MessageType &type, const void *in_msg, void* &out_result);
     //returns processed message from packet
-    UnpackedMessage DLL_EXP UnpackMessage(const void *packet);
+    UnpackedMessage UnpackMessage(const void *packet);
 
 
     int PackChatMessage(const void *in_msg, void* &out_packet);

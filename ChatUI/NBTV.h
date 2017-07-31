@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 
+typedef unsigned(*thread_function)(void*);
+
 enum ChatMsgType
 {
     PUBLIC = 0,
@@ -16,9 +18,11 @@ enum ChatMsgType
 
 enum LogType
 {
+    LOG_INVALID_TYPE = (unsigned char)-1,
     LOG_OFFLINE = (unsigned char)0,
     LOG_ONLINE = (unsigned char)1,
-    LOG_UPDATE = (unsigned char)2
+    LOG_UPDATE = (unsigned char)2,
+    LOG_RESPONCE = (unsigned char)3
 };
 
 enum MessageType
@@ -51,30 +55,47 @@ struct UserMsg
     std::string msg_;
 };
 
-struct RecvStruct
-{
-    //string with ip
-    std::string ip_;
-    //pointer to heap
-    char *packet_ = NULL;
-
-    RecvStruct() { ip_.resize(IP_SIZE); }
-    ~RecvStruct() {}
-
-    inline void Clear() { delete[] packet_; }
-};
-
-
 struct LogMessage
 {
     LogType type_;
     std::string name_;
 };
 
-namespace Parcer
+class DLL_IMP Mutex
 {
-    UnpackedMessage DLL_IMP UnpackMessage(const void *packet);
+public:
+    Mutex();
+    ~Mutex();
+
+    void Lock()const;
+    void Unlock()const;
+    //tries to lock the thread
+    //returns 1 if success
+    //0 otherwise, don't block thread execution
+    //-1 if mutex is not valid
+    int TryLock()const;
+
+    bool IsValid()const;
 };
+
+class DLL_IMP Thread
+{
+public:
+    Thread();
+    Thread(thread_function func, void *params);
+    ~Thread();
+
+    //starts thread with specific function
+    //and vprt to params
+    bool BeginThread(thread_function func, void *params);
+    //joines thread
+    void Join()const;
+
+private:
+
+    HANDLE thread_handle_;
+};
+
 
 class DLL_IMP AppManager
 {
