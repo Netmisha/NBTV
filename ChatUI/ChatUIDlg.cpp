@@ -41,6 +41,21 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
     }
 }
 
+void CChatUIDlg::SetUserIcon()
+{
+    CImage image_;
+    std::string name = app_man.GetName();
+    std::string path("Resourses\\");
+    path += ((char)toupper(name[0]));
+    path += ".png";
+    image_.Load(CString(path.c_str()));
+
+    CBitmap bitmap_;
+    bitmap_.Attach(image_.Detach());
+    icon->SetBitmap(bitmap_);
+
+}
+
 void  CChatUIDlg::RecvLoop(AppManager& am)
 {
     static bool is_working_ = true;
@@ -75,20 +90,35 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MAINBUTTON, MainButton);
     DDX_Control(pDX, IDC_CHAT_EDIT, ChatEdit);
     DDX_Control(pDX, IDC_CHAT, Chat);
+    DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
     ON_BN_CLICKED(IDC_MAINBUTTON, &CChatUIDlg::OnBnClickedMainbutton)
+    ON_STN_CLICKED(IDC_USER_NAME, &CChatUIDlg::OnStnClickedUserName)
 END_MESSAGE_MAP()
 
 
 // CChatUIDlg message handlers
+CStatic* icon;
 
 BOOL CChatUIDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+
+ 
+  
+    UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+  
+   // UserIconButt.SetWindowTextW(L"Text");
+
+   
+    icon = (CStatic*)GetDlgItem(IDC_USERICON);
+    
+
+
     _beginthread(StartRecvLoop, 0, this);
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -136,8 +166,10 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
 void CChatUIDlg::OnBnClickedMainbutton()
 {
+    SetUserIcon();
 
     CString str;
     ChatEdit.GetWindowTextW(str);
@@ -175,7 +207,10 @@ void CChatUIDlg::OnBnClickedMainbutton()
             }
         }
         else if (!strncmp(c, "/setname", 8))
+        {
             app_man.ActivateCommand(std::string(c));
+            UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+        }
         else if (!strncmp(c, "/fl ", 4))
         {
             if (c[4] == '\0')
@@ -211,4 +246,10 @@ void CChatUIDlg::OnBnClickedMainbutton()
         app_man.SendMsg(c);
         Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
     }
+}
+
+
+void CChatUIDlg::OnStnClickedUserName()
+{
+    // TODO: Add your control notification handler code here
 }

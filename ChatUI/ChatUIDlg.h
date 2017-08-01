@@ -5,6 +5,7 @@
 #pragma once
 #include "afxwin.h"
 #include "NBTV.h"
+#include "afxbutton.h"
 
 
 // CChatUIDlg dialog
@@ -41,5 +42,14 @@ public:
 
 private:
     void ProcessMessage(const UnpackedMessage &um, AppManager& am);
- 
+    void SetUserIcon();
+
+public:
+    // user name next to icon
+    CStatic UserNameLabel;
+    afx_msg void OnStnClickedUserName();
+    
+  
+    // user icon with first letter of his name
+    CStatic* icon;
 };
