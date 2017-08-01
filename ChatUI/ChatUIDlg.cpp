@@ -153,7 +153,19 @@ void CChatUIDlg::OnBnClickedMainbutton()
     std::string name = app_man.GetName();
     if (*c == '/')
     {
-        if (!strncmp(c, "/userlist", 9))
+        if (!strncmp(c, "/w ", 3))
+        {
+            void* is_ok = app_man.ActivateCommand(std::string(c));
+            if (is_ok != NULL)
+            {
+                std::string str = "\n NO USER WITH THIS NAME ";
+                Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
+                delete is_ok;
+            }
+            else
+            Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + *(&str+4));
+        }
+        else if (!strncmp(c, "/userlist", 9))
         {
             std::vector<std::string> *users = (std::vector<std::string>*) app_man.ActivateCommand(std::string(c));
             for(auto i : *users)

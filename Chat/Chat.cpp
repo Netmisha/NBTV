@@ -93,6 +93,11 @@ const std::string& Chat::GetName()
     return  user_name_;
 }
 
+const char Chat::GetColor()
+{
+    return msg_color_;
+}
+
 void Chat::ResetChat() const
 {
 	system("cls");
@@ -113,18 +118,7 @@ void Chat::PutMsg(const UserMsg& msg) const
 }
 
 
-void Chat::PrintMyList(std::vector<File>& list) const
-{
-    chat_mutex_.Lock();
-    cout << endl;
-    for (size_t i = 0; i < list.size(); i++)
-    {
-        cout << i + 1 << " \t" + list[i].GetName() << " \t\t " << list[i].GetSizeMB() << "MB" << endl;
-    }
-    std::cerr << "Please enter message: " << buffer_;
 
-    chat_mutex_.Unlock();
-}
 
 void Chat::AddMsg(const UserMsg& msg)
 {
@@ -212,7 +206,6 @@ bool Chat::CheckForCommands() //chat commands
             {
                 std::vector<File> list;
                 FM_->GetFiles(list);
-                PrintMyList(list); //I print my list
             }
             else
             {

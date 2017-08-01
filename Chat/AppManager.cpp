@@ -67,7 +67,16 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
         if (!strncmp(buffer.c_str(), "w ", 2))
         {
             PopBuffer(2, buffer);
-           // ActivatePrivateChat(buffer);
+            std::stringstream stream(buffer);
+            std::string name;
+            stream >> name;
+            PopBuffer(name.size(), buffer);
+        
+            UserMsg usr_msg = { PRIVATE, chat_.GetColor(), chat_.GetName(), buffer };
+            if (chat_.SendMsgTo(name, usr_msg) == -1)
+            {
+                return new int(-1);
+            }
             return NULL;
         }
         else if (!strncmp(buffer.c_str(), "setname ", 8)) //change name command
