@@ -61,6 +61,7 @@ struct LogMessage
 {
     LogType type_;
     std::string name_;
+    std::string prev_name_;
 };
 
 class DLL_IMP Mutex
