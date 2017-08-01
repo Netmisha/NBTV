@@ -19,22 +19,14 @@ Chat::~Chat(){}
 void Chat::IOnlineMsg()
 {
 	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
-	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " is online!" };
-	SendMsg(msg);
+	
 }
 
-void Chat::IChangedName(std::string& old_name)
-{
-    connected_network_->SendLogMsg(user_name_, LOG_UPDATE);
-    UserMsg msg = { PUBLIC, msg_color_, user_name_, old_name + " changed name to " + user_name_ + " !"};
-    SendMsg(msg);
-}
 
 void Chat::IOfflineMsg()
 {
-	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " left the chat!" };
-	SendMsg(msg);
-	cout << "\n Please wait... ";
+
+	
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
@@ -101,6 +93,11 @@ const std::string& Chat::GetName()
     return  user_name_;
 }
 
+const char Chat::GetColor()
+{
+    return msg_color_;
+}
+
 void Chat::ResetChat() const
 {
 	system("cls");
@@ -121,25 +118,14 @@ void Chat::PutMsg(const UserMsg& msg) const
 }
 
 
-void Chat::PrintMyList(std::vector<File>& list) const
-{
-    chat_mutex_.Lock();
-    cout << endl;
-    for (size_t i = 0; i < list.size(); i++)
-    {
-        cout << i + 1 << " \t" + list[i].GetName() << " \t\t " << list[i].GetSizeMB() << "MB" << endl;
-    }
-    std::cerr << "Please enter message: " << buffer_;
 
-    chat_mutex_.Unlock();
-}
 
 void Chat::AddMsg(const UserMsg& msg)
 {
 	chat_mutex_.Lock();
 
 	messages_.push_back(msg);
-	ResetChat();
+	
 
 	chat_mutex_.Unlock();
 }
@@ -204,7 +190,7 @@ bool Chat::CheckForCommands() //chat commands
             PopBuffer(8);
             std::string old_name = user_name_;
             user_name_ = buffer_;
-            IChangedName(old_name);
+           
             buffer_.clear();
             ResetChat();
         }
@@ -220,14 +206,13 @@ bool Chat::CheckForCommands() //chat commands
             {
                 std::vector<File> list;
                 FM_->GetFiles(list);
-                PrintMyList(list); //I print my list
             }
             else
             {
-                connected_network_->RequestSomeoneList(name); //asking for someone`s list
+                connected_network_->RequestList(name); //asking for someone`s list
 
                 std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
-                connected_network_->GetRecvSocket().GetList(*list);
+                connected_network_->GetList(*list);
                 for (auto i : *list)
                 {
                     cout << "\n" << i.name_ << " \t" << i.size_KB_;

@@ -22,6 +22,7 @@ public:
 
     void SetName(const std::string& name);
     const std::string& GetName(); //name getter
+    const char GetColor(); //color getter
 
 	void SetUserInfo(char color, const std::string& name);
 	Thread& GetInputThread(); //thread descriptor getter
@@ -29,8 +30,7 @@ public:
 
 	void ResetChat() const;
 	void PutMsg(const UserMsg& msg) const; // show msg to the screen
-    void PrintMyList(std::vector<File>& list) const;
-
+    
 	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
 	void InputStream(); 
 	void ReadFromKeyboard(); //reading from keyboard 
@@ -43,8 +43,7 @@ public:
     void IOfflineMsg();	//sends online msg
 
     void IOnlineMsg();	//sends online msg
-    void IChangedName(std::string& old_name);
-
+   
     void PrepareSendMsg(const std::string& old_name); //instead of console input
 
     void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()

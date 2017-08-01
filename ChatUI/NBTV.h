@@ -1,3 +1,5 @@
+#ifndef NBTV_H
+#define NBTV_H
 #pragma once
 
 #define DLL_IMP __declspec(dllimport)
@@ -8,6 +10,8 @@
 #include <vector>
 #include <string>
 
+typedef unsigned(*thread_function)(void*);
+
 enum ChatMsgType
 {
     PUBLIC = 0,
@@ -16,9 +20,11 @@ enum ChatMsgType
 
 enum LogType
 {
+    LOG_INVALID_TYPE = (unsigned char)-1,
     LOG_OFFLINE = (unsigned char)0,
     LOG_ONLINE = (unsigned char)1,
-    LOG_UPDATE = (unsigned char)2
+    LOG_UPDATE = (unsigned char)2,
+    LOG_RESPONCE = (unsigned char)3
 };
 
 enum MessageType
@@ -36,6 +42,8 @@ struct UnpackedMessage
 {
     int type_ = INVALID_TYPE;
     void *msg_ = 0;
+
+    inline void Clear() { delete msg_; }
 };
 
 struct UserMsg
@@ -49,38 +57,48 @@ struct UserMsg
     std::string msg_;
 };
 
-struct RecvStruct
-{
-    //string with ip
-    std::string ip_;
-    //pointer to heap
-    char *packet_ = NULL;
-
-    RecvStruct() { ip_.resize(IP_SIZE); }
-    ~RecvStruct() {}
-
-    inline void Clear() { delete[] packet_; }
-};
-
-
 struct LogMessage
 {
     LogType type_;
     std::string name_;
+    std::string prev_name_;
 };
 
-namespace Parcer
+class DLL_IMP Mutex
 {
-    UnpackedMessage DLL_IMP UnpackMessage(const void *packet);
+public:
+    Mutex();
+    ~Mutex();
+
+    void Lock()const;
+    void Unlock()const;
+    //tries to lock the thread
+    //returns 1 if success
+    //0 otherwise, don't block thread execution
+    //-1 if mutex is not valid
+    int TryLock()const;
+
+    bool IsValid()const;
 };
+
+class DLL_IMP Thread
+{
+public:
+    Thread();
+    Thread(thread_function func, void *params);
+    ~Thread();
+
+    //starts thread with specific function
+    //and vprt to params
+    bool BeginThread(thread_function func, void *params);
+    //joines thread
+    void Join()const;
+};
+
 
 class DLL_IMP AppManager
 {
 public:
-    void Work();
-    AppManager();
-    ~AppManager();
-
     //function to use from UI (.DLL)
 
     std::vector<UserMsg> GetCurrentChat();
@@ -97,10 +115,11 @@ public:
 
     void SendMsg(const std::string& msg); //after user wrote message in chat
     void AddMsg(const UserMsg& ms); //will be used by recv loop
+    const std::string& GetName();
 
-    RecvStruct RecieveMessage()const;
+    UnpackedMessage RecieveMessage();
 
-    void *ActivateCommand(std::string& msg); //called by buttons with different commands
+    void* ActivateCommand(std::string& msg); //called by buttons with different commands
     //ChangeName, On/Off private mode, filelists, get someone`s file,
     //add/remove file, online users list, setcolor, exit
     const std::string GetIP()const;
@@ -108,6 +127,42 @@ public:
 
     void ActivatePrivateChat();
     void ExitPrivateChat();
+    
+    //returns true if name is used by other user
+    //false otherwise
+    bool IsNameUsed(const std::string &name)const;
 
     void EXIT();
 };
+
+class DLL_IMP File
+{
+    //private members for stl
+private:
+    std::string name_,
+                path_;
+    double size_KB_;
+
+public:
+
+    //true if path is value
+    //false otherwise
+    bool SetFile(const std::string &path);
+    bool IsValid()const;
+
+    const std::string GetName()const;
+    const std::string GetPath()const;
+    const double GetSizeKB()const;
+    const double GetSizeMB()const;
+};
+
+
+struct RecvFileInfo
+{
+    std::string name_;
+    double size_KB_;
+};
+
+DLL_IMP AppManager app_man;
+
+#endif // !NBTV_H

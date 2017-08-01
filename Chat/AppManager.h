@@ -12,11 +12,8 @@ class DLL_EXP AppManager
     FileManager fm_;
 
 public:
-	void Work();
 	AppManager();
-	~AppManager();
-
-
+    ~AppManager();
 
     //function to use from UI (.DLL)
     
@@ -34,8 +31,9 @@ public:
 
     void SendMsg(const std::string& msg); //after user wrote message in chat
     void AddMsg(const UserMsg& ms); //will be used by recv loop
+    const std::string& GetName();
 
-    RecvStruct RecieveMessage()const;
+    UnpackedMessage RecieveMessage();
 
     void* ActivateCommand(std::string& msg); //called by buttons with different commands
                                              //ChangeName, On/Off private mode, filelists, get someone`s file,
@@ -46,6 +44,9 @@ public:
     void ActivatePrivateChat();
     void ExitPrivateChat();
 
+    //returns true if name is used by other user
+    //false otherwise
+    bool IsNameUsed(const std::string &name)const;
+
     void EXIT();
 };
-

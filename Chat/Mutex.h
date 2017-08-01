@@ -1,9 +1,10 @@
 #ifndef MUTEX_H
 #define MUTEX_H
 
+#include "Defines.h"
 #include <Windows.h>
 
-class Mutex
+class DLL_EXP Mutex
 {
 public:
     Mutex();

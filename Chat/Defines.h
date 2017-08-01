@@ -13,7 +13,7 @@
 
 //max buffer size without
 //possible data tearing
-#define RECV_BUFFER_SIZE (WINDOWS_KILOBYTE * 4)
+#define RECV_BUFFER_SIZE (WINDOWS_KILOBYTE)
 #define BUFFER_SIZE 512
 #define CHUNK_SIZE 512
 
@@ -26,7 +26,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK 0
+#define BROADCAST_LOOPBACK 1
 
 //ASCI buttons
 #define BACKSPACE_BUTTON 8 

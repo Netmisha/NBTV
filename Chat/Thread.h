@@ -2,12 +2,13 @@
 #ifndef THREAD_H
 #define THREAD_H
 
+#include "Defines.h"
 #include <process.h>
 #include <Windows.h>
 
 typedef unsigned(*thread_function)(void*);
 
-class Thread
+class DLL_EXP Thread
 {
 public:
     Thread();

@@ -3,24 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-void AppManager::Work()
-{
-    network_.PrepareNetwork();
-    Thread network__loop(Network::StartNetwork, &network_);
-
-    chat_.SetUserInfo(6, "Anton");
-    chat_.Activate();
-	
-    chat_.GetInputThread().Join();
-
-    network_.StopNetwork();
-    chat_.IOfflineMsg();
-    network__loop.Join();
-
-
-	std::cout << "ok";
-	//at the end
-}
+DLL_EXP AppManager app_man;
 
 AppManager::~AppManager(){}
 
@@ -31,11 +14,12 @@ std::vector<UserMsg> AppManager::GetCurrentChat()
 
 AppManager::AppManager()
 {
-
     chat_.SetNetwork(&network_);
     network_.SetChat(&chat_);
     chat_.SetFM(&fm_);
     network_.SetFM(&fm_);
+    network_.PrepareNetwork();
+    chat_.SetUserInfo(6, "Anton");
 }
 
 void AppManager::SendFile(const std::string & path, const std::string & ip, const std::string & name)
@@ -45,17 +29,12 @@ void AppManager::SendFile(const std::string & path, const std::string & ip, cons
 
 const std::string AppManager::GetFilePath(int file_index)const
 {
-    return network_.GetFM()->GetFilePath(file_index);
+    return fm_.GetFilePath(file_index);
 }
 
 const std::string AppManager::GetFileName(int file_index)const
 {
-    return network_.GetFM()->GetFileName(file_index);
-}
-
-void AppManager::ProcessLogMessage(const LogMessage & msg, const std::string & ip)
-{
-    network_.ProcessLogMessage(msg, ip);
+    return fm_.GetFileName(file_index);
 }
 
 void AppManager::SendList(const std::string & ip)
@@ -65,12 +44,17 @@ void AppManager::SendList(const std::string & ip)
 
 void AppManager::SendMsg(const std::string& msg)
 {
-    chat_.PrepareSendMsg(msg);
+    network_.SendMsg(UserMsg{ PUBLIC, 5, chat_.GetName(), msg });
 }
 
 void AppManager::AddMsg(const UserMsg& ms)
 {
     chat_.AddMsg(ms);
+}
+
+const std::string& AppManager::GetName()
+{
+    return chat_.GetName();
 }
 
 void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off private mode, filelists, get someone`s file,
@@ -83,15 +67,29 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
         if (!strncmp(buffer.c_str(), "w ", 2))
         {
             PopBuffer(2, buffer);
-           // ActivatePrivateChat(buffer);
+            std::stringstream stream(buffer);
+            std::string name;
+            stream >> name;
+            PopBuffer(name.size(), buffer);
+        
+            UserMsg usr_msg = { PRIVATE, chat_.GetColor(), chat_.GetName(), buffer };
+            if (chat_.SendMsgTo(name, usr_msg) == -1)
+            {
+                return new int(-1);
+            }
             return NULL;
         }
         else if (!strncmp(buffer.c_str(), "setname ", 8)) //change name command
         {
             PopBuffer(8, buffer);
+            if(IsNameUsed(buffer))
+            {
+                return NULL;
+            }
             std::string old_name = chat_.GetName();
             chat_.SetName(buffer);
-            chat_.IChangedName(old_name);
+            network_.SendLogMsg(chat_.GetName() , LOG_UPDATE, old_name);
+
             return NULL;
            // ResetChat();
         }
@@ -111,9 +109,9 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             }
             else
             {
-                network_.RequestSomeoneList(name); //asking for someone`s list
+                network_.RequestList(name); //asking for someone`s list
                 std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
-                network_.GetRecvSocket().GetList(*list);
+                network_.GetList(*list);
                 return list;
 
             }
@@ -126,7 +124,7 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             int index;
             stream >> name;
             stream >> index;
-            network_.GetFile(name, index);
+            network_.GetFile(name, index-1);
             //ResetChat();
 
         }
@@ -191,7 +189,12 @@ void AppManager::PopBuffer(int num, std::string& buffer) //easy pop front
     }
 }
 
-RecvStruct AppManager::RecieveMessage()const
+UnpackedMessage AppManager::RecieveMessage()
 {
     return network_.RecieveMessage();
+}
+
+bool AppManager::IsNameUsed(const std::string &name)const
+{
+    return network_.IsNameUsed(name);
 }

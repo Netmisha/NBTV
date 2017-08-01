@@ -38,9 +38,17 @@
 *.v12.suo
 *.opensdf
 *.sln
+*.txt
 
 # vs folders
 Chat/.vc
 Chat/Debug
+Chat/Release
 Chat/Download
 Chat/Data
+Chat/ipch
+ChatUI/Debug
+ChatUI/Release
+ChatUI/Download
+ChatUI/Data
+ChatUI/.vs
