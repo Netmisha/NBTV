@@ -19,16 +19,14 @@ Chat::~Chat(){}
 void Chat::IOnlineMsg()
 {
 	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
-	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " is online!" };
-	SendMsg(msg);
+	
 }
 
 
 void Chat::IOfflineMsg()
 {
-	UserMsg msg = { PUBLIC, msg_color_, user_name_, user_name_ + " left the chat!" };
-	SendMsg(msg);
-	cout << "\n Please wait... ";
+
+	
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
@@ -133,7 +131,7 @@ void Chat::AddMsg(const UserMsg& msg)
 	chat_mutex_.Lock();
 
 	messages_.push_back(msg);
-	ResetChat();
+	
 
 	chat_mutex_.Unlock();
 }

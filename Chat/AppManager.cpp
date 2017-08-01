@@ -115,7 +115,7 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             int index;
             stream >> name;
             stream >> index;
-            network_.GetFile(name, index);
+            network_.GetFile(name, index-1);
             //ResetChat();
 
         }

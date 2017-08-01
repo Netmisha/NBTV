@@ -30,11 +30,11 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
             break;
 
         case LOG_ONLINE:
-            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " left the chat ");
+            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is online! ");
             break;
 
         case LOG_UPDATE:
-            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of ... ");
+            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of " + (*(LogMessage*)um.msg_).prev_name_.c_str());
             break;
         }
         break;
@@ -138,12 +138,6 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 
 void CChatUIDlg::OnBnClickedMainbutton()
 {
-    /*  static bool first_time = true;
-      if (first_time)
-      {
-          _beginthread(StartRecvLoop, 0, this);
-          first_time = false;
-      }*/
 
     CString str;
     ChatEdit.GetWindowTextW(str);
@@ -168,7 +162,7 @@ void CChatUIDlg::OnBnClickedMainbutton()
                 Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
             }
         }
-        else if (!strncmp(c, "/setname", 9))
+        else if (!strncmp(c, "/setname", 8))
             app_man.ActivateCommand(std::string(c));
         else if (!strncmp(c, "/fl ", 4))
         {
@@ -187,7 +181,7 @@ void CChatUIDlg::OnBnClickedMainbutton()
                 std::vector<RecvFileInfo> *list = (std::vector<RecvFileInfo>*) app_man.ActivateCommand(std::string(c));
                 for (size_t i = 0; i < list->size(); i++)
                 {
-                    std::string str = std::to_string(i + 1) + ' ' + (*list)[i].name_ + ' ' + std::to_string((*list)[i].size_KB_ * 1024);
+                    std::string str = std::to_string(i + 1) + ' ' + (*list)[i].name_ + ' ' + std::to_string((*list)[i].size_KB_ / 1024);
                     Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
                 }
                 delete list;
