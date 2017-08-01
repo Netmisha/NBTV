@@ -92,6 +92,10 @@ public:
     //if message can be processed by network itself
     UnpackedMessage RecieveMessage();
 
+    //returns true if name is used by other user
+    //false otherwise
+    bool IsNameUsed(const std::string &name)const;
+
 private:
     Chat *chat_;
 	FileManager *FM_;

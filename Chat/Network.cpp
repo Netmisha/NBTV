@@ -338,3 +338,8 @@ void Network::GetList(std::vector<RecvFileInfo> &out_result)const
 {
     file_get_socket_.GetList(out_result);
 }
+
+bool Network::IsNameUsed(const std::string &name)const
+{
+    return ip_name_list_.IsNameUsed(name);
+}

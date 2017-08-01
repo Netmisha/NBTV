@@ -44,5 +44,9 @@ public:
     void ActivatePrivateChat();
     void ExitPrivateChat();
 
+    //returns true if name is used by other user
+    //false otherwise
+    bool IsNameUsed(const std::string &name)const;
+
     void EXIT();
 };

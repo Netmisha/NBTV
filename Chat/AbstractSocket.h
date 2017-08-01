@@ -32,7 +32,6 @@ public:
 
     //closes socket
     //returns false if failed to close socket
-    //or socket is invalid, and thus can't be closed
     bool Close();
 
 protected:

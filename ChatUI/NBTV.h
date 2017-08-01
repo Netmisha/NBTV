@@ -1,3 +1,5 @@
+#ifndef NBTV_H
+#define NBTV_H
 #pragma once
 
 #define DLL_IMP __declspec(dllimport)
@@ -90,10 +92,6 @@ public:
     bool BeginThread(thread_function func, void *params);
     //joines thread
     void Join()const;
-
-private:
-
-    HANDLE thread_handle_;
 };
 
 
@@ -128,16 +126,20 @@ public:
 
     void ActivatePrivateChat();
     void ExitPrivateChat();
+    
+    //returns true if name is used by other user
+    //false otherwise
+    bool IsNameUsed(const std::string &name)const;
 
     void EXIT();
 };
 
 class DLL_IMP File
 {
-
+    //private members for stl
 private:
     std::string name_,
-        path_;
+                path_;
     double size_KB_;
 
 public:
@@ -161,3 +163,5 @@ struct RecvFileInfo
 };
 
 DLL_IMP AppManager app_man;
+
+#endif // !NBTV_H

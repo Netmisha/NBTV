@@ -38,3 +38,8 @@ void IpNameList::GetNameList(std::vector<std::string> &out_result)const
         out_result.push_back(pair_.second);
     }
 }
+
+bool IpNameList::IsNameUsed(const std::string &name)const
+{
+    return !(GetIp(name).empty());
+}

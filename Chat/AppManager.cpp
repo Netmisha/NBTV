@@ -73,6 +73,10 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
         else if (!strncmp(buffer.c_str(), "setname ", 8)) //change name command
         {
             PopBuffer(8, buffer);
+            if(IsNameUsed(buffer))
+            {
+                return NULL;
+            }
             std::string old_name = chat_.GetName();
             chat_.SetName(buffer);
             network_.SendLogMsg(chat_.GetName() , LOG_UPDATE, old_name);
@@ -179,4 +183,9 @@ void AppManager::PopBuffer(int num, std::string& buffer) //easy pop front
 UnpackedMessage AppManager::RecieveMessage()
 {
     return network_.RecieveMessage();
+}
+
+bool AppManager::IsNameUsed(const std::string &name)const
+{
+    return network_.IsNameUsed(name);
 }

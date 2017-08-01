@@ -31,6 +31,10 @@ public:
     //return value is passed as refference parameter
     void GetNameList(std::vector<std::string> &out_result)const;
 
+    //returns true if name is currently used
+    //false otherwise
+    bool IsNameUsed(const std::string &name)const;
+
 private:
     //map of ip - username pairs
     std::map<std::string, std::string> ip_name_map_;
