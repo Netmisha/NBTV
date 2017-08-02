@@ -105,6 +105,8 @@ public:
 
     // void GetMsgLoop(); //message getting
 
+    const std::vector<std::string>& GetOnlineUsers()const;
+
     void SendFile(const std::string &path, const std::string &ip, const std::string &name);
 
     const std::string GetFilePath(int file_index)const;
@@ -131,12 +133,8 @@ public:
     //returns true if name is used by other user
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
-    //load user info
-    //returns true if info successfully loaded
-    //false otherwise
-    bool LoadUserInfo();
 
-    void GetOnlineUsers(std::vector<std::string> &out_result)const;
+    bool LoadUserInfo();
 };
 
 class DLL_IMP File

@@ -29,7 +29,7 @@ public:
 
     //used to get vector of all user names
     //return value is passed as refference parameter
-    void GetNameList(std::vector<std::string> &out_result)const;
+    const std::vector<std::string>& GetNameList()const;
 
     //returns true if name is currently used
     //false otherwise
@@ -38,5 +38,7 @@ public:
 private:
     //map of ip - username pairs
     std::map<std::string, std::string> ip_name_map_;
+
+    std::vector<std::string> online_users_;
 };
 #endif // !IP_NAME_LIST_H

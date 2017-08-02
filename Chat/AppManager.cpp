@@ -125,15 +125,12 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             stream >> name;
             stream >> index;
             network_.GetFile(name, index-1);
-            //ResetChat();
-
         }
         else if (!strncmp(buffer.c_str(), "userlist", 8)) //get user list
         {
             PopBuffer(8, buffer);
-            std::vector<std::string> *users = new std::vector<std::string>;
-            network_.GetOnlineUsers(*users);
-            return users;
+            const std::vector<std::string> *users = &network_.GetOnlineUsers();
+            return (void*)users;
         }
         else if (!strncmp(buffer.c_str(), "addf ", 5)) //add file
         {
@@ -204,7 +201,7 @@ bool AppManager::LoadUserInfo()
     return chat_.Load();
 }
 
-void AppManager::GetOnlineUsers(std::vector<std::string> &out_result)const
+const std::vector<std::string>& AppManager::GetOnlineUsers()const
 {
-    network_.GetOnlineUsers(out_result);
+    return network_.GetOnlineUsers();
 }

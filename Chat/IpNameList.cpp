@@ -9,11 +9,18 @@ IpNameList::~IpNameList(){}
 
 void IpNameList::Add(const std::string &ip, const std::string &name)
 {
+    if(!GetName(ip).empty())
+    {
+        Remove(ip);
+    }
+
     ip_name_map_[ip] = name;
+    online_users_.push_back(name);
 }
 
 void IpNameList::Remove(const std::string &ip)
 {
+    online_users_.erase(std::find(online_users_.begin(), online_users_.end(), ip_name_map_[ip]));
     ip_name_map_.erase(ip);
 }
 
@@ -32,12 +39,9 @@ std::string IpNameList::GetIp(const std::string &name)const
     return std::string("");
 }
 
-void IpNameList::GetNameList(std::vector<std::string> &out_result)const
+const std::vector<std::string>& IpNameList::GetNameList()const
 {
-    for(std::pair<std::string, std::string> pair_ : ip_name_map_)
-    {
-        out_result.push_back(pair_.second);
-    }
+    return online_users_;
 }
 
 bool IpNameList::IsNameUsed(const std::string &name)const

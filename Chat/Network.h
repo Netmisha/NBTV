@@ -81,8 +81,7 @@ public:
     void GetList(std::vector<RecvFileInfo> &out_result)const;
 
     //returns vector of online users
-    //return value is passed as refference parameter
-    void GetOnlineUsers(std::vector<std::string> &users)const;
+    const std::vector<std::string>& GetOnlineUsers()const;
     //get your local ip
     //only valid if PrepareNetwork was called at least once
     //otherwise will return empty string

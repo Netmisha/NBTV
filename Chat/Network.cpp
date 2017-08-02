@@ -262,9 +262,9 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
     return is_fully_processed;
 }
 
-void Network::GetOnlineUsers(std::vector<std::string> &out_users)const
+const std::vector<std::string>& Network::GetOnlineUsers()const
 {
-    ip_name_list_.GetNameList(out_users);
+    return ip_name_list_.GetNameList();
 }
 
 const std::string Network::GetIP()const
