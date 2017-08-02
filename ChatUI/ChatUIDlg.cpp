@@ -72,9 +72,10 @@ void  CChatUIDlg::RecvLoop(AppManager& am)
 }
 
 
-void StartRecvLoop(void* vptr)
+unsigned StartRecvLoop(void* vptr)
 {
     ((CChatUIDlg*)vptr)->RecvLoop(app_man);
+    return 0;
 }
 // CChatUIDlg dialog
 
@@ -119,13 +120,19 @@ BOOL CChatUIDlg::OnInitDialog()
     
 
 
-    _beginthread(StartRecvLoop, 0, this);
+    Thread(StartRecvLoop, this);
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+    CFont font;
+    font.CreatePointFont(65, TEXT("Arial"));
+    GetDlgItem(IDC_USER_NAME)->SetFont(&font, TRUE);
+
 	// TODO: Add extra initialization here
+
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -169,7 +176,7 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 
 void CChatUIDlg::OnBnClickedMainbutton()
 {
-    SetUserIcon();
+    
 
     CString str;
     ChatEdit.GetWindowTextW(str);
@@ -210,6 +217,7 @@ void CChatUIDlg::OnBnClickedMainbutton()
         {
             app_man.ActivateCommand(std::string(c));
             UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+            SetUserIcon();
         }
         else if (!strncmp(c, "/fl ", 4))
         {

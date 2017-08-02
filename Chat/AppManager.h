@@ -17,7 +17,7 @@ public:
 
     //function to use from UI (.DLL)
     
-    std::vector<UserMsg> GetCurrentChat();
+    const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
 
    // void GetMsgLoop(); //message getting
 
@@ -29,9 +29,10 @@ public:
     void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
     void SendList(const std::string& ip);
 
-    void SendMsg(const std::string& msg); //after user wrote message in chat
-    void AddMsg(const UserMsg& ms); //will be used by recv loop
-    const std::string& GetName();
+    int SendMsg(const std::string& msg); //after user wrote message in chat
+    int SendMsgTo(const std::string& msg, const std::string &name);
+    void AddMsg(const UserMsg &user_msg, const std::string &name = "");
+    const std::string& GetName()const;
 
     UnpackedMessage RecieveMessage();
 

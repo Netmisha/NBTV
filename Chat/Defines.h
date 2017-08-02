@@ -1,6 +1,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include <string>
+
 //default port
 #define PORT (unsigned short)20001
 //port for tcp connectiong
@@ -26,7 +28,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK 1
+#define BROADCAST_LOOPBACK 0
 
 //ASCI buttons
 #define BACKSPACE_BUTTON 8 
@@ -37,5 +39,7 @@
 #define DOWNLOAD_DIR "Download"
 
 #define DLL_EXP __declspec(dllexport)
+
+const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 
 #endif // !DEFINES_H

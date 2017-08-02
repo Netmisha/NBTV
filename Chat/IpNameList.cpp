@@ -1,6 +1,7 @@
 #include "IpNameList.h"
 
 #include <algorithm>
+#include "Defines.h"
 
 IpNameList::IpNameList(){}
 
@@ -41,5 +42,5 @@ void IpNameList::GetNameList(std::vector<std::string> &out_result)const
 
 bool IpNameList::IsNameUsed(const std::string &name)const
 {
-    return !(GetIp(name).empty());
+    return !(GetIp(name).empty()) || (name == PUBLIC_MSGS);
 }

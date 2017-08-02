@@ -7,9 +7,14 @@ DLL_EXP AppManager app_man;
 
 AppManager::~AppManager(){}
 
-std::vector<UserMsg> AppManager::GetCurrentChat()
+const std::vector<UserMsg> &AppManager::GetPrivateChatMsgs(const std::string &name)const
 {
-    return chat_.GetCurrentChat();
+    return chat_.GetPrivateChatMsgs(name);
+}
+
+void AppManager::AddMsg(const UserMsg &user_msg, const std::string &name)
+{
+    chat_.AddMsg(user_msg, name);
 }
 
 AppManager::AppManager()
@@ -42,17 +47,17 @@ void AppManager::SendList(const std::string & ip)
     network_.SendList(ip);
 }
 
-void AppManager::SendMsg(const std::string& msg)
+int AppManager::SendMsg(const std::string& msg)
 {
-    network_.SendMsg(UserMsg{ PUBLIC, 5, chat_.GetName(), msg });
+    return chat_.SendMsg(UserMsg{ PUBLIC, chat_.GetColor(), chat_.GetName(), msg });
 }
 
-void AppManager::AddMsg(const UserMsg& ms)
+int AppManager::SendMsgTo(const std::string& msg, const std::string &name)
 {
-    chat_.AddMsg(ms);
+    return chat_.SendMsgTo(name, UserMsg{ PRIVATE, chat_.GetColor(), chat_.GetName(), msg });
 }
 
-const std::string& AppManager::GetName()
+const std::string& AppManager::GetName()const
 {
     return chat_.GetName();
 }

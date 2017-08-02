@@ -7,58 +7,39 @@
 #include <sstream>
 #include <conio.h>
 
-using std::cout;
-using std::cin;
-using std::endl;
+Chat::Chat(){}
 
-
-Chat::Chat() : input_is_working_(true){}
-
-Chat::~Chat(){}
+Chat::~Chat()
+{
+    ClearMessages();
+}
 
 void Chat::IOnlineMsg()
 {
 	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
-	
 }
 
 
 void Chat::IOfflineMsg()
 {
-
-	
 	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
 }
 
-void Chat::PrepareSendMsg(const std::string& str_msg)
+int Chat::SendMsg(const UserMsg& msg)
 {
-    if (!str_msg.empty())
-    {
-        UserMsg msg = { PUBLIC, msg_color_, user_name_, str_msg };
-        SendMsg(msg);
-    }
-}
-
-
-void Chat::SendMsg(const UserMsg& msg)
-{
-	connected_network_->SendMsg(msg);
-	buffer_.clear();
-	AddMsg(msg);
+    AddMsg(msg);
+	return connected_network_->SendMsg(msg);
 }
 
 int Chat::SendMsgTo(const std::string& name, UserMsg& msg)
 {
-	int result = connected_network_->SendMsgTo(name, msg);
-	buffer_.clear();
-	AddMsg(msg);
-
-	return result;
+	AddMsg(msg, name);    
+    return connected_network_->SendMsgTo(name, msg);
 }
 
-std::vector<UserMsg>& Chat::GetCurrentChat()
+const std::vector<UserMsg>& Chat::GetPrivateChatMsgs(const std::string &name)const
 {
-    return messages_;
+    return *messages_.find(name)->second;
 }
 
 void Chat::SetNetwork(Network * net)
@@ -83,245 +64,40 @@ void Chat::SetUserInfo(char color, const std::string& name)
 	IOnlineMsg();
 }
 
-Thread& Chat::GetInputThread()
+const std::string& Chat::GetName()const
 {
-	return input_thread_;
+    return user_name_;
 }
 
-const std::string& Chat::GetName()
-{
-    return  user_name_;
-}
-
-const char Chat::GetColor()
+const char Chat::GetColor()const
 {
     return msg_color_;
 }
 
-void Chat::ResetChat() const
+void Chat::AddMsg(const UserMsg& msg, const std::string &name)
 {
-	system("cls");
-	for (auto i : messages_)
-	{
-		PutMsg(i);
-	}
-	std::cerr << "Please enter message: " << buffer_;
-	
-}
+    std::string msg_chat = (msg.type_ == PUBLIC ? PUBLIC_MSGS : name);
+    chat_mutex_.Lock();
 
-void Chat::PutMsg(const UserMsg& msg) const
-{
-    cout << msg.name_ << " : "; 
+    //if vector of user messages to this user do not exist
+    if(messages_.find(msg_chat) == messages_.end())
+        messages_[msg_chat] = new std::vector<UserMsg>;
 
-	cout << msg.msg_ << endl;
-	
-}
-
-
-
-
-void Chat::AddMsg(const UserMsg& msg)
-{
-	chat_mutex_.Lock();
-
-	messages_.push_back(msg);
-	
-
+    messages_[msg_chat]->push_back(msg);
 	chat_mutex_.Unlock();
 }
 
-void Chat::InputStream()
+void Chat::ChangeOtherUserName(const std::string &from, const std::string &to)
 {
-	while (input_is_working_) 
-	{
-		ReadFromKeyboard();
-		
-        if (!CheckForCommands())
-        {
-            if (!buffer_.empty())
-            {
-                UserMsg msg = { PUBLIC, msg_color_, user_name_, buffer_ };
-                SendMsg(msg);
-
-            }
-        }
-	}
+    std::vector<UserMsg>* user_msgs = messages_[from];
+    messages_.erase(from);
+    messages_[to] = user_msgs;
 }
 
-void Chat::ReadFromKeyboard()
+void Chat::ClearMessages()
 {
-	for (char tmp = _getch(); tmp != '\r'; tmp = _getch())
-	{
-		if (tmp == BACKSPACE_BUTTON && !buffer_.empty())
-		{
-			printf("\b \b");
-			buffer_.pop_back();
-		}
-		else
-		{
-			buffer_.push_back(tmp);
-			cout << tmp;
-		}
-	}
-}
-
-void Chat::PopBuffer(int num) //easy pop front
-{
-	for (int i = num; i > 0; i--)
-	{
-		buffer_.erase(buffer_.begin());
-	}
-}
-
-bool Chat::CheckForCommands() //chat commands
-{
-
-    if (buffer_[0] == '/')
+    for(std::pair<std::string, std::vector<UserMsg>*> pair : messages_)
     {
-        PopBuffer(1);
-
-        if (!strncmp(buffer_.c_str(), "w ", 2))
-        {
-            PopBuffer(2);
-            ActivatePrivateChat(buffer_);
-        }
-        else if (!strncmp(buffer_.c_str(), "setname ", 8))
-        {
-            PopBuffer(8);
-            std::string old_name = user_name_;
-            user_name_ = buffer_;
-           
-            buffer_.clear();
-            ResetChat();
-        }
-        else if (!strncmp(buffer_.c_str(), "fl ", 3))
-        {
-            PopBuffer(3);
-            std::stringstream stream(buffer_);
-            std::string name;
-            stream >> name;
-            buffer_.clear();
-            ResetChat();
-            if (name.empty())
-            {
-                std::vector<File> list;
-                FM_->GetFiles(list);
-            }
-            else
-            {
-                connected_network_->RequestList(name); //asking for someone`s list
-
-                std::vector<RecvFileInfo> *list = new std::vector<RecvFileInfo>;
-                connected_network_->GetList(*list);
-                for (auto i : *list)
-                {
-                    cout << "\n" << i.name_ << " \t" << i.size_KB_;
-                }
-
-            }
-            return true;
-        }
-        else if (!strncmp(buffer_.c_str(), "getf ", 5))
-        {
-            PopBuffer(5);
-            std::stringstream stream(buffer_);
-            std::string name;
-            int index;
-            stream >> name;
-            stream >> index;
-            connected_network_->GetFile(name, index);
-            buffer_.clear();
-            ResetChat();
-
-        }
-        else if (!strncmp(buffer_.c_str(), "userlist", 8))
-        {
-            PopBuffer(8);
-            std::vector<std::string> users;
-            connected_network_->GetOnlineUsers(users);
-            buffer_.clear();
-            cout << "\n ACTIVE USERS: \n";
-            for (auto i : users)
-                cout << i << '\n';
-            std::cerr << "Please enter message: " << buffer_;
-           
-            return true;
-        }
-        else if (!strncmp(buffer_.c_str(), "addf ", 5))
-        {
-            PopBuffer(5);
-            std::stringstream stream(buffer_);
-            std::string pass;
-            stream >> pass;
-            FM_->AddFile(pass);
-            buffer_.clear();
-            ResetChat();
-
-        }
-        else if (!strncmp(buffer_.c_str(), "setcolor ", 9))
-        {
-            PopBuffer(9);
-            std::string color_str("COLOR 0");
-            color_str += std::to_string(atoi(&buffer_.front()));
-            system(color_str.c_str());
-            buffer_.clear();
-            ResetChat();
-            //system("COLOR 07"); white 
-        }
-        else if (!strncmp(buffer_.c_str(), "exit", 4))
-        {
-            input_is_working_ = false;
-        }
-        else if (!strncmp(buffer_.c_str(), "removef ", 8))
-        {
-            PopBuffer(8);
-            std::stringstream stream(buffer_);
-            int index;
-            stream >> index;
-            FM_->RemoveFile(index-1);
-            buffer_.clear();
-            ResetChat();
-          
-        }
-        buffer_.clear();
-        ResetChat();
-        return true;
+        delete pair.second;
     }
-
-    return false;
-}
-
-void Chat::Activate()
-{
-	input_thread_.BeginThread(ActivateChat, this);
-}
-
-void Chat::ActivatePrivateChat(std::string& name) //all msgs user write goes directly to the chosen user
-{
-	buffer_.clear();
-	AddMsg(UserMsg{ PUBLIC, 7, "PRIVATE CHAT WITH", name });
-
-	while (true)
-	{
-		ReadFromKeyboard();
-
-		if (!strncmp(buffer_.c_str(), "/w", 2))
-		{
-			buffer_.clear();
-			break;
-		}
-		UserMsg msg = { PRIVATE, msg_color_, user_name_, buffer_ };
-		if (SendMsgTo(name, msg) == -1)
-		{
-			AddMsg(UserMsg{ PUBLIC, 7, "THERE NO USER WITH THIS NAME ", name });
-			break;
-		}
-	}
-	ResetChat();
-}
-
-unsigned ActivateChat(void* chat) //function for input thread
-{
-	((Chat*)chat)->InputStream();
-    return 0;
 }

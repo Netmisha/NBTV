@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #include "UserMsg.h"
 
@@ -21,51 +22,34 @@ public:
     void SetFM(FileManager* fm);
 
     void SetName(const std::string& name);
-    const std::string& GetName(); //name getter
-    const char GetColor(); //color getter
+    const std::string& GetName()const; //name getter
+    const char GetColor()const; //color getter
 
 	void SetUserInfo(char color, const std::string& name);
-	Thread& GetInputThread(); //thread descriptor getter
-   
-
-	void ResetChat() const;
-	void PutMsg(const UserMsg& msg) const; // show msg to the screen
     
-	void AddMsg(const UserMsg& msg); //adds msg to the vector and call`s PutMsg()
-	void InputStream(); 
-	void ReadFromKeyboard(); //reading from keyboard 
-	void PopBuffer(int num);
-	bool CheckForCommands();
-
-	void Activate(); //starts input thread
-	void ActivatePrivateChat(std::string& name); //private chat input mode
+	void AddMsg(const UserMsg& msg, const std::string &name = "");
 
     void IOfflineMsg();	//sends online msg
 
     void IOnlineMsg();	//sends online msg
-   
-    void PrepareSendMsg(const std::string& old_name); //instead of console input
 
-    void SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
+    int SendMsg(const UserMsg& msg); //broadcast message and AddMsg()
     int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
 
-    std::vector<UserMsg>& GetCurrentChat();
+    const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
+
+    void ChangeOtherUserName(const std::string &from, const std::string &to);
 
 private:
-
 	char msg_color_;
 	std::string user_name_;
-	std::string buffer_;
 
-	std::vector< std::string > users_;
-	std::vector< UserMsg > messages_;
+    std::map<std::string, std::vector<UserMsg>*> messages_;
 
 	Network* connected_network_;
     FileManager* FM_;
 
-	volatile bool input_is_working_;
-	Thread input_thread_;
 	Mutex chat_mutex_;
-};
 
-unsigned ActivateChat(void* chat); //function for input thread
+    void ClearMessages();
+};
