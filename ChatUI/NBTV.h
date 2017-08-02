@@ -135,6 +135,8 @@ public:
     //returns true if info successfully loaded
     //false otherwise
     bool LoadUserInfo();
+
+    void GetOnlineUsers(std::vector<std::string> &out_result)const;
 };
 
 class DLL_IMP File

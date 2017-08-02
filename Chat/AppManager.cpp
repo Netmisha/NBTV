@@ -203,3 +203,8 @@ bool AppManager::LoadUserInfo()
 {
     return chat_.Load();
 }
+
+void AppManager::GetOnlineUsers(std::vector<std::string> &out_result)const
+{
+    network_.GetOnlineUsers(out_result);
+}
