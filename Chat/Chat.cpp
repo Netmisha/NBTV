@@ -83,7 +83,12 @@ void Chat::AddMsg(const UserMsg& msg, const std::string &name)
     if(messages_.find(msg_chat) == messages_.end())
         messages_[msg_chat] = new std::vector<UserMsg>;
 
-    messages_[msg_chat]->push_back(msg);
+    std::vector<UserMsg> *msgs = messages_[msg_chat];
+    msgs->push_back(msg);
+
+    if(msgs->size() > MAX_MSGS_STORED)
+        msgs->erase(msgs->begin());
+
 	chat_mutex_.Unlock();
 }
 
