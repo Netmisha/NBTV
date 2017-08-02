@@ -9,7 +9,7 @@ IpNameList::~IpNameList(){}
 
 void IpNameList::Add(const std::string &ip, const std::string &name)
 {
-    if(!GetName(ip).empty())
+    if(ip_name_map_.find(ip) != ip_name_map_.end())
     {
         Remove(ip);
     }
@@ -20,7 +20,9 @@ void IpNameList::Add(const std::string &ip, const std::string &name)
 
 void IpNameList::Remove(const std::string &ip)
 {
-    online_users_.erase(std::find(online_users_.begin(), online_users_.end(), ip_name_map_[ip]));
+    online_users_.erase(std::find(online_users_.begin(),
+                                  online_users_.end(),
+                                  ip_name_map_[ip]));
     ip_name_map_.erase(ip);
 }
 
