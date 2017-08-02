@@ -87,7 +87,8 @@ void Chat::AddMsg(const UserMsg& msg, const std::string &name)
     std::vector<UserMsg> *msgs = messages_[msg_chat];
     msgs->push_back(msg);
 
-    if(msgs->size() > MAX_MSGS_STORED)
+    if(msgs->size() > (msg.type_ == PUBLIC ?
+                       MAX_PUBLIC_MSGS_STORED : MAX_PRIVATE_MSGS_STORED))
         msgs->erase(msgs->begin());
 
 	chat_mutex_.Unlock();

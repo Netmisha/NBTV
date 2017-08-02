@@ -46,7 +46,8 @@
 const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 
 //maximum msgs stored from a single chat
-#define MAX_MSGS_STORED (50)
+#define MAX_PRIVATE_MSGS_STORED (50)
+#define MAX_PUBLIC_MSGS_STORED (100)
 
 #define DEFAULT_COLOR (char(1))
 
