@@ -42,8 +42,9 @@ public:
 
 private:
     void ProcessMessage(const UnpackedMessage &um, AppManager& am);
+    
     void SetUserIcon();
-
+    void SetUserList();
 public:
     // user name next to icon
     CStatic UserNameLabel;
@@ -52,4 +53,12 @@ public:
   
     // user icon with first letter of his name
     CStatic* icon;
+    // label for "Active Users"
+    CStatic UserListLabel;
+
+    afx_msg void OnStnClickedUsericon();
+
+
+    // online users
+    CListBox UserList;
 };

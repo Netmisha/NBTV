@@ -25,14 +25,17 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
         switch (((LogMessage*)um.msg_)->type_)
         {
         case LOG_OFFLINE:
+            SetUserList();
             Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " left the chat ");
             break;
 
         case LOG_ONLINE:
+            SetUserList();
             Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is online! ");
             break;
 
         case LOG_UPDATE:
+            SetUserList();
             Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of " + (*(LogMessage*)um.msg_).prev_name_.c_str());
             break;
         }
@@ -53,6 +56,20 @@ void CChatUIDlg::SetUserIcon()
     bitmap_.Attach(image_.Detach());
     icon->SetBitmap(bitmap_);
 
+}
+
+void CChatUIDlg::SetUserList()
+{
+
+    std::vector<std::string>* list = (std::vector<std::string>*)app_man.ActivateCommand(std::string("/userlist"));
+    CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
+    usr_list->ResetContent();
+    if(list->size() != 0)
+    for (auto i : *list)
+    {
+
+        usr_list->InsertString(usr_list->GetCount(), CString(i.c_str()));
+    }
 }
 
 void  CChatUIDlg::RecvLoop(AppManager& am)
@@ -91,6 +108,7 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAT_EDIT, ChatEdit);
     DDX_Control(pDX, IDC_CHAT, Chat);
     DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
+    DDX_Control(pDX, IDC_USERLIST_LABEL, UserListLabel);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -98,6 +116,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
     ON_BN_CLICKED(IDC_MAINBUTTON, &CChatUIDlg::OnBnClickedMainbutton)
     ON_STN_CLICKED(IDC_USER_NAME, &CChatUIDlg::OnStnClickedUserName)
+    ON_STN_CLICKED(IDC_USERICON, &CChatUIDlg::OnStnClickedUsericon)
 END_MESSAGE_MAP()
 
 
@@ -111,15 +130,18 @@ BOOL CChatUIDlg::OnInitDialog()
  
   
     UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
-  
-   // UserIconButt.SetWindowTextW(L"Text");
+    UserListLabel.SetWindowTextW(CString("Active Users: "));
 
-   
     icon = (CStatic*)GetDlgItem(IDC_USERICON);
+   
+    Thread(StartRecvLoop, this);
+    
+    SetUserIcon();
+    SetUserList();
     
 
 
-    Thread(StartRecvLoop, this);
+  
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
@@ -173,9 +195,10 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 }
 
 
-void CChatUIDlg::OnBnClickedMainbutton()
+void CChatUIDlg::OnBnClickedMainbutton() //msg sending
 {
-    
+   /* CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
+    usr_list->InsertString(usr_list->GetCount(), CString("sssss"));*/
 
     CString str;
     ChatEdit.GetWindowTextW(str);
@@ -184,11 +207,11 @@ void CChatUIDlg::OnBnClickedMainbutton()
     _bstr_t b(wc);
     const char* c = b;
 
-   
-
+  
     ChatEdit.SetWindowTextW(TEXT(""));
 
     std::string name = app_man.GetName();
+   
     if (*c == '/')
     {
         if (!strncmp(c, "/w ", 3))
@@ -257,6 +280,12 @@ void CChatUIDlg::OnBnClickedMainbutton()
 
 
 void CChatUIDlg::OnStnClickedUserName()
+{
+    // TODO: Add your control notification handler code here
+}
+
+
+void CChatUIDlg::OnStnClickedUsericon()
 {
     // TODO: Add your control notification handler code here
 }

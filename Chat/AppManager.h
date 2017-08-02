@@ -21,8 +21,6 @@ public:
 
    // void GetMsgLoop(); //message getting
 
-    const std::vector<std::string>& GetOnlineUsers()const;
-
     void SendFile(const std::string &path, const std::string &ip, const std::string &name);
 
     const std::string GetFilePath(int file_index)const;
