@@ -235,6 +235,9 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
         switch(out_unp_msg.type_)
         {
 
+        case CHAT_MESSAGE:
+            chat_->AddMsg(*(UserMsg*)out_unp_msg.msg_);
+
         case LOG_MESSAGE:
             is_fully_processed = ProcessLogMessage(*(LogMessage*)out_unp_msg.msg_,
                                                    recv_str.ip_);

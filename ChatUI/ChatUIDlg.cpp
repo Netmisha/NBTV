@@ -17,7 +17,6 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
     switch(um.type_)
     {
     case CHAT_MESSAGE:
-        am.AddMsg(*(UserMsg*)um.msg_);
         Chat.InsertString(Chat.GetCount(), '\n'+ CString((*(UserMsg*)um.msg_).name_.c_str())  + " : " + CString((*(UserMsg*)um.msg_).msg_.c_str()));
         break;
 

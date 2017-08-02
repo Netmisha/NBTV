@@ -12,11 +12,6 @@ const std::vector<UserMsg> &AppManager::GetPrivateChatMsgs(const std::string &na
     return chat_.GetPrivateChatMsgs(name);
 }
 
-void AppManager::AddMsg(const UserMsg &user_msg, const std::string &name)
-{
-    chat_.AddMsg(user_msg, name);
-}
-
 AppManager::AppManager()
 {
     chat_.SetNetwork(&network_);

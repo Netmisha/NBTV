@@ -115,7 +115,6 @@ public:
 
     int SendMsg(const std::string& msg); //after user wrote message in chat
     int SendMsgTo(const std::string& msg, const std::string &name);
-    void AddMsg(const UserMsg &user_msg, const std::string &name = "");
     const std::string& GetName()const;
 
     UnpackedMessage RecieveMessage();
