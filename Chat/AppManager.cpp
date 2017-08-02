@@ -201,7 +201,3 @@ bool AppManager::LoadUserInfo()
     return chat_.Load();
 }
 
-const std::vector<std::string>& AppManager::GetOnlineUsers()const
-{
-    return network_.GetOnlineUsers();
-}
