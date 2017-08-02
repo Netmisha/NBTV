@@ -41,7 +41,7 @@ private:
     std::vector<File> shared_files_;
 
     //saves shared file info
-    void Save();
+    void Save()const;
     //loads shared file info
     void Load();
 };

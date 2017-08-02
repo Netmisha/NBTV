@@ -96,11 +96,11 @@ void FileManager::GetFiles(std::vector<File> &out_result)const
     }
 }
 
-void FileManager::Save()
+void FileManager::Save()const
 {
     //if directory to save shared files data
     //doesn't exist -> create it
-    if((CreateDirectory(FILE_DATA_SAVE_DIR, NULL)) ||
+    if((CreateDirectory(DATA_SAVE_DIR, NULL)) ||
        (GetLastError() == ERROR_ALREADY_EXISTS))
     {
         HANDLE file = CreateFile(FILE_DATA_SAVE_FULLPATH,   //path

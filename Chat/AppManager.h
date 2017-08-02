@@ -47,6 +47,8 @@ public:
     //returns true if name is used by other user
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
+    
+    bool LoadUserInfo();
 
     void EXIT();
 };

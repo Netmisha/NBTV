@@ -39,6 +39,7 @@ public:
     const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
 
     void ChangeOtherUserName(const std::string &from, const std::string &to);
+    bool Load();
 
 private:
 	char msg_color_;
@@ -52,4 +53,6 @@ private:
 	Mutex chat_mutex_;
 
     void ClearMessages();
+
+    void Save()const;
 };

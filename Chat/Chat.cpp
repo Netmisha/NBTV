@@ -12,6 +12,7 @@ Chat::Chat(){}
 Chat::~Chat()
 {
     ClearMessages();
+    Save();
 }
 
 void Chat::IOnlineMsg()
@@ -105,4 +106,117 @@ void Chat::ClearMessages()
     {
         delete pair.second;
     }
+}
+
+void Chat::Save()const
+{
+    //if directory to save shared files data
+    //doesn't exist -> create it
+    if((CreateDirectory(DATA_SAVE_DIR, NULL)) ||
+       (GetLastError() == ERROR_ALREADY_EXISTS))
+    {
+        HANDLE file = CreateFile(USER_DATA_SAVE_FULLPATH,   //path
+                                 GENERIC_WRITE,             //to write
+                                 0,                         //non-share
+                                 NULL,                      //security
+                                 CREATE_ALWAYS,             //always create
+                                 FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
+                                 NULL);                     //why no default arguments
+        //if failed to create file
+        if(file == INVALID_HANDLE_VALUE)
+        {
+            return;
+        }
+
+        BOOL err_check;
+        do
+        {
+            int bytes_written;
+            err_check = WriteFile(file,
+                                       &msg_color_,
+                                       sizeof(msg_color_),
+                                       (DWORD*)&bytes_written,
+                                       NULL);
+
+            if(!err_check)
+                break;
+
+            unsigned char size = (unsigned char)user_name_.length();
+            err_check = WriteFile(file,
+                                       &size,
+                                       sizeof(size),
+                                       (DWORD*)&bytes_written,
+                                       NULL);
+
+            if(!err_check)
+                break;
+
+            err_check = WriteFile(file,
+                                       &user_name_[0],
+                                       size,
+                                       (DWORD*)&bytes_written,
+                                       NULL);
+        } while(false);
+
+        CloseHandle(file);
+
+        //if writing failed - delete file
+        //as it is corrupted
+        if(!err_check)
+            DeleteFileA(USER_DATA_SAVE_FULLPATH);
+    }
+}
+
+bool Chat::Load()
+{
+    HANDLE file = CreateFile(FILE_DATA_SAVE_FULLPATH,   //path
+                             GENERIC_READ,              //to read
+                             0,                         //non-share
+                             NULL,                      //security
+                             OPEN_EXISTING,             //only existing
+                             FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
+                             NULL);
+    //if there is no existing file
+    if(file == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
+
+    BOOL error_flag;
+    do
+    {
+        DWORD bytes_read = 0;
+        error_flag = ReadFile(file,
+                              &msg_color_,
+                              sizeof(msg_color_),
+                              &bytes_read,
+                              NULL);
+        if(!error_flag)
+            break;
+
+        int size;
+        error_flag = ReadFile(file,
+                              &size,
+                              sizeof(size),
+                              &bytes_read,
+                              NULL);
+        if(!error_flag)
+            break;
+
+        user_name_.resize(size);
+        error_flag = ReadFile(file,
+                              &user_name_[0],
+                              size,
+                              &bytes_read,
+                              NULL);
+    } while(false);
+
+    if(!error_flag)
+    {
+        msg_color_ = DEFAULT_COLOR;
+        user_name_ = "";
+    }
+
+    CloseHandle(file);
+    return error_flag;
 }

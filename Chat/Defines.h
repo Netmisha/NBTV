@@ -31,9 +31,11 @@
 #define BROADCAST_LOOPBACK (0)
 
 //dir where shared files data is stored
-#define FILE_DATA_SAVE_DIR ("Data")
+#define DATA_SAVE_DIR ("Data")
 //full path to file where shared files data is stored
 #define FILE_DATA_SAVE_FULLPATH ("Data/shared_files.shif")
+//full path to file where user info (name/color) is stored
+#define USER_DATA_SAVE_FULLPATH ("Data/user_info.urio")
 
 //default dir where downloaded shared files are located
 #define DOWNLOAD_DIR ("Download")
@@ -45,5 +47,7 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 
 //maximum msgs stored from a single chat
 #define MAX_MSGS_STORED (50)
+
+#define DEFAULT_COLOR (char(1))
 
 #endif // !DEFINES_H

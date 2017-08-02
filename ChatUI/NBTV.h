@@ -131,6 +131,10 @@ public:
     //returns true if name is used by other user
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
+    //load user info
+    //returns true if info successfully loaded
+    //false otherwise
+    bool LoadUserInfo();
 };
 
 class DLL_IMP File
