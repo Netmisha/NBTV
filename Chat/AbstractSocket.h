@@ -19,7 +19,7 @@ enum SocketConnectionType
     UDP = 1
 };
 
-class AbstractSocket
+class DLL AbstractSocket
 {
 public:
     AbstractSocket();

@@ -6,7 +6,7 @@
 
 #include <WS2tcpip.h>
 
-class BroadcastSocket : public AbstractSocket
+class DLL BroadcastSocket : public AbstractSocket
 {
 public:
     BroadcastSocket(int port_to_send = -1);

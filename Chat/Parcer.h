@@ -2,6 +2,12 @@
 #define PARCER_H
 
 #include "UnpackedMessage.h"
+#include "Defines.h"
+
+#include "File.h"
+#include "UserMsg.h"
+#include "LogMessage.h"
+#include "RecvFileInfo.h"
 
 enum ConstantSizes
 {
@@ -9,9 +15,9 @@ enum ConstantSizes
     PREPARE_MESSAGE_SIZE = 5,   
     //1B flag + 1B type + 1B name size + 1B name color + 1B msg size
     CHAT_MESSAGE_HEADER_SIZE = 5,
-    //1B flag + 1B type + 1B name size + !B prev name size
+    //1B flag + 1B type + 1B name size + 1B prev name size
     LOG_MESSAGE_HEADER_SIZE = 4,
-	//1B flag + 1Bindex
+	//1B flag + 4B index
 	GET_FILE_MESSAGE_SIZE = 5,
     //1B flag
     FILE_LIST_REQUEST_SIZE = 1,
@@ -26,9 +32,9 @@ namespace Parcer
     //pointer to it, message is allocated in heap as char array
     //so use delete[] to clear it
     //returns size of message
-    int PackMessage(const MessageType &type, const void *in_msg, void* &out_result);
+    DLL int PackMessage(const MessageType &type, const void *in_msg, void* &out_result);
     //returns processed message from packet
-    UnpackedMessage UnpackMessage(const void *packet);
+    DLL UnpackedMessage UnpackMessage(const void *packet);
 
     //used to pack chat messages (in_msg is ptr to UserMsg)
     int PackChatMessage(const void *in_msg, void* &out_packet);

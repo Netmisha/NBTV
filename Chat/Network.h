@@ -19,7 +19,7 @@
 
 #include <string>
 
-class Network
+class DLL Network
 {
 public:
     //sets up is_working_ bool and

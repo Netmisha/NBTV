@@ -22,7 +22,7 @@ enum MessageType
 
 struct UnpackedMessage
 {
-    int type_ = INVALID_TYPE;
+    MessageType type_ = INVALID_TYPE;
     void *msg_ = 0;
 
     inline void Clear() { delete msg_; }

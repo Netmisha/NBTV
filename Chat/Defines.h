@@ -40,7 +40,11 @@
 //default dir where downloaded shared files are located
 #define DOWNLOAD_DIR ("Download")
 
-#define DLL_EXP __declspec(dllexport)
+#ifndef DLL_IMPORT
+#define DLL __declspec(dllexport)
+#else
+#define DLL __declspec(dllimport)
+#endif // !DLL_IMPORT
 
 //key value for public messages vector in Chat object
 const std::string PUBLIC_MSGS("PUBLIC_MSGS");

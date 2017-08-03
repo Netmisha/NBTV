@@ -47,7 +47,7 @@ namespace Parcer
             return result;
         }
         char *temp_ptr = (char*)packet;
-        result.type_ = *temp_ptr++;
+        result.type_ = (MessageType)*temp_ptr++;
         switch (result.type_)
         {
         case PREPARE_MESSAGE:

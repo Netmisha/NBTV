@@ -4,7 +4,7 @@
 #include "Defines.h"
 #include <string>
 
-class DLL_EXP File
+class DLL File
 {
 public:
     File();

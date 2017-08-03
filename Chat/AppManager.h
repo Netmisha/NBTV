@@ -5,7 +5,7 @@
 #include "FileManager.h"
 #include <vector>
 
-class DLL_EXP AppManager
+class DLL AppManager
 {
 	Chat chat_;
 	Network network_;

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-DLL_EXP AppManager app_man;
+DLL AppManager app_man;
 
 AppManager::~AppManager(){}
 
