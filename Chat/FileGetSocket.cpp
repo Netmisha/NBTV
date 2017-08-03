@@ -7,14 +7,14 @@ FileGetSocket::FileGetSocket(){}
 
 FileGetSocket::~FileGetSocket(){}
 
-bool FileGetSocket::Initialize()
+bool FileGetSocket::Initialize(unsigned int listen_port)
 {
     if (!TCPSocket::Initialize())
     {
         return false;
     }
 
-    if(!SetListen())
+    if(!SetListen(listen_port))
     {
         return false;
     }
@@ -24,7 +24,7 @@ bool FileGetSocket::Initialize()
 
 unsigned FileGetSocket::GetFileStartup(void *this_ptr)
 {
-   (*(FileGetSocket*)this_ptr).GetFile();
+    (*(FileGetSocket*)this_ptr).GetFile();
     return 0;
 }
 
@@ -32,7 +32,7 @@ bool FileGetSocket::GetFile()
 {
     TCPSocket file_getter = Accept();
    
-    if (!((CreateDirectory(DOWNLOAD_DIR, NULL)) ||
+    if (!((CreateDirectoryA(DOWNLOAD_DIR, NULL)) ||
         (GetLastError() == ERROR_ALREADY_EXISTS)))
         return false;
  
@@ -41,13 +41,17 @@ bool FileGetSocket::GetFile()
     file_getter.Recv(buffer, CHUNK_SIZE); //gettinh file name
     std::string dir(DOWNLOAD_DIR + std::string("\\") + std::string(buffer));
 
-    HANDLE file = CreateFile(dir.c_str(),
-                             GENERIC_WRITE,
-                             0,
-                             NULL,
-                             CREATE_ALWAYS,
-                             FILE_ATTRIBUTE_NORMAL,
-                             NULL);
+    HANDLE file = CreateFileA(dir.c_str(),
+                              GENERIC_WRITE,
+                              0,
+                              NULL,
+                              CREATE_ALWAYS,
+                              FILE_ATTRIBUTE_NORMAL,
+                              NULL);
+    if(file == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
     BOOL err_check;
     DWORD bytes_written;
     while(true) //file getting

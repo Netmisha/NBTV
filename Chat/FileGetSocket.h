@@ -6,7 +6,7 @@
 
 #include "RecvFileInfo.h"
 
-class FileGetSocket :
+class DLL FileGetSocket :
     public TCPSocket
 {
 
@@ -14,7 +14,7 @@ public:
     FileGetSocket();
     ~FileGetSocket();
 
-    bool Initialize();
+    bool Initialize(unsigned int listen_port = 0U);
 
     //thread startup function for GetFile
     static unsigned GetFileStartup(void *this_ptr);

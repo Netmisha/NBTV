@@ -12,4 +12,6 @@
 #define TEST_LOG_MSG {LOG_UPDATE, "Dio", "Brando"}
 #define TEST_LOG_MSG_SIZE (13)
 
+#define TEST_FILE_SEND_PATH "test.txt"
+
 #endif // !TEST_DEFINES_H

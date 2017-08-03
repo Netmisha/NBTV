@@ -4,7 +4,7 @@
 #include "AbstractSocket.h"
 #include "Defines.h"
 
-class TCPSocket : public AbstractSocket
+class DLL TCPSocket : public AbstractSocket
 {
 public:
     TCPSocket();

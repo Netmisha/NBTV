@@ -5,13 +5,16 @@
 
 #include <iostream>
 #include <string>
-class FileSendSocket : public TCPSocket
+class DLL FileSendSocket : public TCPSocket
 {
 public:
 	FileSendSocket();
 	~FileSendSocket();
 
-    bool SendFile(const std::string& pass, const std::string& ip, const std::string& filename);
+    bool SendFile(const std::string& pass,
+                  const std::string& ip,
+                  const std::string& filename,
+                  unsigned int port = 0);
 
 private:
 

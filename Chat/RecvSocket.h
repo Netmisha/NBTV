@@ -7,7 +7,7 @@
 
 #include <WS2tcpip.h>
 
-class RecvSocket : public AbstractSocket
+class DLL RecvSocket : public AbstractSocket
 {
 public:
     RecvSocket();
