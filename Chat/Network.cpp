@@ -115,7 +115,7 @@ int Network::SendLogMsg(const std::string &name,
                         const LogType &type,
                         const std::string &prev_name)
 {
-    LogMessage log_msg = { type, name, prev_name };
+    LogMessage log_msg = { type, name, prev_name, chat_->GetColor() };
     void *send_buffer = NULL;
     //allocation in heap
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
@@ -188,7 +188,7 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
     
     case LOG_UPDATE:
     case LOG_RESPONCE:
-        ip_name_list_.Add(ip, msg.name_);
+        ip_name_list_.Add(ip, msg.name_, msg.color_);
         
         if(msg.type_ == LOG_RESPONCE)
             is_fully_processed = true;
@@ -262,7 +262,7 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
     return is_fully_processed;
 }
 
-const std::vector<std::string>& Network::GetOnlineUsers()const
+const std::vector<UserInfo>& Network::GetOnlineUsers()const
 {
     return ip_name_list_.GetNameList();
 }

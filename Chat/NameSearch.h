@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>  //std::pair
 
+#include "UserInfo.h"
+
 class NameSearch
 {
 public:
@@ -12,7 +14,7 @@ public:
     ~NameSearch();
 
     void SetNameToSearch(const std::string *name_to_search);
-    bool operator()(const std::pair<std::string, std::string> &ip_name_pair)const;
+    bool operator()(const std::pair<std::string, UserInfo> &ip_name_pair)const;
 
 private:
     const std::string *name_to_search_;

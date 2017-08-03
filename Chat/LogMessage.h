@@ -17,11 +17,13 @@ struct LogMessage
     LogType type_;
     std::string name_;
     std::string prev_name_;
+    char color_;
 
     inline LogMessage(const LogType &type = LOG_INVALID_TYPE,
                       const std::string &name = "",
-                      const std::string &prev_name = "")
-                      : type_(type), name_(name), prev_name_(prev_name){}
+                      const std::string &prev_name = "",
+                      char color = -1)
+                      : type_(type), name_(name), prev_name_(prev_name), color_(color){}
 };
 
 #endif // !LOG_MESSAGE_H

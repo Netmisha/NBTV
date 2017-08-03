@@ -35,6 +35,7 @@ bool AbstractSocket::Close()
 
     int error_check = shutdown(socket_, SD_BOTH);
     // 10057 - error socket not connected
+    //caused by shutdown+close on the other end of connection
     if(error_check == SOCKET_ERROR && GetLastError() != 10057)
         return false;
 

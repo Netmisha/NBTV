@@ -148,6 +148,7 @@ namespace Parcer
         *temp_ptr++ = LOG_MESSAGE;
         *temp_ptr++ = log_msg->type_;
         *temp_ptr++ = (unsigned char)log_msg->name_.length();
+        *temp_ptr++ = log_msg->color_;
         *temp_ptr++ = (unsigned char)log_msg->prev_name_.length();
 
         memcpy(temp_ptr, &log_msg->name_[0], log_msg->name_.length());
@@ -164,6 +165,7 @@ namespace Parcer
 
         result->type_ = (LogType)*temp_ptr++;
         int name_size = (int)*temp_ptr++;
+        result->color_ = *temp_ptr++;
         int prev_name_size = (int)*temp_ptr++;
 
         result->name_.resize(name_size);

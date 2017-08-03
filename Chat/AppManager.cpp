@@ -129,7 +129,7 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
         else if (!strncmp(buffer.c_str(), "userlist", 8)) //get user list
         {
             PopBuffer(8, buffer);
-            const std::vector<std::string> *users = &network_.GetOnlineUsers();
+            const std::vector<UserInfo> *users = &network_.GetOnlineUsers();
             return (void*)users;
         }
         else if (!strncmp(buffer.c_str(), "addf ", 5)) //add file
@@ -200,4 +200,3 @@ bool AppManager::LoadUserInfo()
 {
     return chat_.Load();
 }
-

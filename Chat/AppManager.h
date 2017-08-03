@@ -51,4 +51,6 @@ public:
     bool LoadUserInfo();
 
     void EXIT();
+
+    void GetFile(const std::string &name, int index);
 };

@@ -15,8 +15,8 @@ enum ConstantSizes
     PREPARE_MESSAGE_SIZE = 5,   
     //1B flag + 1B type + 1B name size + 1B name color + 1B msg size
     CHAT_MESSAGE_HEADER_SIZE = 5,
-    //1B flag + 1B type + 1B name size + 1B prev name size
-    LOG_MESSAGE_HEADER_SIZE = 4,
+    //1B flag + 1B type + 1B name size + 1B color + 1B prev name size
+    LOG_MESSAGE_HEADER_SIZE = 5,
 	//1B flag + 4B index
 	GET_FILE_MESSAGE_SIZE = 5,
     //1B flag

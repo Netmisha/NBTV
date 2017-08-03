@@ -61,14 +61,14 @@ void CChatUIDlg::SetUserIcon()
 void CChatUIDlg::SetUserList()
 {
 
-    std::vector<std::string>* list = (std::vector<std::string>*)app_man.ActivateCommand(std::string("/userlist"));
+    std::vector<UserInfo>* list = (std::vector<UserInfo>*)app_man.ActivateCommand(std::string("/userlist"));
     CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
     usr_list->ResetContent();
     if(list->size() != 0)
     for (auto i : *list)
     {
 
-        usr_list->InsertString(usr_list->GetCount(), CString(i.c_str()));
+        usr_list->InsertString(usr_list->GetCount(), CString(i.user_name_.c_str()));
     }
 }
 

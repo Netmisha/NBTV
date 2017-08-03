@@ -95,6 +95,11 @@ public:
     void Join()const;
 };
 
+struct UserInfo
+{
+    std::string user_name_;
+    char color;
+};
 
 class DLL_IMP AppManager
 {
@@ -104,8 +109,6 @@ public:
     const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
 
     // void GetMsgLoop(); //message getting
-
-    const std::vector<std::string>& GetOnlineUsers()const;
 
     void SendFile(const std::string &path, const std::string &ip, const std::string &name);
 
