@@ -27,6 +27,7 @@ namespace UnitTests
             //return value (send bites) should be equal to msg size
             Assert::AreEqual(TEST_BROADCAST_MSG_SIZE,
                              br_sock.Send(buffer, TEST_BROADCAST_MSG_SIZE));
+            br_sock.Close();
         }
         TEST_METHOD(SendTo)
         {
@@ -38,6 +39,7 @@ namespace UnitTests
                              br_sock.SendTo(buffer,
                              TEST_BROADCAST_MSG_SIZE,
                              TEST_LOCALHOST_IP));
+            br_sock.Close();
         }
 	};
 }

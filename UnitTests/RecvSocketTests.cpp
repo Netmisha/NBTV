@@ -41,6 +41,9 @@ namespace UnitTests
             Assert::IsTrue(br_sock.Close());
 
             recv_str.Clear();
+
+            recv_sock.Close();
+            br_sock.Close();
         }
     };
 }

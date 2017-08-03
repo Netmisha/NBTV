@@ -38,6 +38,9 @@ namespace UnitTests
             Thread th(AcceptFunc, &listen_sock);
             connecting_sock.Connect(TEST_LOCALHOST_IP, TEST_PORT);
             th.Join();
+
+            Assert::IsTrue(connecting_sock.Close());
+            Assert::IsTrue(listen_sock.Close());
         }
     };
 }

@@ -68,9 +68,6 @@ namespace UnitTests
                 (DWORD*)&bytes_written,
                 NULL));
             Assert::IsTrue(strcmp(buffer, recv_buffer) == 0);
-
-            DeleteFileA(download_loc.c_str());
-            RemoveDirectoryA(DOWNLOAD_DIR);
         }
     };
 }
