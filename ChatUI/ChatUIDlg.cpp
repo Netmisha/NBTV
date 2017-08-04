@@ -152,7 +152,7 @@ BOOL CChatUIDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
- 
+    app_man.LoadUserInfo();
   
     UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
     UserListLabel.SetWindowTextW(CString("Active Users: "));
@@ -161,6 +161,8 @@ BOOL CChatUIDlg::OnInitDialog()
    
     recv_thread_.BeginThread(StartRecvLoop, this);
     
+
+
     SetUserIcon();
     SetUserList();
     
@@ -335,6 +337,10 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
         // Return handle to our CBrush object
        // hbr = m_brush;
     }
-
+    else if (pWnd->GetDlgCtrlID() == IDC_LIST1)
+    {
+        pDC->SetTextColor(LIGHTGREEN);
+        pDC->SetBkMode(TRANSPARENT);
+    }
     return hbr;
 }
