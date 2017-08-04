@@ -185,15 +185,15 @@ namespace Parcer
 
         unsigned char *temp_ptr = (unsigned char*)out_packet;
         *temp_ptr++ = GET_FILE_MESSAGE;
-        *temp_ptr++ = *((int*)in_msg);
+        *temp_ptr++ = *((short*)in_msg);
 
         return msg_size;
     }
 
     void* ParceGetFileMessage(const void * in_packet)
     {
-        int *result = new int;
-        *result = *((int*)in_packet);
+        short *result = new short;
+        *result = *((short*)in_packet);
 
         return (void*)result;
     }

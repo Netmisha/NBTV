@@ -246,9 +246,9 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
             break;
 
         case GET_FILE_MESSAGE:
-            SendFile(FM_->GetFilePath(*((int*)out_unp_msg.msg_)),
+            SendFile(FM_->GetFilePath(*((short*)out_unp_msg.msg_)),
                      recv_str.ip_,
-                     FM_->GetFileName(*((int*)out_unp_msg.msg_)),
+                     FM_->GetFileName(*((short*)out_unp_msg.msg_)),
                      custom_tcp_port_);
             break;
 
