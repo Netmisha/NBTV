@@ -31,6 +31,7 @@ public:
     int SendMsgTo(const std::string& msg, const std::string &name);
     //get your name
     const std::string& GetName()const;
+    const char GetColor() const;
 
     //recieve message from broadcasts
     UnpackedMessage RecieveMessage();

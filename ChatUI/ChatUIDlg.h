@@ -43,7 +43,8 @@ public:
 
 private:
     void ProcessMessage(const UnpackedMessage &um, AppManager& am);
-    
+    COLORREF  GetColorByIndex(char index);
+
     void SetUserIcon();
     void SetUserList();
 public:
@@ -64,4 +65,7 @@ public:
     CListBox UserList;
 
     Thread recv_thread_;
+
+    HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+   
 };

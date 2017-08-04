@@ -10,6 +10,7 @@
 #include <comdef.h>  // you will need this
 
 #include "NBTV.h"
+#include "Color.h"
 
 
 void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
@@ -39,6 +40,41 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
             Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of " + (*(LogMessage*)um.msg_).prev_name_.c_str());
             break;
         }
+        break;
+    }
+}
+
+COLORREF CChatUIDlg::GetColorByIndex(char index)
+{
+    switch (index)
+    {
+    case 1:
+        return RED;
+        break;
+    case 2:
+        return GREEN;
+        break;
+    case 3:
+        return BLUE;
+        break;
+    case 4:
+        return LIGHTRED;
+        break;
+    case 5:
+        return LIGHTGREEN;
+        break;
+    case 6:
+        return  LIGHTBLUE;
+        break;
+    case 7:
+        return BLACK;
+        break;
+    case 8: 
+        return GRAY;
+        break;
+  
+    default:
+        return BLACK;
         break;
     }
 }
@@ -123,6 +159,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_BN_CLICKED(IDC_MAINBUTTON, &CChatUIDlg::OnBnClickedMainbutton)
     ON_STN_CLICKED(IDC_USER_NAME, &CChatUIDlg::OnStnClickedUserName)
     ON_STN_CLICKED(IDC_USERICON, &CChatUIDlg::OnStnClickedUsericon)
+    ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -294,4 +331,28 @@ void CChatUIDlg::OnStnClickedUserName()
 void CChatUIDlg::OnStnClickedUsericon()
 {
     // TODO: Add your control notification handler code here
+}
+
+HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
+{
+    // Call the base class implementation first! Otherwise, it may
+    // undo what we're trying to accomplish here.
+    HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+    // Are we painting the IDC_MYSTATIC control? We can use
+    // CWnd::GetDlgCtrlID() to perform the most efficient test.
+    if (pWnd->GetDlgCtrlID() == IDC_USER_NAME)
+    {
+        // Set the text color to red
+        pDC->SetTextColor(GetColorByIndex(app_man.GetColor()));
+
+        // Set the background mode for text to transparent
+        // so background will show thru.
+        pDC->SetBkMode(TRANSPARENT);
+
+        // Return handle to our CBrush object
+       // hbr = m_brush;
+    }
+
+    return hbr;
 }

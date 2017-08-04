@@ -19,7 +19,7 @@ AppManager::AppManager(unsigned int broadc_port, unsigned int tcp_port)
     chat_.SetFM(&fm_);
     network_.SetFM(&fm_);
     network_.PrepareNetwork(broadc_port, tcp_port);
-    chat_.SetUserInfo(6, "Anton");
+    chat_.SetUserInfo(4, "Lebron");
 }
 
 const std::string& AppManager::GetFilePath(int file_index)const
@@ -50,6 +50,11 @@ int AppManager::SendMsgTo(const std::string& msg, const std::string &name)
 const std::string& AppManager::GetName()const
 {
     return chat_.GetName();
+}
+
+const char AppManager::GetColor() const
+{
+    return chat_.GetColor();
 }
 
 void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off private mode, filelists, get someone`s file,

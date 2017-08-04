@@ -37,6 +37,7 @@ public:
     int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
 
     const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
+   
 
     void ChangeOtherUserName(const std::string &from, const std::string &to);
     bool Load();
