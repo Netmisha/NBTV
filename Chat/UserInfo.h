@@ -6,7 +6,7 @@
 struct UserInfo
 {
     std::string user_name_;
-    char color;
+    char color_;
 
     inline bool operator==(const UserInfo& info) { return (user_name_ == info.user_name_); }
 };

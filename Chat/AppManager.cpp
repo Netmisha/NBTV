@@ -19,7 +19,7 @@ AppManager::AppManager(unsigned int broadc_port, unsigned int tcp_port)
     chat_.SetFM(&fm_);
     network_.SetFM(&fm_);
     network_.PrepareNetwork(broadc_port, tcp_port);
-    chat_.SetUserInfo(4, "Lebron");
+    chat_.SetUserInfo(0, "");
 }
 
 const std::string& AppManager::GetFilePath(int file_index)const
@@ -87,11 +87,8 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
                 return NULL;
             }
             std::string old_name = chat_.GetName();
-            chat_.SetName(buffer);
-            network_.SendLogMsg(chat_.GetName() , LOG_UPDATE, old_name);
-
+            SetUserInfo(buffer);
             return NULL;
-           // ResetChat();
         }
         else if (!strncmp(buffer.c_str(), "fl ", 3))  //my and someones file list
         {
@@ -99,12 +96,10 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             std::stringstream stream(buffer);
             std::string name;
             stream >> name;
-           // ResetChat();
             if (name.empty())
             {
                 const std::vector<File> *list = &fm_.GetFiles();
                 return (void*)list;
-                //PrintMyList(list); //I print my list
             }
             else
             {
@@ -138,17 +133,12 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             std::string pass;
             stream >> pass;
             fm_.AddFile(pass);
-            //ResetChat();
 
         }
         else if (!strncmp(buffer.c_str(), "setcolor ", 9))
         {
             PopBuffer(9, buffer);
-            std::string color_str("COLOR 0");
-            color_str += std::to_string(atoi(&buffer.front()));
-            system(color_str.c_str());
-            //ResetChat();
-            //system("COLOR 07"); white 
+            SetUserInfo((char)atoi(buffer.c_str()));
         }
         else if (!strncmp(buffer.c_str(), "exit", 4))
         {
@@ -161,12 +151,8 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             int index;
             stream >> index;
             fm_.RemoveFile(index - 1);
-            //ResetChat();
-
         }
        
-       // ResetChat();
-
     }
 
     return false;
@@ -204,4 +190,24 @@ void AppManager::StopNetwork()
 {
     network_.StopNetwork();
     chat_.IOfflineMsg();
+}
+
+void AppManager::SetUserInfo(const std::string &name, char color)
+{
+    std::string prev_name = chat_.GetName();
+    chat_.SetUserInfo(color, name);
+    network_.SendLogMsg(name, LOG_UPDATE, prev_name);
+}
+
+void AppManager::SetUserInfo(const std::string &name)
+{
+    std::string prev_name = chat_.GetName();
+    chat_.SetName(name);
+    network_.SendLogMsg(name, LOG_UPDATE, prev_name);
+}
+
+void AppManager::SetUserInfo(char color)
+{
+    chat_.SetColor(color);
+    network_.SendLogMsg(chat_.GetName(), LOG_UPDATE);
 }

@@ -5,6 +5,7 @@
 #include <map>
 
 #include "UserMsg.h"
+#include "UserInfo.h"
 
 #include "Mutex.h"
 #include "Thread.h"
@@ -23,6 +24,7 @@ public:
 
     void SetName(const std::string& name);
     const std::string& GetName()const; //name getter
+    void SetColor(char color);
     const char GetColor()const; //color getter
 
 	void SetUserInfo(char color, const std::string& name);
@@ -37,14 +39,12 @@ public:
     int SendMsgTo(const std::string& name, UserMsg& msg); //all msgs user write goes directly to the chosen user
 
     const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
-   
-
+    
     void ChangeOtherUserName(const std::string &from, const std::string &to);
     bool Load();
 
 private:
-	char msg_color_;
-	std::string user_name_;
+    UserInfo user_info_;
 
     std::map<std::string, std::vector<UserMsg>*> messages_;
 

@@ -37,7 +37,8 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
 
         case LOG_UPDATE:
             SetUserList();
-            Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of " + (*(LogMessage*)um.msg_).prev_name_.c_str());
+            if(!(*(LogMessage*)um.msg_).prev_name_.empty())
+                Chat.InsertString(Chat.GetCount(), CString((*(LogMessage*)um.msg_).name_.c_str()) + " is a new name of " + (*(LogMessage*)um.msg_).prev_name_.c_str());
             break;
         }
         break;
@@ -48,34 +49,15 @@ COLORREF CChatUIDlg::GetColorByIndex(char index)
 {
     switch (index)
     {
-    case 1:
-        return RED;
-        break;
-    case 2:
-        return GREEN;
-        break;
-    case 3:
-        return BLUE;
-        break;
-    case 4:
-        return LIGHTRED;
-        break;
-    case 5:
-        return LIGHTGREEN;
-        break;
-    case 6:
-        return  LIGHTBLUE;
-        break;
-    case 7:
-        return BLACK;
-        break;
-    case 8: 
-        return GRAY;
-        break;
-  
-    default:
-        return BLACK;
-        break;
+    case 1: return RED;         break;
+    case 2: return GREEN;       break;
+    case 3: return BLUE;        break;
+    case 4: return LIGHTRED;    break;
+    case 5: return LIGHTGREEN;  break;
+    case 6: return LIGHTBLUE;   break;
+    case 7: return BLACK;       break;
+    case 8: return GRAY;        break;
+    default:return BLACK;       break;
     }
 }
 

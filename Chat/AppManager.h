@@ -56,4 +56,8 @@ public:
     void GetFile(const std::string &name, int index);
 
     void StopNetwork();
+
+    void SetUserInfo(const std::string &name, char color);
+    void SetUserInfo(const std::string &name);
+    void SetUserInfo(char color);
 };

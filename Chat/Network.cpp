@@ -130,7 +130,7 @@ int Network::SendLogMsg(const std::string &name,
 
 void Network::GetFile(const std::string& user_name, int index)
 {
-	int file_index = index;
+	short file_index = (short)index;
 	void *send_buffer = NULL;
     //allocation in heap
 	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);

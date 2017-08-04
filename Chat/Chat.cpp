@@ -17,13 +17,13 @@ Chat::~Chat()
 
 void Chat::IOnlineMsg()
 {
-	connected_network_->SendLogMsg(user_name_, LOG_ONLINE);
+	connected_network_->SendLogMsg(user_info_.user_name_, LOG_ONLINE);
 }
 
 
 void Chat::IOfflineMsg()
 {
-	connected_network_->SendLogMsg(user_name_, LOG_OFFLINE);
+	connected_network_->SendLogMsg(user_info_.user_name_, LOG_OFFLINE);
 }
 
 int Chat::SendMsg(const UserMsg& msg)
@@ -55,24 +55,24 @@ void Chat::SetFM(FileManager * fm)
 
 void Chat::SetName(const std::string& name)
 {
-    user_name_ = name;
+    user_info_.user_name_ = name;
 }
 
 void Chat::SetUserInfo(char color, const std::string& name)
 {
-	msg_color_ = color;
-	user_name_ = name;
+	user_info_.color_ = color;
+	user_info_.user_name_ = name;
 	IOnlineMsg();
 }
 
 const std::string& Chat::GetName()const
 {
-    return user_name_;
+    return user_info_.user_name_;
 }
 
 const char Chat::GetColor()const
 {
-    return msg_color_;
+    return user_info_.color_;
 }
 
 void Chat::AddMsg(const UserMsg& msg, const std::string &name)
@@ -134,15 +134,15 @@ void Chat::Save()const
         {
             int bytes_written;
             err_check = WriteFile(file,
-                                       &msg_color_,
-                                       sizeof(msg_color_),
+                                       &user_info_.color_,
+                                       sizeof(user_info_.color_),
                                        (DWORD*)&bytes_written,
                                        NULL);
 
             if(!err_check)
                 break;
 
-            unsigned char size = (unsigned char)user_name_.length();
+            unsigned char size = (unsigned char)user_info_.user_name_.length();
             err_check = WriteFile(file,
                                        &size,
                                        sizeof(size),
@@ -153,7 +153,7 @@ void Chat::Save()const
                 break;
 
             err_check = WriteFile(file,
-                                       &user_name_[0],
+                                       &user_info_.user_name_[0],
                                        size,
                                        (DWORD*)&bytes_written,
                                        NULL);
@@ -188,8 +188,8 @@ bool Chat::Load()
     {
         DWORD bytes_read = 0;
         error_flag = ReadFile(file,
-                              &msg_color_,
-                              sizeof(msg_color_),
+                              &user_info_.color_,
+                              sizeof(user_info_.color_),
                               &bytes_read,
                               NULL);
         if(!error_flag)
@@ -204,9 +204,9 @@ bool Chat::Load()
         if(!error_flag)
             break;
 
-        user_name_.resize(size);
+        user_info_.user_name_.resize(size);
         error_flag = ReadFile(file,
-                              &user_name_[0],
+                              &user_info_.user_name_[0],
                               size,
                               &bytes_read,
                               NULL);
@@ -214,10 +214,15 @@ bool Chat::Load()
 
     if(!error_flag)
     {
-        msg_color_ = DEFAULT_COLOR;
-        user_name_ = "";
+        user_info_.color_ = DEFAULT_COLOR;
+        user_info_.user_name_ = "";
     }
 
     CloseHandle(file);
     return error_flag;
+}
+
+void Chat::SetColor(char color)
+{
+    user_info_.color_ = color;
 }
