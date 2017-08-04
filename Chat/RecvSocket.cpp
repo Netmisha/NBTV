@@ -11,7 +11,7 @@ RecvSocket::~RecvSocket()
     delete[] buffer_;
 }
 
-bool RecvSocket::Initialize(int port)
+bool RecvSocket::Initialize(unsigned int port)
 {
     if(!AbstractSocket::Initialize(UDP))
     {
@@ -33,7 +33,7 @@ bool RecvSocket::Initialize(int port)
     sockaddr_in port_bind;
     memset(&port_bind, 0, sizeof(port_bind));
     port_bind.sin_family = AF_INET;
-    port_bind.sin_port = htons(port != -1 ? (unsigned int)port : PORT);
+    port_bind.sin_port = htons(port ? port : PORT);
     port_bind.sin_addr.s_addr = INADDR_ANY;
     
     if(bind(socket_, (SOCKADDR*)&port_bind, (int)sizeof(port_bind)) != 0)

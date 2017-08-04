@@ -12,34 +12,29 @@ const std::vector<UserMsg> &AppManager::GetPrivateChatMsgs(const std::string &na
     return chat_.GetPrivateChatMsgs(name);
 }
 
-AppManager::AppManager()
+AppManager::AppManager(unsigned int broadc_port, unsigned int tcp_port)
 {
     chat_.SetNetwork(&network_);
     network_.SetChat(&chat_);
     chat_.SetFM(&fm_);
     network_.SetFM(&fm_);
-    network_.PrepareNetwork();
+    network_.PrepareNetwork(broadc_port, tcp_port);
     chat_.SetUserInfo(6, "Anton");
 }
 
-void AppManager::SendFile(const std::string & path, const std::string & ip, const std::string & name)
-{
-    network_.SendFile(path, ip, name);
-}
-
-const std::string AppManager::GetFilePath(int file_index)const
+const std::string& AppManager::GetFilePath(int file_index)const
 {
     return fm_.GetFilePath(file_index);
 }
 
-const std::string AppManager::GetFileName(int file_index)const
+const std::string& AppManager::GetFileName(int file_index)const
 {
     return fm_.GetFileName(file_index);
 }
 
-void AppManager::SendList(const std::string & ip)
+void AppManager::SendList(const std::string& ip, unsigned int port)
 {
-    network_.SendList(ip);
+    network_.SendList(ip, port);
 }
 
 int AppManager::SendMsg(const std::string& msg)
@@ -102,9 +97,8 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
            // ResetChat();
             if (name.empty())
             {
-                std::vector<File> *list = new  std::vector<File>;
-                fm_.GetFiles(*list);
-                return list;
+                const std::vector<File> *list = &fm_.GetFiles();
+                return (void*)list;
                 //PrintMyList(list); //I print my list
             }
             else
@@ -199,4 +193,10 @@ bool AppManager::IsNameUsed(const std::string &name)const
 bool AppManager::LoadUserInfo()
 {
     return chat_.Load();
+}
+
+void AppManager::StopNetwork()
+{
+    network_.StopNetwork();
+    chat_.IOfflineMsg();
 }

@@ -15,13 +15,13 @@ namespace UnitTests
 	public:
         TEST_METHOD(Initialize_Close)
         {
-            ::BroadcastSocket br_sock(TEST_PORT);
+            ::BroadcastSocket br_sock(TEST_BROADCAST_PORT);
             Assert::IsTrue(br_sock.Initialize());
             Assert::IsTrue(br_sock.Close());
         }
         TEST_METHOD(Send)
         {
-            ::BroadcastSocket br_sock(TEST_PORT);
+            ::BroadcastSocket br_sock(TEST_BROADCAST_PORT);
             char buffer[TEST_BROADCAST_MSG_SIZE] = TEST_BROADCAST_MSG;
             br_sock.Initialize();
             //return value (send bites) should be equal to msg size
@@ -31,7 +31,7 @@ namespace UnitTests
         }
         TEST_METHOD(SendTo)
         {
-            ::BroadcastSocket br_sock(TEST_PORT);
+            ::BroadcastSocket br_sock(TEST_BROADCAST_PORT);
             char buffer[TEST_BROADCAST_MSG_SIZE] = TEST_BROADCAST_MSG;
             br_sock.Initialize();
             //return value (send bites) should be equal to msg size

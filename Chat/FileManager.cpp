@@ -88,12 +88,9 @@ void FileManager::GetFileNames(std::vector<std::string> &out_result)const
     }
 }
 
-void FileManager::GetFiles(std::vector<File> &out_result)const
+const std::vector<File>& FileManager::GetFiles()const
 {
-    for(File file : shared_files_)
-    {
-        out_result.push_back(file);
-    }
+    return shared_files_;
 }
 
 void FileManager::Save()const

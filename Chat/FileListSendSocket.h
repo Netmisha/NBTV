@@ -16,7 +16,9 @@ public:
     //sending is done through connected tcp sockets
     //and numerous message sends, so requester needs 
     //to have listening socket up to send him list
-    bool SendFileList(const std::vector<File> &to_send, const std::string &ip);
+    bool SendFileList(const std::vector<File> &to_send,
+                      const std::string &ip,
+                      unsigned int port = 0U);
 };
 
 #endif // !FILE_LIST_SEND_SOCKET_H

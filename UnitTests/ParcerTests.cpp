@@ -33,8 +33,12 @@ namespace UnitTests
             int msg_size = ::Parcer::PackMessage(CHAT_MESSAGE, &msg, packed_message);
             Assert::AreEqual(TEST_CHAT_MSG_SIZE, msg_size);
             UnpackedMessage unp_msg = ::Parcer::UnpackMessage(packed_message);
-            Assert::AreEqual((int)unp_msg.type_, (int)CHAT_MESSAGE);
-            Assert::AreEqual(msg.msg_, (*(::UserMsg*)unp_msg.msg_).msg_);
+            ::UserMsg *unp_user_msg = (::UserMsg*)unp_msg.msg_;
+
+            Assert::IsTrue((msg.color_ == unp_user_msg->color_) &&
+                           (msg.name_ == unp_user_msg->name_) &&
+                           (msg.type_ == unp_user_msg->type_) &&
+                           (msg.msg_ == unp_user_msg->msg_));
 
             delete[] packed_message;
             unp_msg.Clear();
@@ -46,8 +50,12 @@ namespace UnitTests
             int msg_size = ::Parcer::PackMessage(LOG_MESSAGE, &msg, packed_message);
             Assert::AreEqual(TEST_LOG_MSG_SIZE, msg_size);
             UnpackedMessage unp_msg = ::Parcer::UnpackMessage(packed_message);
-            Assert::AreEqual((int)unp_msg.type_, (int)LOG_MESSAGE);
-            Assert::AreEqual(msg.name_, (*(::LogMessage*)unp_msg.msg_).name_);
+            ::LogMessage *unp_log_msg = (::LogMessage*)unp_msg.msg_;
+            
+            Assert::IsTrue((msg.color_ == unp_log_msg->color_) &&
+                           (msg.name_ == unp_log_msg->name_) &&
+                           (msg.prev_name_ == unp_log_msg->prev_name_) &&
+                           (msg.type_ == unp_log_msg->type_));
 
             delete[] packed_message;
             unp_msg.Clear();
@@ -59,8 +67,7 @@ namespace UnitTests
             int msg_size = ::Parcer::PackMessage(GET_FILE_MESSAGE, &rand_index, packed_message);
             Assert::AreEqual((int)GET_FILE_MESSAGE_SIZE, msg_size);
             UnpackedMessage unp_msg = ::Parcer::UnpackMessage(packed_message);
-            Assert::AreEqual((int)unp_msg.type_, (int)GET_FILE_MESSAGE);
-            Assert::AreEqual(rand_index, *(int*)unp_msg.msg_);
+            Assert::IsTrue(memcmp(&rand_index, unp_msg.msg_, sizeof(rand_index)) == 0);
 
             delete[] packed_message;
             unp_msg.Clear();
@@ -85,6 +92,7 @@ namespace UnitTests
             UnpackedMessage unp_msg = ::Parcer::UnpackMessage(packed_message);
             Assert::AreEqual((int)unp_msg.type_, (int)FILE_LIST_MESSAGE);
             Assert::AreEqual(file.GetName(), (*(RecvFileInfo*)unp_msg.msg_).name_);
+            Assert::AreEqual(file.GetSizeKB(), (*(RecvFileInfo*)unp_msg.msg_).size_KB_);
 
             delete[] packed_message;
             unp_msg.Clear();

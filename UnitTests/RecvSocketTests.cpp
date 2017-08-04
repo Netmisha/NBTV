@@ -17,16 +17,16 @@ namespace UnitTests
         TEST_METHOD(Initialize_Close)
         {
             ::RecvSocket recv_sock;
-            Assert::IsTrue(recv_sock.Initialize(TEST_PORT));
+            Assert::IsTrue(recv_sock.Initialize(TEST_BROADCAST_PORT));
             Assert::IsTrue(recv_sock.Close());
         }
         TEST_METHOD(Recv)
         {
-            ::BroadcastSocket br_sock(TEST_PORT);
+            ::BroadcastSocket br_sock(TEST_BROADCAST_PORT);
             ::RecvSocket recv_sock;
 
             Assert::IsTrue(br_sock.Initialize());
-            Assert::IsTrue(recv_sock.Initialize(TEST_PORT));
+            Assert::IsTrue(recv_sock.Initialize(TEST_BROADCAST_PORT));
 
             char buffer[TEST_BROADCAST_MSG_SIZE] = TEST_BROADCAST_MSG;
             //return value (send bites) should be equal to msg size

@@ -31,12 +31,12 @@ namespace UnitTests
         {
             ::TCPSocket listen_sock;
             Assert::IsTrue(listen_sock.Initialize());
-            Assert::IsTrue(listen_sock.SetListen(TEST_PORT, 1));
+            Assert::IsTrue(listen_sock.SetListen(TEST_BROADCAST_PORT, 1));
 
             ::TCPSocket connecting_sock;
             Assert::IsTrue(connecting_sock.Initialize());
             Thread th(AcceptFunc, &listen_sock);
-            connecting_sock.Connect(TEST_LOCALHOST_IP, TEST_PORT);
+            connecting_sock.Connect(TEST_LOCALHOST_IP, TEST_BROADCAST_PORT);
             th.Join();
 
             Assert::IsTrue(connecting_sock.Close());

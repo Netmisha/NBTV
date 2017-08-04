@@ -1,11 +1,11 @@
 #include "BroadcastSocket.h"
 
-BroadcastSocket::BroadcastSocket(int port_to_send)
+BroadcastSocket::BroadcastSocket(unsigned int port_to_send)
 {
     memset(&broadcast_addr_, 0, sizeof(broadcast_addr_));
     broadcast_addr_.sin_family = AF_INET;   //ipv4
     broadcast_addr_.sin_port = 
-        htons(port_to_send != -1 ? (unsigned int)port_to_send : PORT); //defined in Defines.h
+        htons(port_to_send ? port_to_send : PORT); //defined in Defines.h
     
     //BROADCAST_IP defined in Defines.h
     inet_pton(broadcast_addr_.sin_family, BROADCAST_IP, &(broadcast_addr_.sin_addr));
@@ -13,7 +13,7 @@ BroadcastSocket::BroadcastSocket(int port_to_send)
 
 BroadcastSocket::~BroadcastSocket(){}
 
-bool BroadcastSocket::Initialize()
+bool BroadcastSocket::Initialize(unsigned int port_to_send)
 {
     if(!AbstractSocket::Initialize(UDP))
     {
@@ -32,6 +32,9 @@ bool BroadcastSocket::Initialize()
         return false;
     }
 
+    if(port_to_send)
+        SetBroadcastPort(port_to_send);
+
     return true;
 }
 
@@ -45,7 +48,7 @@ int BroadcastSocket::Send(const void* buffer, int size)const
                   (int)sizeof(broadcast_addr_));
 }
 
-void BroadcastSocket::SetBroadcastPort(int port)
+void BroadcastSocket::SetBroadcastPort(unsigned int port)
 {
     broadcast_addr_.sin_port = htons(port);
 }

@@ -34,7 +34,7 @@ public:
     //get all file names
     void GetFileNames(std::vector<std::string> &out_result)const;
     //get vector of all files
-    void GetFiles(std::vector<File> &out_result)const;
+    const std::vector<File>& GetFiles()const;
 
 private:
     //vector of shared files

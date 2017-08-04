@@ -39,7 +39,7 @@ public:
     //function to prepare network for working
     //returns false in case of failure
     //true otherwise
-    bool PrepareNetwork();
+    bool PrepareNetwork(unsigned int broadc_port = 0U, unsigned int tcp_port = 0U);
     //stops network
     //note that network will take some
     //time to stop, this isn't an synchronous function
@@ -64,7 +64,10 @@ public:
     static unsigned GetFileStartup(void *socket_ptr);
     //sends file with specific path and name to
     //user with specific ip
-    void SendFile(const std::string &path, const std::string &ip, const std::string &name);
+    void SendFile(const std::string &path,
+                  const std::string &ip,
+                  const std::string &name,
+                  unsigned int port = 0U);
     //thread startup function for SendFile
     static unsigned SendFileStartup(void *send_file_info);
 
@@ -74,7 +77,7 @@ public:
     //returns -1 if send failed
     int RequestList(const std::string& user_name);
     //send list to specific ip
-    void SendList(const std::string& ip)const;
+    void SendList(const std::string& ip, unsigned int port = 0U)const;
     //get list, used right after RequestList
     //return value is passed as refference parameter
     //it is safe as the sender connects to requester
@@ -123,6 +126,9 @@ private:
 
     //list of ip - user name pairs
     IpNameList ip_name_list_;
+
+    //custom tcp connection port
+    unsigned int custom_tcp_port_;
 
     //cleanup function, closes sockets
     void Cleanup();

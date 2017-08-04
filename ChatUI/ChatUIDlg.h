@@ -14,6 +14,7 @@ class CChatUIDlg : public CDialogEx
 // Construction
 public:
 	CChatUIDlg(CWnd* pParent = NULL);	// standard constructor
+    ~CChatUIDlg();
 
 // Dialog Data
 	enum { IDD = IDD_CHATUI_DIALOG };
@@ -61,4 +62,6 @@ public:
 
     // online users
     CListBox UserList;
+
+    Thread recv_thread_;
 };

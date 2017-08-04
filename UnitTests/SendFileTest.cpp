@@ -39,14 +39,14 @@ namespace UnitTests
             CloseHandle(file);
 
             FileGetSocket file_sock;
-            Assert::IsTrue(file_sock.Initialize(TEST_PORT));
+            Assert::IsTrue(file_sock.Initialize(TEST_BROADCAST_PORT));
             Thread th(FileGetSocket::GetFileStartup, &file_sock);
 
             FileSendSocket file_send_sock;
             Assert::IsTrue(file_send_sock.SendFile(TEST_FILE_SEND_PATH,
                                                    TEST_LOCALHOST_IP,
                                                    TEST_FILE_SEND_PATH,
-                                                   TEST_PORT));
+                                                   TEST_BROADCAST_PORT));
 
             th.Join();
             DeleteFileA(TEST_FILE_SEND_PATH);

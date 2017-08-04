@@ -14,7 +14,7 @@ public:
     bool SendFile(const std::string& pass,
                   const std::string& ip,
                   const std::string& filename,
-                  unsigned int port = 0);
+                  unsigned int port = 0U);
 
 private:
 

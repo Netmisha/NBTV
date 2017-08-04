@@ -6,14 +6,14 @@
 volatile int Network::file_sharing_thread_num_ = 0;
 Mutex Network::threads_num_mutex_;
 
-Network::Network() : is_working_(false), my_ip_(""){}
+Network::Network() : is_working_(false), my_ip_(""), custom_tcp_port_(0U){}
 
 Network::~Network()
 {
     Cleanup();
 }
 
-bool Network::PrepareNetwork()
+bool Network::PrepareNetwork(unsigned int broadc_port, unsigned int tcp_port)
 {
     WSAData wsa_data;
     int error_check = WSAStartup(MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION), 
@@ -23,20 +23,23 @@ bool Network::PrepareNetwork()
         return false;
     }
 
-    if(!broadc_socket_.Initialize())
+    if(!broadc_socket_.Initialize(broadc_port))
     {
         return false;
     }
 
-    if(!recv_socket_.Initialize())
+    if(!recv_socket_.Initialize(broadc_port))
     {
         return false;
     }
 
-    if (!file_get_socket_.Initialize())
+    if (!file_get_socket_.Initialize(tcp_port))
 	{
 		return false;
 	}
+
+    if(tcp_port)
+        custom_tcp_port_ = tcp_port;
 
     //getting local pc ip
     int rand_value = rand(), buffer = 0;
@@ -162,12 +165,11 @@ int Network::RequestList(const std::string& user_name)
     return send_size;
 }
 
-void Network::SendList(const std::string& ip)const
+void Network::SendList(const std::string& ip, unsigned int port)const
 {
-    std::vector<File> files;
-    FM_->GetFiles(files);
+    const std::vector<File>* files = &FM_->GetFiles();
 
-    FileListSendSocket().SendFileList(files, ip);
+    FileListSendSocket().SendFileList(*files, ip, port);
 }
 
 bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
@@ -246,7 +248,8 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
         case GET_FILE_MESSAGE:
             SendFile(FM_->GetFilePath(*((int*)out_unp_msg.msg_)),
                      recv_str.ip_,
-                     FM_->GetFileName(*((int*)out_unp_msg.msg_)));
+                     FM_->GetFileName(*((int*)out_unp_msg.msg_)),
+                     custom_tcp_port_);
             break;
 
         case FILE_LIST_REQUEST:
@@ -274,13 +277,15 @@ const std::string Network::GetIP()const
 
 unsigned Network::SendFileStartup(void *send_file_info)
 {
+    SendFileInfo* file_info = (SendFileInfo*)send_file_info;
     threads_num_mutex_.Lock();
     file_sharing_thread_num_++;
     threads_num_mutex_.Unlock();
 
-    FileSendSocket().SendFile((*(SendFileInfo*)send_file_info).path_,
-                              (*(SendFileInfo*)send_file_info).ip_,
-                              (*(SendFileInfo*)send_file_info).name_);
+    FileSendSocket().SendFile(file_info->path_,
+                              file_info->ip_,
+                              file_info->name_,
+                              file_info->port_);
     delete send_file_info;
 
     threads_num_mutex_.Lock();
@@ -292,11 +297,12 @@ unsigned Network::SendFileStartup(void *send_file_info)
 
 void Network::SendFile(const std::string &path,
                        const std::string &ip,
-                       const std::string &name)
+                       const std::string &name,
+                       unsigned int port)
 {
     //explisit conversion to object
     //then copying it to heap
-    SendFileInfo *sfi = new SendFileInfo(SendFileInfo{ path, name, ip });
+    SendFileInfo *sfi = new SendFileInfo(SendFileInfo{ path, name, ip, port });
     Thread th(Network::SendFileStartup, sfi);
 }
 

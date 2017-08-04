@@ -9,12 +9,12 @@
 class DLL BroadcastSocket : public AbstractSocket
 {
 public:
-    BroadcastSocket(int port_to_send = -1);
+    BroadcastSocket(unsigned int port_to_send = 0U);
     ~BroadcastSocket();
 
     //calls AbstractSocket::Initialize
     //and finishes initializetion
-    bool Initialize();
+    bool Initialize(unsigned int port_to_send = 0U);
 
     //broadcasts message to the entire network
     //returns size of message send in bytes
@@ -27,7 +27,7 @@ public:
     int SendTo(const void *buffer, int size, const char* ip)const;
 
     //sets socket to broadcast to different port
-    void SetBroadcastPort(int port);
+    void SetBroadcastPort(unsigned int port);
 
 private:
     //broadcast address

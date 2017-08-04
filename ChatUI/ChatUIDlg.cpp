@@ -101,6 +101,12 @@ CChatUIDlg::CChatUIDlg(CWnd* pParent /*=NULL*/)
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+CChatUIDlg::~CChatUIDlg()
+{
+    app_man.StopNetwork();
+    recv_thread_.Join();
+}
+
 void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialogEx::DoDataExchange(pDX);
@@ -134,7 +140,7 @@ BOOL CChatUIDlg::OnInitDialog()
 
     icon = (CStatic*)GetDlgItem(IDC_USERICON);
    
-    Thread(StartRecvLoop, this);
+    recv_thread_.BeginThread(StartRecvLoop, this);
     
     SetUserIcon();
     SetUserList();
