@@ -183,7 +183,7 @@ bool AppManager::IsNameUsed(const std::string &name)const
 
 bool AppManager::LoadUserInfo()
 {
-    return chat_.Load();
+   return chat_.Load();
 }
 
 void AppManager::StopNetwork()

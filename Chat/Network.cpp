@@ -227,7 +227,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)con
 
 bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_unp_msg)
 {
-    bool is_fully_processed = true;
+    bool is_fully_processed = (is_working_ ? true : false);
 
     if((recv_str.ip_ != my_ip_) || BROADCAST_LOOPBACK)
     {

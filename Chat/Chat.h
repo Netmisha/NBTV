@@ -5,7 +5,7 @@
 #include <map>
 
 #include "UserMsg.h"
-#include "UserInfo.h"
+#include "MyUserInfo.h"
 
 #include "Mutex.h"
 #include "Thread.h"
@@ -41,10 +41,11 @@ public:
     const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
     
     void ChangeOtherUserName(const std::string &from, const std::string &to);
+
     bool Load();
 
 private:
-    UserInfo user_info_;
+    MyUserInfo user_info_;
 
     std::map<std::string, std::vector<UserMsg>*> messages_;
 
@@ -54,6 +55,4 @@ private:
 	Mutex chat_mutex_;
 
     void ClearMessages();
-
-    void Save()const;
 };

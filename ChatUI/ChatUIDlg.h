@@ -48,10 +48,10 @@ private:
     void SetUserIcon();
     void SetUserList();
 public:
+    volatile bool is_working_ = false;
     // user name next to icon
     CStatic UserNameLabel;
     afx_msg void OnStnClickedUserName();
-    
   
     // user icon with first letter of his name
     CStatic* icon;

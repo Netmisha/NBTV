@@ -12,18 +12,17 @@ Chat::Chat(){}
 Chat::~Chat()
 {
     ClearMessages();
-    Save();
 }
 
 void Chat::IOnlineMsg()
 {
-	connected_network_->SendLogMsg(user_info_.user_name_, LOG_ONLINE);
+	connected_network_->SendLogMsg(user_info_.GetName(), LOG_ONLINE);
 }
 
 
 void Chat::IOfflineMsg()
 {
-	connected_network_->SendLogMsg(user_info_.user_name_, LOG_OFFLINE);
+	connected_network_->SendLogMsg(user_info_.GetName(), LOG_OFFLINE);
 }
 
 int Chat::SendMsg(const UserMsg& msg)
@@ -55,24 +54,24 @@ void Chat::SetFM(FileManager * fm)
 
 void Chat::SetName(const std::string& name)
 {
-    user_info_.user_name_ = name;
+    user_info_.SetName(name);
 }
 
 void Chat::SetUserInfo(char color, const std::string& name)
 {
-	user_info_.color_ = color;
-	user_info_.user_name_ = name;
+	user_info_.SetColor(color);
+	user_info_.SetName(name);
 	IOnlineMsg();
 }
 
 const std::string& Chat::GetName()const
 {
-    return user_info_.user_name_;
+    return user_info_.GetName();
 }
 
 const char Chat::GetColor()const
 {
-    return user_info_.color_;
+    return user_info_.GetColor();
 }
 
 void Chat::AddMsg(const UserMsg& msg, const std::string &name)
@@ -110,120 +109,12 @@ void Chat::ClearMessages()
     }
 }
 
-void Chat::Save()const
+void Chat::SetColor(char color)
 {
-    //if directory to save shared files data
-    //doesn't exist -> create it
-    if((CreateDirectory(DATA_SAVE_DIR, NULL)) ||
-       (GetLastError() == ERROR_ALREADY_EXISTS))
-    {
-        HANDLE file = CreateFile(USER_DATA_SAVE_FULLPATH,   //path
-                                 GENERIC_WRITE,             //to write
-                                 0,                         //non-share
-                                 NULL,                      //security
-                                 CREATE_ALWAYS,             //always create
-                                 FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
-                                 NULL);                     //why no default arguments
-        //if failed to create file
-        if(file == INVALID_HANDLE_VALUE)
-        {
-            return;
-        }
-
-        BOOL err_check;
-        do
-        {
-            int bytes_written;
-            err_check = WriteFile(file,
-                                       &user_info_.color_,
-                                       sizeof(user_info_.color_),
-                                       (DWORD*)&bytes_written,
-                                       NULL);
-
-            if(!err_check)
-                break;
-
-            unsigned char size = (unsigned char)user_info_.user_name_.length();
-            err_check = WriteFile(file,
-                                       &size,
-                                       sizeof(size),
-                                       (DWORD*)&bytes_written,
-                                       NULL);
-
-            if(!err_check)
-                break;
-
-            err_check = WriteFile(file,
-                                       &user_info_.user_name_[0],
-                                       size,
-                                       (DWORD*)&bytes_written,
-                                       NULL);
-        } while(false);
-
-        CloseHandle(file);
-
-        //if writing failed - delete file
-        //as it is corrupted
-        if(!err_check)
-            DeleteFileA(USER_DATA_SAVE_FULLPATH);
-    }
+    user_info_.SetColor(color);
 }
 
 bool Chat::Load()
 {
-    HANDLE file = CreateFile(FILE_DATA_SAVE_FULLPATH,   //path
-                             GENERIC_READ,              //to read
-                             0,                         //non-share
-                             NULL,                      //security
-                             OPEN_EXISTING,             //only existing
-                             FILE_ATTRIBUTE_NORMAL,     //nothing-specific-file
-                             NULL);
-    //if there is no existing file
-    if(file == INVALID_HANDLE_VALUE)
-    {
-        return false;
-    }
-
-    BOOL error_flag;
-    do
-    {
-        DWORD bytes_read = 0;
-        error_flag = ReadFile(file,
-                              &user_info_.color_,
-                              sizeof(user_info_.color_),
-                              &bytes_read,
-                              NULL);
-        if(!error_flag)
-            break;
-
-        int size;
-        error_flag = ReadFile(file,
-                              &size,
-                              sizeof(size),
-                              &bytes_read,
-                              NULL);
-        if(!error_flag)
-            break;
-
-        user_info_.user_name_.resize(size);
-        error_flag = ReadFile(file,
-                              &user_info_.user_name_[0],
-                              size,
-                              &bytes_read,
-                              NULL);
-    } while(false);
-
-    if(!error_flag)
-    {
-        user_info_.color_ = DEFAULT_COLOR;
-        user_info_.user_name_ = "";
-    }
-
-    CloseHandle(file);
-    return error_flag;
-}
-
-void Chat::SetColor(char color)
-{
-    user_info_.color_ = color;
+    return user_info_.Load();
 }

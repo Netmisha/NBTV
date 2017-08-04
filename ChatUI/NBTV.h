@@ -120,7 +120,7 @@ public:
     int SendMsgTo(const std::string& msg, const std::string &name);
     //get your name
     const std::string& GetName()const;
-    const char GetColor() const; //clolr getter
+    const char GetColor() const;
 
     //recieve message from broadcasts
     UnpackedMessage RecieveMessage();
@@ -145,6 +145,10 @@ public:
     void GetFile(const std::string &name, int index);
 
     void StopNetwork();
+
+    void SetUserInfo(const std::string &name, char color);
+    void SetUserInfo(const std::string &name);
+    void SetUserInfo(char color);
 };
 
 class DLL_IMP File

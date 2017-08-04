@@ -78,10 +78,10 @@ void CChatUIDlg::SetUserIcon()
 
 void CChatUIDlg::SetUserList()
 {
-
     std::vector<UserInfo>* list = (std::vector<UserInfo>*)app_man.ActivateCommand(std::string("/userlist"));
     CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
-    usr_list->ResetContent();
+    if(is_working_)
+        usr_list->ResetContent();
     if(list->size() != 0)
     for (auto i : *list)
     {
@@ -92,12 +92,12 @@ void CChatUIDlg::SetUserList()
 
 void  CChatUIDlg::RecvLoop(AppManager& am)
 {
-    static bool is_working_ = true;
+    is_working_ = true;
     while (is_working_)
     {
         UnpackedMessage packet = am.RecieveMessage();
-        //TODO
-        ProcessMessage(packet, am);
+        if(is_working_)
+            ProcessMessage(packet, am);
 
         packet.Clear();
         //Send new info to AppManager
@@ -122,6 +122,7 @@ CChatUIDlg::CChatUIDlg(CWnd* pParent /*=NULL*/)
 CChatUIDlg::~CChatUIDlg()
 {
     app_man.StopNetwork();
+    is_working_ = false;
     recv_thread_.Join();
 }
 
@@ -296,6 +297,8 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
         else if (!strncmp(c, "/addf", 5))
             app_man.ActivateCommand(std::string(c));
         else if (!strncmp(c, "/removef", 8))
+            app_man.ActivateCommand(std::string(c));
+        else if(!strncmp(c, "/setcolor", 9))
             app_man.ActivateCommand(std::string(c));
     }
     else
