@@ -28,7 +28,7 @@ namespace UnitTests
         }
         TEST_METHOD(UserMsg)
         {
-            ::UserMsg msg = TEST_CHAT_MSG;
+            ::UserMsg msg = TEST_CHAT_MSG(PUBLIC);
             void* packed_message;
             int msg_size = ::Parcer::PackMessage(CHAT_MESSAGE, &msg, packed_message);
             Assert::AreEqual(TEST_CHAT_MSG_SIZE, msg_size);
@@ -62,12 +62,12 @@ namespace UnitTests
         }
         TEST_METHOD(GetFileMessage)
         {
-            int rand_index = rand() % 100;
+            short rand_index = rand() % 100;
             void* packed_message;
             int msg_size = ::Parcer::PackMessage(GET_FILE_MESSAGE, &rand_index, packed_message);
             Assert::AreEqual((int)GET_FILE_MESSAGE_SIZE, msg_size);
             UnpackedMessage unp_msg = ::Parcer::UnpackMessage(packed_message);
-            Assert::IsTrue(memcmp(&rand_index, unp_msg.msg_, sizeof(rand_index)) == 0);
+            Assert::IsTrue(rand_index == *(short*)unp_msg.msg_);
 
             delete[] packed_message;
             unp_msg.Clear();

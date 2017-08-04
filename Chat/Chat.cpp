@@ -77,7 +77,8 @@ const char Chat::GetColor()const
 
 void Chat::AddMsg(const UserMsg& msg, const std::string &name)
 {
-    std::string msg_chat = (msg.type_ == PUBLIC ? PUBLIC_MSGS : name);
+    std::string msg_chat = 
+        (msg.type_ == PUBLIC ? PUBLIC_MSGS : (name.empty() ? msg.name_ : name));
     chat_mutex_.Lock();
 
     //if vector of user messages to this user do not exist
