@@ -19,7 +19,6 @@ AppManager::AppManager(unsigned int broadc_port, unsigned int tcp_port)
     chat_.SetFM(&fm_);
     network_.SetFM(&fm_);
     network_.PrepareNetwork(broadc_port, tcp_port);
-    chat_.SetUserInfo(0, "");
 }
 
 const std::string& AppManager::GetFilePath(int file_index)const
@@ -183,7 +182,12 @@ bool AppManager::IsNameUsed(const std::string &name)const
 
 bool AppManager::LoadUserInfo()
 {
-   return chat_.Load();
+   bool result = chat_.Load();
+
+   if(result)
+       network_.SendLogMsg(chat_.GetName(), LOG_ONLINE);
+
+   return result;
 }
 
 void AppManager::StopNetwork()
