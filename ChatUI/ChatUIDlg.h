@@ -6,8 +6,9 @@
 #include "afxwin.h"
 #include "NBTV.h"
 #include "afxbutton.h"
+#include "afxcmn.h"
 
-
+#include "GridCtrl_src\GridCtrl.h"
 // CChatUIDlg dialog
 class CChatUIDlg : public CDialogEx
 {
@@ -68,4 +69,15 @@ public:
 
     HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
    
+
+    CGridCtrl FileGrid;
+    // switch to chat    // switch to chat
+    CButton CheckChat;
+    // switch to file list
+    CButton CheckFileList;
+
+    afx_msg void OnBnClickedSwitchC();
+    afx_msg void OnBnClickedSwitchFl();
+
+    void SetFileList();
 };

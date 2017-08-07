@@ -134,6 +134,9 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAT, Chat);
     DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
     DDX_Control(pDX, IDC_USERLIST_LABEL, UserListLabel);
+    // DDX_Control(pDX, IDC_LIST2, FileTable);
+    DDX_Control(pDX, IDC_SWITCH_C, CheckChat);
+    DDX_Control(pDX, IDC_SWITCH_FL, CheckFileList);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -143,6 +146,8 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_STN_CLICKED(IDC_USER_NAME, &CChatUIDlg::OnStnClickedUserName)
     ON_STN_CLICKED(IDC_USERICON, &CChatUIDlg::OnStnClickedUsericon)
     ON_WM_CTLCOLOR()
+    ON_BN_CLICKED(IDC_SWITCH_C, &CChatUIDlg::OnBnClickedSwitchC)
+    ON_BN_CLICKED(IDC_SWITCH_FL, &CChatUIDlg::OnBnClickedSwitchFl)
 END_MESSAGE_MAP()
 
 
@@ -157,6 +162,8 @@ BOOL CChatUIDlg::OnInitDialog()
   
     UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
     UserListLabel.SetWindowTextW(CString("Active Users: "));
+    CheckFileList.SetWindowTextW(CString("FL"));
+    CheckChat.SetWindowTextW(CString("C"));
 
     icon = (CStatic*)GetDlgItem(IDC_USERICON);
    
@@ -166,7 +173,20 @@ BOOL CChatUIDlg::OnInitDialog()
 
     SetUserIcon();
     SetUserList();
-    
+    SetFileList();
+
+    //set file table
+    RECT rect = { LONG(1090), LONG(10), LONG(1675), LONG(500) };
+    FileGrid.Create(rect, this, 25);
+    FileGrid.SetColumnCount(3); 
+    FileGrid.SetRowCount(13);
+
+    FileGrid.SetColumnWidth(0, 50);
+    FileGrid.SetColumnWidth(1, 420);
+    FileGrid.SetColumnWidth(2, 105);
+    //FileGrid.AutoSize();
+
+
 
 
   
@@ -225,8 +245,6 @@ HCURSOR CChatUIDlg::OnQueryDragIcon()
 
 void CChatUIDlg::OnBnClickedMainbutton() //msg sending
 {
-   /* CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
-    usr_list->InsertString(usr_list->GetCount(), CString("sssss"));*/
 
     CString str;
     ChatEdit.GetWindowTextW(str);
@@ -279,6 +297,7 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                     std::string str = std::to_string(i + 1) + ' ' + (*list)[i].GetName() + ' ' + std::to_string((*list)[i].GetSizeMB());
                     Chat.InsertString( Chat.GetCount(), CString( str.c_str() )  );
                 }
+                if(list->size() != 0)
                 delete list;
             }
             else
@@ -289,17 +308,28 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                     std::string str = std::to_string(i + 1) + ' ' + (*list)[i].name_ + ' ' + std::to_string((*list)[i].size_KB_ / 1024);
                     Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
                 }
+                if (list->size() != 0)
                 delete list;
             }
         }
         else if (!strncmp(c, "/getf", 5))
             app_man.ActivateCommand(std::string(c));
         else if (!strncmp(c, "/addf", 5))
+        {
             app_man.ActivateCommand(std::string(c));
+            SetFileList();
+        }
         else if (!strncmp(c, "/removef", 8))
+        {
             app_man.ActivateCommand(std::string(c));
-        else if(!strncmp(c, "/setcolor", 9))
+            SetFileList();
+        }
+        else if (!strncmp(c, "/setcolor", 9))
+        {
             app_man.ActivateCommand(std::string(c));
+            UserNameLabel.GetDC()->SetTextColor(GetColorByIndex(app_man.GetColor()));
+            UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+        }
     }
     else
     {
@@ -337,8 +367,6 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
         // so background will show thru.
         pDC->SetBkMode(TRANSPARENT);
 
-        // Return handle to our CBrush object
-       // hbr = m_brush;
     }
     else if (pWnd->GetDlgCtrlID() == IDC_LIST1)
     {
@@ -346,4 +374,36 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
         pDC->SetBkMode(TRANSPARENT);
     }
     return hbr;
+}
+
+
+void CChatUIDlg::OnBnClickedSwitchC()
+{
+    MainButton.ShowWindow(SW_SHOW);
+    ChatEdit.ShowWindow(SW_SHOW);
+    Chat.ShowWindow(SW_SHOW);
+    FileGrid.ShowWindow(SW_HIDE);
+}
+
+
+void CChatUIDlg::OnBnClickedSwitchFl()
+{
+    MainButton.ShowWindow(SW_HIDE);
+    ChatEdit.ShowWindow(SW_HIDE);
+    Chat.ShowWindow(SW_HIDE);
+    FileGrid.ShowWindow(SW_SHOW);
+}
+
+void CChatUIDlg::SetFileList()
+{
+    std::vector<File> *list = (std::vector<File>*)app_man.ActivateCommand(std::string("/fl "));
+   FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
+    for (int i = 0; i < list->size(); i++)
+    {
+        FileGrid.SetItemText(i, 0, CString(std::to_string(i+1).c_str()));
+        FileGrid.SetItemText(i, 1, CString(  (*list)[i].GetName().c_str()  ));
+        
+        FileGrid.SetItemText(i, 2, CString( std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
+    }
+    FileGrid.Refresh();
 }
