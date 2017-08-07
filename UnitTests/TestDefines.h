@@ -13,6 +13,9 @@
 #define TEST_LOG_MSG {LOG_UPDATE, "Dio", "Brando", (char)1}
 #define TEST_LOG_MSG_SIZE (14)
 
-#define TEST_FILE_SEND_PATH "test.txt"
+#define TEST_FILE_SEND_PATH ("test.txt")
+
+#define TEST_FILE_ALWAYS_EXISTS_FULLPATH ("../../UnitTests/TestDefines.h")
+#define TEST_FILE_ALWAYS_EXISTS_NAME ("TestDefines.h")
 
 #endif // !TEST_DEFINES_H
