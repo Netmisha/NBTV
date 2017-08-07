@@ -5,7 +5,7 @@
 
 //default port
 #define PORT ((unsigned short)20001)
-//port for tcp connectiong
+//port for tcp connection
 #define FILE_PORT ((unsigned short)12000)
 //broadcast ip
 #define BROADCAST_IP ("255.255.255.255")
@@ -19,7 +19,7 @@
 #define BUFFER_SIZE (512)
 #define CHUNK_SIZE (512)
 
-//size of ip in chars
+//size of ip in chars (multibite)
 #define IP_SIZE (16)
 
 //WSAStartup version define
@@ -28,7 +28,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK (1)
+#define BROADCAST_LOOPBACK (0)
 
 //dir where shared files data is stored
 #define DATA_SAVE_DIR ("Data")

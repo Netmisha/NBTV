@@ -189,6 +189,9 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
         //do not put break here
     
     case LOG_UPDATE:
+        if(!msg.prev_name_.empty())
+            chat_->ChangeOtherUserName(msg.prev_name_, msg.name_);
+
     case LOG_RESPONCE:
         ip_name_list_.Add(ip, msg.name_, msg.color_);
         

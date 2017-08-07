@@ -107,6 +107,7 @@ private:
     //socket for recieving messages
     RecvSocket recv_socket_;
     //socket for getting files
+    //and list
     FileGetSocket file_get_socket_;
 
     //local machine ip

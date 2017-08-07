@@ -106,7 +106,7 @@ class DLL_IMP AppManager
 public:
     //returns refference to vector of user msgs of specific private chat
     //use PUBLIC_MSGS constant for getting public messages
-    const std::vector<UserMsg>& GetPrivateChatMsgs(const std::string &name)const;
+    const std::vector<UserMsg>* GetPrivateChatMsgs(const std::string &name)const;
 
     //get specific yours shared file path and name
     const std::string& GetFilePath(int file_index)const;
@@ -115,7 +115,7 @@ public:
     void SendList(const std::string& ip, unsigned int port = 0U);
 
     //send msg to everyone
-    int SendMsg(const std::string& msg); //after user wrote message in chat
+    int SendMsg(const std::string& msg);
     //send msg to someone specific
     int SendMsgTo(const std::string& msg, const std::string &name);
     //get your name

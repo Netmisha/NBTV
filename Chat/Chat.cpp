@@ -9,10 +9,7 @@
 
 Chat::Chat(){}
 
-Chat::~Chat()
-{
-    ClearMessages();
-}
+Chat::~Chat(){}
 
 void Chat::IOnlineMsg()
 {
@@ -37,9 +34,9 @@ int Chat::SendMsgTo(const std::string& name, UserMsg& msg)
     return connected_network_->SendMsgTo(name, msg);
 }
 
-const std::vector<UserMsg>& Chat::GetPrivateChatMsgs(const std::string &name)const
+const std::vector<UserMsg>* Chat::GetChatMsgs(const std::string &name)const
 {
-    return *messages_.find(name)->second;
+    return messages_.GetUserMsgs(name);
 }
 
 void Chat::SetNetwork(Network * net)
@@ -76,37 +73,12 @@ const char Chat::GetColor()const
 
 void Chat::AddMsg(const UserMsg& msg, const std::string &name)
 {
-    std::string msg_chat = 
-        (msg.type_ == PUBLIC ? PUBLIC_MSGS : (name.empty() ? msg.name_ : name));
-    chat_mutex_.Lock();
-
-    //if vector of user messages to this user do not exist
-    if(messages_.find(msg_chat) == messages_.end())
-        messages_[msg_chat] = new std::vector<UserMsg>;
-
-    std::vector<UserMsg> *msgs = messages_[msg_chat];
-    msgs->push_back(msg);
-
-    if((int)msgs->size() > (msg.type_ == PUBLIC ?
-                       MAX_PUBLIC_MSGS_STORED : MAX_PRIVATE_MSGS_STORED))
-        msgs->erase(msgs->begin());
-
-	chat_mutex_.Unlock();
+    messages_.AddMsg(msg, name);
 }
 
 void Chat::ChangeOtherUserName(const std::string &from, const std::string &to)
 {
-    std::vector<UserMsg>* user_msgs = messages_[from];
-    messages_.erase(from);
-    messages_[to] = user_msgs;
-}
-
-void Chat::ClearMessages()
-{
-    for(std::pair<std::string, std::vector<UserMsg>*> pair : messages_)
-    {
-        delete pair.second;
-    }
+    messages_.ChangeUsername(from, to);
 }
 
 void Chat::SetColor(char color)

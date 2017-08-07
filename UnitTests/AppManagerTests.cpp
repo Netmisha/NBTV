@@ -48,7 +48,7 @@ namespace UnitTests
                     break;
             }
 
-            const std::vector<UserMsg> &msgs = app_manager.GetPrivateChatMsgs(PUBLIC_MSGS);
+            const std::vector<UserMsg>& msgs = *app_manager.GetPrivateChatMsgs(PUBLIC_MSGS);
             Assert::IsTrue((msgs[0].color_ == msg.color_) &&
                            (msgs[0].msg_ == msg.msg_) &&
                            (msgs[0].name_ == msg.name_) &&
@@ -74,7 +74,7 @@ namespace UnitTests
                     break;
             }
 
-            const std::vector<UserMsg> &msgs = app_manager.GetPrivateChatMsgs(msg.name_);
+            const std::vector<UserMsg> &msgs = *app_manager.GetPrivateChatMsgs(msg.name_);
             Assert::IsTrue((msgs[0].color_ == msg.color_) &&
                            (msgs[0].msg_ == msg.msg_) &&
                            (msgs[0].name_ == msg.name_) &&

@@ -7,9 +7,9 @@ DLL AppManager app_man;
 
 AppManager::~AppManager(){}
 
-const std::vector<UserMsg> &AppManager::GetPrivateChatMsgs(const std::string &name)const
+const std::vector<UserMsg>* AppManager::GetPrivateChatMsgs(const std::string &name)const
 {
-    return chat_.GetPrivateChatMsgs(name);
+    return chat_.GetChatMsgs(name);
 }
 
 AppManager::AppManager(unsigned int broadc_port, unsigned int tcp_port)
@@ -193,7 +193,7 @@ bool AppManager::LoadUserInfo()
 void AppManager::StopNetwork()
 {
     network_.StopNetwork();
-    chat_.IOfflineMsg();
+    network_.SendLogMsg(chat_.GetName(), LOG_OFFLINE);
 }
 
 void AppManager::SetUserInfo(const std::string &name, char color)
