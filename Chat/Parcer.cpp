@@ -185,7 +185,7 @@ namespace Parcer
 
         unsigned char *temp_ptr = (unsigned char*)out_packet;
         *temp_ptr++ = GET_FILE_MESSAGE;
-        *temp_ptr++ = *((short*)in_msg);
+        *(short*)temp_ptr++ = *((short*)in_msg);
 
         return msg_size;
     }

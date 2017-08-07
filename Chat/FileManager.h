@@ -20,9 +20,9 @@ public:
 
 
     //get specific file path
-    const std::string GetFilePath(int file_index)const;
+    const std::string& GetFilePath(int file_index)const;
     //get specific file name
-    const std::string GetFileName(int file_index)const;
+    const std::string& GetFileName(int file_index)const;
     //get size in kilobytes
     const double GetFileSizeKB(int file_index)const;
     //get size in megabytes
@@ -39,6 +39,9 @@ public:
 private:
     //vector of shared files
     std::vector<File> shared_files_;
+    //refference to this string is returned
+    //if invalid index has been passed
+    std::string error_string_;
 
     //saves shared file info
     void Save()const;

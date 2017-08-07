@@ -30,7 +30,8 @@ unsigned FileGetSocket::GetFileStartup(void *this_ptr)
 
 bool FileGetSocket::GetFile()
 {
-    TCPSocket file_getter = Accept();
+    TCPSocket file_getter;
+    Accept(file_getter);
    
     if (!((CreateDirectoryA(DOWNLOAD_DIR, NULL)) ||
         (GetLastError() == ERROR_ALREADY_EXISTS)))
@@ -75,7 +76,27 @@ bool FileGetSocket::GetFile()
 
 void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 {
-    TCPSocket list_getter = Accept();
+    TCPSocket list_getter;
+    for(int i = 0; i < 4; ++i)
+    {
+        //if waiting is to long
+        if(i == 3)
+        {
+            return;
+        }
+
+        //wait for connection with timeout 1 sec
+        if(IsConnectionCame(1000))
+        {
+            //if it came - try accept it
+            if(Accept(list_getter))
+                //if accepted
+                break;
+            
+            //if error occurs on accept
+            return;
+        }
+    }
 
     char buffer[FILE_LIST_MESSAGE_SIZE] = {};
     while(true)

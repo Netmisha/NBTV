@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-FileManager::FileManager()
+FileManager::FileManager() :error_string_("")
 {
     Load();
 }
@@ -30,20 +30,20 @@ void FileManager::RemoveFile(int file_index)
         shared_files_.erase(shared_files_.begin() + file_index);
 }
 
-const std::string FileManager::GetFilePath(int file_index)const
+const std::string& FileManager::GetFilePath(int file_index)const
 {
     if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetPath();
 
-    return std::string("");
+    return error_string_;
 }
 
-const std::string FileManager::GetFileName(int file_index)const
+const std::string& FileManager::GetFileName(int file_index)const
 {
     if((unsigned)file_index < shared_files_.size())
         return shared_files_[file_index].GetName();
 
-    return std::string("");
+    return error_string_;
 }
 
 const double FileManager::GetFileSizeKB(int file_index)const
@@ -116,7 +116,7 @@ void FileManager::Save()const
         int bytes_written;
         std::vector<std::string> file_paths;
         GetFilePaths(file_paths);
-        BOOL err_check;
+        BOOL err_check = FALSE;
         for(std::string path : file_paths)
         {
             int path_size = path.length();

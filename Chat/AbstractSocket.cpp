@@ -43,3 +43,8 @@ bool AbstractSocket::Close()
     
     return error_check != SOCKET_ERROR;
 }
+
+void AbstractSocket::SetSocket(const SOCKET &socket)
+{
+    socket_ = socket;
+}

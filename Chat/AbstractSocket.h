@@ -34,6 +34,9 @@ public:
     //returns false if failed to close socket
     bool Close();
 
+    //sets windows api socket to passed one
+    void SetSocket(const SOCKET &socket);
+
 protected:
     SOCKET socket_;
 };

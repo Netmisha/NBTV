@@ -160,14 +160,13 @@ private:
     double size_KB_;
 
 public:
-
     //true if path is value
     //false otherwise
     bool SetFile(const std::string &path);
     bool IsValid()const;
 
-    const std::string GetName()const;
-    const std::string GetPath()const;
+    const std::string& GetName()const;
+    const std::string& GetPath()const;
     const double GetSizeKB()const;
     const double GetSizeMB()const;
 };

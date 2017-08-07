@@ -21,7 +21,10 @@ public:
     //returns false in case of failure
     bool SetListen(unsigned int port = 0, int num_of_connections = 0);
     //accepts connection and returns TCPSocket as result
-    TCPSocket Accept()const;
+    bool Accept(TCPSocket &out_socket)const;
+    //returns true if there is connection to accept
+    //returns false if timeout expires and connection doesn't came
+    bool IsConnectionCame(unsigned int msec_timeouts)const;
     
     //sends 'size' bytes from buffer
     //returns number of bytes send

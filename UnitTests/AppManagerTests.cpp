@@ -41,7 +41,12 @@ namespace UnitTests
             bc_socket.SendTo(packet, size, TEST_LOCALHOST_IP);
             delete[] packet;
 
-            app_manager.RecieveMessage();
+            while(true)
+            {
+                UnpackedMessage unp_msg = app_manager.RecieveMessage();
+                if(unp_msg.type_ == CHAT_MESSAGE)
+                    break;
+            }
 
             const std::vector<UserMsg> &msgs = app_manager.GetPrivateChatMsgs(PUBLIC_MSGS);
             Assert::IsTrue((msgs[0].color_ == msg.color_) &&
@@ -62,7 +67,12 @@ namespace UnitTests
             bc_socket.SendTo(packet, size, TEST_LOCALHOST_IP);
             delete[] packet;
 
-            app_manager.RecieveMessage();
+            while(true)
+            {
+                UnpackedMessage unp_msg = app_manager.RecieveMessage();
+                if(unp_msg.type_ == CHAT_MESSAGE)
+                    break;
+            }
 
             const std::vector<UserMsg> &msgs = app_manager.GetPrivateChatMsgs(msg.name_);
             Assert::IsTrue((msgs[0].color_ == msg.color_) &&

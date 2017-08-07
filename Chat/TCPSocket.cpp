@@ -34,9 +34,9 @@ bool TCPSocket::Connect(const char* ip, unsigned int port)
     inet_pton(sock_addr.sin_family, ip, &(sock_addr.sin_addr));
 
     //trying to connect 
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 4; ++i)
     {
-        if(i == 9)
+        if(i == 3)
         {
             return false;
         }
@@ -90,8 +90,29 @@ int TCPSocket::Recv(char* buffer, int size)const
     return recv(socket_, buffer, size, 0);
 }
 
-TCPSocket TCPSocket::Accept()const
+bool TCPSocket::Accept(TCPSocket &out_socket)const
 {
     SOCKET temp_sock = accept(socket_, NULL, NULL);
-    return TCPSocket(temp_sock);
+    if(temp_sock == INVALID_SOCKET)
+    {
+        return false;
+    }
+
+    out_socket.SetSocket(temp_sock);
+    return true;
+}
+
+bool TCPSocket::IsConnectionCame(unsigned int msec_timeout)const
+{
+    fd_set sockets;
+    FD_ZERO(&sockets);
+    FD_SET(socket_, &sockets);
+    TIMEVAL timeout = { msec_timeout / 1000, (msec_timeout % 1000) * 1000 };
+
+    int status = select(0, &sockets, NULL, NULL, &timeout);
+
+    if(status == -1 || status == 0)
+        return false;
+
+    return true;
 }

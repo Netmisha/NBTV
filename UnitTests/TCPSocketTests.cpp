@@ -11,7 +11,8 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 unsigned AcceptFunc(void *sock)
 {
-    TCPSocket s = (*(TCPSocket*)sock).Accept();
+    TCPSocket s;
+    (*(TCPSocket*)sock).Accept(s);
     s.Close();
     return 0;
 }
