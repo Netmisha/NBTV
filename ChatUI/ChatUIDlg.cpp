@@ -418,5 +418,14 @@ void CChatUIDlg::SetFileList()
 
 void CChatUIDlg::OnBnClickedButton1()
 {
-    CFileDialog(TRUE).GetPathName();
+    CFileDialog fileDialog(TRUE, NULL);	//create file d_log
+    int result = fileDialog.DoModal();	//set up
+    if (result == IDOK)	//if is ok
+    {
+        CString file_path("/addf "); 
+        file_path += fileDialog.GetPathName(); //set up string
+        CStringA charstr(file_path);
+        app_man.ActivateCommand(std::string((charstr)));
+        SetFileList();
+    }
 }
