@@ -17,7 +17,7 @@ public:
     //add message to archive
     void AddMsg(const UserMsg &msg, const std::string &name);
     std::vector<UserMsg>* GetUserMsgs(const std::string &user_name)const;
-    void ChangeUsername(const std::string &from, const std::string &to);
+    void ChangeUsername(const std::string &from, const std::string &to) {}
 
 private:
 

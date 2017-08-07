@@ -134,9 +134,9 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAT, Chat);
     DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
     DDX_Control(pDX, IDC_USERLIST_LABEL, UserListLabel);
-    // DDX_Control(pDX, IDC_LIST2, FileTable);
     DDX_Control(pDX, IDC_SWITCH_C, CheckChat);
     DDX_Control(pDX, IDC_SWITCH_FL, CheckFileList);
+    DDX_Control(pDX, IDC_BUTTON1, AddFileButt);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -148,6 +148,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_WM_CTLCOLOR()
     ON_BN_CLICKED(IDC_SWITCH_C, &CChatUIDlg::OnBnClickedSwitchC)
     ON_BN_CLICKED(IDC_SWITCH_FL, &CChatUIDlg::OnBnClickedSwitchFl)
+    ON_BN_CLICKED(IDC_BUTTON1, &CChatUIDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -164,6 +165,7 @@ BOOL CChatUIDlg::OnInitDialog()
     UserListLabel.SetWindowTextW(CString("Active Users: "));
     CheckFileList.SetWindowTextW(CString("FL"));
     CheckChat.SetWindowTextW(CString("C"));
+    AddFileButt.SetWindowTextW(CString("ADD FILE"));
 
     icon = (CStatic*)GetDlgItem(IDC_USERICON);
    
@@ -171,20 +173,23 @@ BOOL CChatUIDlg::OnInitDialog()
     
 
 
-    SetUserIcon();
+    
     SetUserList();
     SetFileList();
+    SetUserIcon();
+
 
     //set file table
-    RECT rect = { LONG(1090), LONG(10), LONG(1675), LONG(500) };
+    RECT rect = { LONG(25), LONG(65), LONG(735), LONG(440) };
     FileGrid.Create(rect, this, 25);
     FileGrid.SetColumnCount(3); 
-    FileGrid.SetRowCount(13);
+    FileGrid.SetRowCount(10);
 
     FileGrid.SetColumnWidth(0, 50);
-    FileGrid.SetColumnWidth(1, 420);
+    FileGrid.SetColumnWidth(1, 550);
     FileGrid.SetColumnWidth(2, 105);
-    //FileGrid.AutoSize();
+
+    OnBnClickedSwitchC();//set chat mode
 
 
 
@@ -383,6 +388,7 @@ void CChatUIDlg::OnBnClickedSwitchC()
     ChatEdit.ShowWindow(SW_SHOW);
     Chat.ShowWindow(SW_SHOW);
     FileGrid.ShowWindow(SW_HIDE);
+    AddFileButt.ShowWindow(SW_HIDE);
 }
 
 
@@ -392,6 +398,7 @@ void CChatUIDlg::OnBnClickedSwitchFl()
     ChatEdit.ShowWindow(SW_HIDE);
     Chat.ShowWindow(SW_HIDE);
     FileGrid.ShowWindow(SW_SHOW);
+    AddFileButt.ShowWindow(SW_SHOW);
 }
 
 void CChatUIDlg::SetFileList()
@@ -406,4 +413,10 @@ void CChatUIDlg::SetFileList()
         FileGrid.SetItemText(i, 2, CString( std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
     }
     FileGrid.Refresh();
+}
+
+
+void CChatUIDlg::OnBnClickedButton1()
+{
+    CFileDialog(TRUE).GetPathName();
 }

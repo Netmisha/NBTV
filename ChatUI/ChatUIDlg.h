@@ -80,4 +80,6 @@ public:
     afx_msg void OnBnClickedSwitchFl();
 
     void SetFileList();
+    CButton AddFileButt;
+    afx_msg void OnBnClickedButton1();
 };
