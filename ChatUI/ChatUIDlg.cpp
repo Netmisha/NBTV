@@ -11,6 +11,7 @@
 
 #include "NBTV.h"
 #include "Color.h"
+#include "SettingsDlg.h"
 #define TID_ONLY_ONCE WM_USER + 202
 
 
@@ -194,6 +195,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_BN_CLICKED(IDC_SWITCH_C, &CChatUIDlg::OnBnClickedSwitchC)
     ON_BN_CLICKED(IDC_SWITCH_FL, &CChatUIDlg::OnBnClickedSwitchFl)
     ON_BN_CLICKED(IDC_BUTTON1, &CChatUIDlg::OnBnClickedButton1)
+    ON_BN_CLICKED(IDC_SETTING_BUT, &CChatUIDlg::OnBnClickedSettingBut)
 END_MESSAGE_MAP()
 
 
@@ -463,4 +465,19 @@ void CChatUIDlg::OnBnClickedButton1()
         app_man.ActivateCommand(std::string((charstr)));
         SetFileList();
     }
+}
+
+
+void CChatUIDlg::OnBnClickedSettingBut()
+{
+   
+    SettingsDlg dlg; //setting dlg
+    dlg.SetAM(&app_man);
+
+    if (dlg.DoModal() == IDOK) // DoModal() - open dlg
+    {
+        UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+        SetUserIcon();
+    }
+
 }
