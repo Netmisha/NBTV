@@ -31,7 +31,7 @@ unsigned FileGetSocket::GetFileStartup(void *this_ptr)
 bool FileGetSocket::GetFile()
 {
     TCPSocket file_getter;
-    for(int i = 0; i <= ACCEPT_TIMEOUT_SEC; ++i)
+    for(int i = 0; i <= ACCEPT_TIMEOUT_SEC * 4; ++i)
     {
         //if waiting is to long
         if(i == ACCEPT_TIMEOUT_SEC)
@@ -40,7 +40,7 @@ bool FileGetSocket::GetFile()
         else if(TryAccept(file_getter))
             break;
 
-        Sleep(1000);
+        Sleep(250);
     }
    
     if (!((CreateDirectoryA(DOWNLOAD_DIR, NULL)) ||
@@ -87,7 +87,7 @@ bool FileGetSocket::GetFile()
 void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 {
     TCPSocket list_getter;
-    for(int i = 0; i <= ACCEPT_TIMEOUT_SEC; ++i)
+    for(int i = 0; i <= ACCEPT_TIMEOUT_SEC * 4; ++i)
     {
         //if waiting is to long
         if(i == ACCEPT_TIMEOUT_SEC)
@@ -96,7 +96,7 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
         else if(TryAccept(list_getter))
             break;
 
-        Sleep(1000);
+        Sleep(250);
     }
 
     char buffer[FILE_LIST_MESSAGE_SIZE] = {};

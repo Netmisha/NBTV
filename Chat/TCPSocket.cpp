@@ -35,7 +35,7 @@ bool TCPSocket::Connect(const char* ip, unsigned int port, unsigned int timeout_
 
     int timeout = (timeout_sec ? timeout_sec : 0);
     //trying to connect 
-    for(int i = 0; i <= timeout; ++i)
+    for(int i = 0; i <= timeout * 4; ++i)
     {
         //if connection succeed
         if(connect(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
@@ -44,7 +44,7 @@ bool TCPSocket::Connect(const char* ip, unsigned int port, unsigned int timeout_
         else if(i == timeout)
             return false;
         //wait a second
-        Sleep(1000);
+        Sleep(250);
     }
 
     return true;
