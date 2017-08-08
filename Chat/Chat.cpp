@@ -11,17 +11,6 @@ Chat::Chat(){}
 
 Chat::~Chat(){}
 
-//void Chat::IOnlineMsg()
-//{
-//	connected_network_->SendLogMsg(user_info_.GetName(), LOG_ONLINE);
-//}
-//
-//
-//void Chat::IOfflineMsg()
-//{
-//	connected_network_->SendLogMsg(user_info_.GetName(), LOG_OFFLINE);
-//}
-
 int Chat::SendMsg(const UserMsg& msg)
 {
     AddMsg(msg);
@@ -58,7 +47,6 @@ void Chat::SetUserInfo(char color, const std::string& name)
 {
 	user_info_.SetColor(color);
 	user_info_.SetName(name);
-	//IOnlineMsg();
 }
 
 const std::string& Chat::GetName()const
