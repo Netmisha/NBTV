@@ -40,11 +40,12 @@
 //default dir where downloaded shared files are located
 #define DOWNLOAD_DIR ("Download")
 
-#ifndef DLL_IMPORT
-#define DLL __declspec(dllexport)
-#else
+//define for dll import in unittests
+#ifdef DLL_IMPORT
 #define DLL __declspec(dllimport)
-#endif // !DLL_IMPORT
+#else
+#define DLL __declspec(dllexport)
+#endif // DLL_IMPORT
 
 //key value for public messages vector in Chat object
 const std::string PUBLIC_MSGS("PUBLIC_MSGS");
@@ -52,7 +53,9 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 //maximum msgs stored from a single chat
 #define MAX_PRIVATE_MSGS_STORED (50)
 #define MAX_PUBLIC_MSGS_STORED (100)
-
+//default color - black
 #define DEFAULT_COLOR (char(0))
+//accept tcp connection timeout in seconds
+#define ACCEPT_TIMEOUT_SEC (3)
 
 #endif // !DEFINES_H

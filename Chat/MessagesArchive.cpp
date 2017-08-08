@@ -42,20 +42,19 @@ std::vector<UserMsg>* MessagesArchive::GetUserMsgs(const std::string &user_name)
 
 void MessagesArchive::ChangeUsername(const std::string &from, const std::string &to)
 { 
-    std::map<std::string, std::vector<UserMsg>*>::const_iterator it = messages_.find(from);
-    if(it == messages_.end())
+    std::vector<UserMsg>* value = GetUserMsgs(from);
+
+    if(!value)
         return;
 
-    std::vector<UserMsg>* value = it->second;
-    messages_.erase(it);
+    messages_.erase(from);
     messages_[to] = value;
 }
 
 void MessagesArchive::ClearMessages()
 {
     for(std::pair<std::string, std::vector<UserMsg>*> pair : messages_)
-    {
         delete pair.second;
-    }
+
     messages_.clear();
 }

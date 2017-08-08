@@ -20,12 +20,14 @@ public:
     //sets socket to listen
     //returns false in case of failure
     bool SetListen(unsigned int port = 0, int num_of_connections = 0);
-    //accepts connection and returns TCPSocket as result
+    //accepts connection, returns socket as passed parameter
+    //returns true if accept didn't fail
+    //false otherwise
     bool Accept(TCPSocket &out_socket)const;
-    //returns true if there is connection to accept
-    //returns false if timeout expires and connection doesn't came
-    bool IsConnectionCame(unsigned int msec_timeouts)const;
-    
+    //tries to accept connection
+    //doesn't block thread
+    //returns true if accepted, false otherwise
+    bool TryAccept(TCPSocket &out_socket)const;
     //sends 'size' bytes from buffer
     //returns number of bytes send
     //-1 if send failed
@@ -34,6 +36,11 @@ public:
     //returns number of bytes recieved
     //-1 if send failed
     int Recv(char* buffer, int size)const;
+
+private:
+    //returns true if there is connection to accept
+    //returns false if timeout expires and connection doesn't came
+    bool ConnectionCame(unsigned int msec_timeouts)const;
 };
 
 #endif // !TCP_SOCKET_H

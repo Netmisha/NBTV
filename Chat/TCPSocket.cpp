@@ -102,7 +102,7 @@ bool TCPSocket::Accept(TCPSocket &out_socket)const
     return true;
 }
 
-bool TCPSocket::IsConnectionCame(unsigned int msec_timeout)const
+bool TCPSocket::ConnectionCame(unsigned int msec_timeout)const
 {
     fd_set sockets;
     FD_ZERO(&sockets);
@@ -110,8 +110,19 @@ bool TCPSocket::IsConnectionCame(unsigned int msec_timeout)const
     TIMEVAL timeout = { msec_timeout / 1000, (msec_timeout % 1000) * 1000 };
 
     int status = select(0, &sockets, NULL, NULL, &timeout);
-
+    //if select doesn't fail and return value isn't 0
     if(status == -1 || status == 0)
+        return false;
+
+    return true;
+}
+
+bool TCPSocket::TryAccept(TCPSocket &out_socket)const
+{
+    if(!ConnectionCame(0))
+        return false;
+
+    if(!Accept(out_socket))
         return false;
 
     return true;
