@@ -57,6 +57,9 @@ BOOL CChatUIApp::InitInstance()
 
 	CChatUIDlg dlg;
 	m_pMainWnd = &dlg;
+
+  // dlg.SetUserIcon();
+   
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{

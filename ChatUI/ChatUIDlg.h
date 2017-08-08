@@ -41,13 +41,16 @@ public:
     afx_msg void OnBnClickedMainbutton();
     CEdit ChatEdit;
     CListBox Chat;
-
+    
+    void OnTimer(UINT_PTR nIDEvent);
+    inline void SetUserIcon();
+    inline void SetUserList();
+    inline void SetFileList();
 private:
     void ProcessMessage(const UnpackedMessage &um, AppManager& am);
     COLORREF  GetColorByIndex(char index);
 
-    void SetUserIcon();
-    void SetUserList();
+   
 public:
     volatile bool is_working_ = false;
     // user name next to icon
@@ -79,7 +82,6 @@ public:
     afx_msg void OnBnClickedSwitchC();
     afx_msg void OnBnClickedSwitchFl();
 
-    void SetFileList();
     CButton AddFileButt;
     afx_msg void OnBnClickedButton1();
 };
