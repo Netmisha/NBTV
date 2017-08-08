@@ -16,7 +16,8 @@ public:
     bool Initialize();
     //connects socket to specific ip and port
     //returns false if fails
-    bool Connect(const char* ip, unsigned int port = 0);
+    //if timeout is not passed
+    bool Connect(const char* ip, unsigned int port = 0, unsigned int timeout_sec = 0);
     //sets socket to listen
     //returns false in case of failure
     bool SetListen(unsigned int port = 0, int num_of_connections = 0);
@@ -27,7 +28,7 @@ public:
     //tries to accept connection
     //doesn't block thread
     //returns true if accepted, false otherwise
-    bool TryAccept(TCPSocket &out_socket)const;
+    bool TryAccept(TCPSocket &out_socket, unsigned int msec_timeout = 0)const;
     //sends 'size' bytes from buffer
     //returns number of bytes send
     //-1 if send failed

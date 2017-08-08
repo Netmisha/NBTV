@@ -19,7 +19,7 @@ bool FileSendSocket::SendFile(const std::string& pass,
         return false;
     }
 
-    if(!Connect(ip.c_str(), port))
+    if(!Connect(ip.c_str(), port, CONNECT_TIMEOUT_SEC))
     {
         return false;
     }

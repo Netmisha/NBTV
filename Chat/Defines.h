@@ -56,6 +56,8 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 //default color - black
 #define DEFAULT_COLOR (char(0))
 //accept tcp connection timeout in seconds
-#define ACCEPT_TIMEOUT_SEC (3)
+#define ACCEPT_TIMEOUT_SEC (2)
+//tcp connection timeout in seconds
+#define CONNECT_TIMEOUT_SEC (2)
 
 #endif // !DEFINES_H

@@ -1,6 +1,7 @@
 #include "FileListSendSocket.h"
 
 #include "Parcer.h"
+#include "Defines.h"
 
 FileListSendSocket::FileListSendSocket() {}
 
@@ -15,7 +16,7 @@ bool FileListSendSocket::SendFileList(const std::vector<File> &to_send,
         return false;
     }
 
-    if(!Connect(ip.c_str(), port))
+    if(!Connect(ip.c_str(), port, CONNECT_TIMEOUT_SEC))
     {
         return false;
     }

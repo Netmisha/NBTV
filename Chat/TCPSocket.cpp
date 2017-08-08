@@ -19,7 +19,7 @@ bool TCPSocket::Initialize()
     return true;
 }
 
-bool TCPSocket::Connect(const char* ip, unsigned int port)
+bool TCPSocket::Connect(const char* ip, unsigned int port, unsigned int timeout_sec)
 {
     if(socket_ == INVALID_SOCKET)
     {
@@ -33,21 +33,18 @@ bool TCPSocket::Connect(const char* ip, unsigned int port)
     sock_addr.sin_port = htons(port ? port : FILE_PORT); //Host TO Network Short
     inet_pton(sock_addr.sin_family, ip, &(sock_addr.sin_addr));
 
+    int timeout = (timeout_sec ? timeout_sec : 0);
     //trying to connect 
-    for(int i = 0; i < 4; ++i)
+    for(int i = 0; i <= timeout; ++i)
     {
-        if(i == 3)
-        {
-            return false;
-        }
-        else if(connect(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
-        {
-            Sleep(1000);
-        }
-        else
-        {
+        //if connection succeed
+        if(connect(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
             break;
-        }
+        //if timeout occurs
+        else if(i == timeout)
+            return false;
+        //wait a second
+        Sleep(1000);
     }
 
     return true;
@@ -117,9 +114,9 @@ bool TCPSocket::ConnectionCame(unsigned int msec_timeout)const
     return true;
 }
 
-bool TCPSocket::TryAccept(TCPSocket &out_socket)const
+bool TCPSocket::TryAccept(TCPSocket &out_socket, unsigned int msec_timeout)const
 {
-    if(!ConnectionCame(0))
+    if(!ConnectionCame(msec_timeout))
         return false;
 
     if(!Accept(out_socket))
