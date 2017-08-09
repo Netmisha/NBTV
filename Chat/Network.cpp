@@ -347,7 +347,9 @@ UnpackedMessage Network::RecieveMessage()
         packet.Clear();
         if(is_fully_processed)
         {
-            unp_msg.Clear();
+            if(unp_msg.type_ != INVALID_TYPE)
+                unp_msg.Clear();
+
             continue;
         }
         break;
