@@ -66,7 +66,14 @@ void SettingsDlg::OnBnClickedOk()
     _bstr_t b2(wc2);
     const char* c2 = b2;
     
-    if(strlen(b1))
-    am_->SetUserInfo( std::string(b1) ,  (char)std::atoi(b2) );
-    CDialog::OnOK();
+    if (strlen(b1) && !app_man.IsNameUsed(std::string(b1)))
+    {
+        am_->SetUserInfo(std::string(b1), (char)std::atoi(b2));
+        CDialog::OnOK();
+    }
+    else
+    {
+        AfxMessageBox(CString("Name is used or empty!!!"));
+    }
+       
 }
