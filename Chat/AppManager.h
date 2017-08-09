@@ -23,7 +23,7 @@ public:
     const std::string& GetFilePath(int file_index)const;
     const std::string& GetFileName(int file_index)const;
     //send list to specific ip
-    void SendList(const std::string& ip, unsigned int port = 0U);
+    bool SendList(const std::string& ip, unsigned int port = 0U);
 
     //send msg to everyone
     int SendMsg(const std::string& msg);

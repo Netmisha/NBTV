@@ -45,9 +45,8 @@ bool RecvSocket::Initialize(unsigned int port)
     return true;
 }
 
-int RecvSocket::Recv(RecvStruct* out_result)const
+int RecvSocket::Recv(RecvStruct& out_result)const
 {
-    memset(buffer_, 0, RECV_BUFFER_SIZE);
     sockaddr_in recv_info;
     int recv_info_size = sizeof(recv_info);
     
@@ -62,9 +61,11 @@ int RecvSocket::Recv(RecvStruct* out_result)const
         return -1;
     }
 
-    inet_ntop(AF_INET, &(recv_info.sin_addr), &out_result->ip_[0], IP_SIZE);
-    out_result->packet_ = new char[recv_size]();
-    memcpy(out_result->packet_, buffer_, recv_size);
+    inet_ntop(AF_INET, &(recv_info.sin_addr), &out_result.ip_[0], IP_SIZE);
+    out_result.packet_ = new char[recv_size]();
+    memcpy(out_result.packet_, buffer_, recv_size);
+
+    memset(buffer_, 0, RECV_BUFFER_SIZE);
 
     return recv_size;
 }

@@ -84,14 +84,14 @@ bool FileGetSocket::GetFile()
     return err_check;
 }
 
-void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
+bool FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 {
     TCPSocket list_getter;
     for(int i = 0; i <= ACCEPT_TIMEOUT_SEC * 4; ++i)
     {
         //if waiting is to long
         if(i == ACCEPT_TIMEOUT_SEC)
-            return;
+            return false;
         //if socket is accepted
         else if(TryAccept(list_getter))
             break;
@@ -104,7 +104,12 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
     {
         int bytes_recved = list_getter.Recv(buffer, FILE_LIST_MESSAGE_SIZE);
 
-        if(!bytes_recved)
+        if(bytes_recved == -1)
+        {
+            out_result.clear();
+            return false;
+        }
+        else if(!bytes_recved)
             break;
 
         UnpackedMessage msg = Parcer::UnpackMessage(buffer);
@@ -113,4 +118,6 @@ void FileGetSocket::GetList(std::vector<RecvFileInfo> &out_result)const
 
         delete msg.msg_;
     }
+
+    return true;
 }

@@ -77,7 +77,7 @@ public:
     //returns -1 if send failed
     int RequestList(const std::string& user_name);
     //send list to specific ip
-    void SendList(const std::string& ip, unsigned int port = 0U)const;
+    bool SendList(const std::string& ip, unsigned int port = 0U)const;
     //get list, used right after RequestList
     //return value is passed as refference parameter
     //it is safe as the sender connects to requester

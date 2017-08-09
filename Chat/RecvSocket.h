@@ -19,7 +19,7 @@ public:
     bool Initialize(unsigned int port = 0U);
     //recvs message, returns size of it
     //sets parameter as pointer to it
-    int Recv(RecvStruct* out_result)const;
+    int Recv(RecvStruct& out_result)const;
 
 private:
     char *buffer_;

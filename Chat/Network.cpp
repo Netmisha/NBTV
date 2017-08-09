@@ -57,7 +57,7 @@ bool Network::PrepareNetwork(unsigned int broadc_port, unsigned int tcp_port)
     while(true)
     {
         RecvStruct recv_struct;
-        err_check = recv_socket_.Recv(&recv_struct);
+        err_check = recv_socket_.Recv(recv_struct);
 
         if(err_check == SOCKET_ERROR)
             return false;
@@ -165,11 +165,11 @@ int Network::RequestList(const std::string& user_name)
     return send_size;
 }
 
-void Network::SendList(const std::string& ip, unsigned int port)const
+bool Network::SendList(const std::string& ip, unsigned int port)const
 {
-    const std::vector<File>* files = &FM_->GetFiles();
+    const std::vector<File> files = FM_->GetFiles();
 
-    FileListSendSocket().SendFileList(*files, ip, port);
+    return FileListSendSocket().SendFileList(files, ip, port);
 }
 
 bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
@@ -335,7 +335,7 @@ UnpackedMessage Network::RecieveMessage()
     while(is_working_)
     {
         unp_msg.type_ = INVALID_TYPE;
-        recv_socket_.Recv(&packet);
+        recv_socket_.Recv(packet);
         bool is_fully_processed = ProcessMessage(packet, unp_msg);
         packet.Clear();
         if(is_fully_processed)

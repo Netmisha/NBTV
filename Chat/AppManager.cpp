@@ -31,9 +31,9 @@ const std::string& AppManager::GetFileName(int file_index)const
     return fm_.GetFileName(file_index);
 }
 
-void AppManager::SendList(const std::string& ip, unsigned int port)
+bool AppManager::SendList(const std::string& ip, unsigned int port)
 {
-    network_.SendList(ip, port);
+    return network_.SendList(ip, port);
 }
 
 int AppManager::SendMsg(const std::string& msg)

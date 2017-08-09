@@ -59,5 +59,7 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 #define ACCEPT_TIMEOUT_SEC (2)
 //tcp connection timeout in seconds
 #define CONNECT_TIMEOUT_SEC (2)
+//caused by shutdown+close on the other end of connection
+#define ERROR_SOCKET_NOT_CONNECTED (10057)
 
 #endif // !DEFINES_H
