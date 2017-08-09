@@ -182,6 +182,7 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_SWITCH_C, CheckChat);
     DDX_Control(pDX, IDC_SWITCH_FL, CheckFileList);
     DDX_Control(pDX, IDC_BUTTON1, AddFileButt);
+    DDX_Control(pDX, IDC_SETTING_BUT, OpsButt);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -196,6 +197,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_BN_CLICKED(IDC_SWITCH_FL, &CChatUIDlg::OnBnClickedSwitchFl)
     ON_BN_CLICKED(IDC_BUTTON1, &CChatUIDlg::OnBnClickedButton1)
     ON_BN_CLICKED(IDC_SETTING_BUT, &CChatUIDlg::OnBnClickedSettingBut)
+    ON_LBN_DBLCLK(IDC_LIST1, &CChatUIDlg::OnLbnDblclkList1)
 END_MESSAGE_MAP()
 
 
@@ -211,6 +213,7 @@ BOOL CChatUIDlg::OnInitDialog()
     CheckFileList.SetWindowTextW(CString("FL"));
     CheckChat.SetWindowTextW(CString("C"));
     AddFileButt.SetWindowTextW(CString("ADD FILE"));
+    OpsButt.SetWindowTextW(CString("Ops"));
 
    
     recv_thread_.BeginThread(StartRecvLoop, this);
@@ -327,9 +330,13 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
         }
         else if (!strncmp(c, "/setname", 8))
         {
-            app_man.ActivateCommand(std::string(c));
-            UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
-            SetUserIcon();
+            if (app_man.ActivateCommand(std::string(c)) == NULL)   
+                AfxMessageBox(CString("Name is used !!!"));
+            else
+            {
+                UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+                SetUserIcon();
+            }
         }
         else if (!strncmp(c, "/fl ", 4))
         {
@@ -480,4 +487,29 @@ void CChatUIDlg::OnBnClickedSettingBut()
         SetUserIcon();
     }
 
+}
+
+
+void CChatUIDlg::OnLbnDblclkList1()
+{
+    
+    CListBox* ul = (CListBox*)GetDlgItem(IDC_LIST1);
+        int j, i = 0;
+        for (; i < ul->GetCount(); i++)
+        {
+            j = ul->GetSel(i);
+            if (j > 0)
+                break;
+        }
+        
+        CString ItemSelected;
+        if (j>0 && i!= ul->GetCount())
+        {
+            ul->GetText(i, ItemSelected);
+            AfxMessageBox(ItemSelected);
+        }
+
+
+
+   
 }

@@ -28,7 +28,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK (0)
+#define BROADCAST_LOOPBACK (1)
 
 //dir where shared files data is stored
 #define DATA_SAVE_DIR ("Data")

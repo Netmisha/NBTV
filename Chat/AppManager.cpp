@@ -87,7 +87,7 @@ void* AppManager::ActivateCommand(std::string& buffer) //ChangeName, On/Off priv
             }
             std::string old_name = chat_.GetName();
             SetUserInfo(buffer);
-            return NULL;
+            return (void*)1;
         }
         else if (!strncmp(buffer.c_str(), "fl ", 3))  //my and someones file list
         {
