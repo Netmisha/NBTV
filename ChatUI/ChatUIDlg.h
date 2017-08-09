@@ -85,4 +85,5 @@ public:
     CButton AddFileButt;
     afx_msg void OnBnClickedButton1();
     afx_msg void OnBnClickedSettingBut();
+    CButton OpsButt;
 };

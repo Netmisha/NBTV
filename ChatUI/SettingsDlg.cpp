@@ -30,8 +30,6 @@ void SettingsDlg::SetAM(AppManager * am)
 void SettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_EDIT_NAME, NameEdit);
-    DDX_Control(pDX, IDC_EDIT_COLOR, ColorEdit);
 }
 
 
@@ -55,10 +53,10 @@ BOOL SettingsDlg::OnInitDialog()
 void SettingsDlg::OnBnClickedOk()
 {
     CString name;
-    NameEdit.GetWindowTextW(name);
+    GetDlgItem(IDC_EDIT_NAME) -> GetWindowTextW(name);
     
     CString color;
-    ColorEdit.GetWindowTextW(color);
+    GetDlgItem(IDC_EDIT_COLOR)->GetWindowTextW(color);
 
     const WCHAR* wc = name; //unicod to ANSI magic
     _bstr_t b1(wc);
@@ -67,7 +65,8 @@ void SettingsDlg::OnBnClickedOk()
     const WCHAR* wc2 = color;
     _bstr_t b2(wc2);
     const char* c2 = b2;
-
+    
+    if(strlen(b1))
     am_->SetUserInfo( std::string(b1) ,  (char)std::atoi(b2) );
     CDialog::OnOK();
 }
