@@ -40,12 +40,15 @@ bool BroadcastSocket::Initialize(unsigned int port_to_send)
 
 int BroadcastSocket::Send(const void* buffer, int size)const
 {
-    return sendto(socket_,
-                  (const char*)buffer,
-                  size,
-                  0,
-                  (SOCKADDR*)&broadcast_addr_,
-                  (int)sizeof(broadcast_addr_));
+    send_mutex_.Lock();
+    int return_val = sendto(socket_,
+                            (const char*)buffer,
+                            size,
+                            0,
+                            (SOCKADDR*)&broadcast_addr_,
+                            (int)sizeof(broadcast_addr_));
+    send_mutex_.Unlock();
+    return return_val;
 }
 
 void BroadcastSocket::SetBroadcastPort(unsigned int port)
@@ -60,10 +63,14 @@ int BroadcastSocket::SendTo(const void *buffer, int size, const char* ip)const
     //change ip to recieved one
     inet_pton(send_to_addr.sin_family, ip, &(send_to_addr.sin_addr));
 
-    return sendto(socket_,
-                  (const char*)buffer,
-                  size,
-                  0,
-                  (SOCKADDR*)&send_to_addr,
-                  (int)sizeof(send_to_addr));
+    send_mutex_.Lock();
+    int return_val = sendto(socket_,
+                            (const char*)buffer,
+                            size,
+                            0,
+                            (SOCKADDR*)&send_to_addr,
+                            (int)sizeof(send_to_addr));
+    send_mutex_.Unlock();
+
+    return return_val;
 }

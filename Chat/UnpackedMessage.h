@@ -17,7 +17,9 @@ enum MessageType
     //message that it part of file list send
     FILE_LIST_MESSAGE = 4,
     //message requesting send of file
-	GET_FILE_MESSAGE = 5
+	GET_FILE_MESSAGE = 5,
+    //heartbeat message
+    HEARTBEAT_MESSAGE = 6
 };
 
 struct UnpackedMessage

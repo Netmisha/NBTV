@@ -23,7 +23,9 @@ enum ConstantSizes
     FILE_LIST_REQUEST_SIZE = 1,
     //static size to not screw over
     //sending list by numerous messages
-    FILE_LIST_MESSAGE_SIZE = 64
+    FILE_LIST_MESSAGE_SIZE = 64,
+    //1B flag
+    HEARTBEAT_MESSAGE_SIZE = 1
 };
 
 namespace Parcer
@@ -65,6 +67,9 @@ namespace Parcer
     int PackFileList(const void *in_msg, void* &out_packet);
     //returns ptr to File
     void* ParceFileList(const void *in_packet);
+
+    int PackHeartbeat(const void *in_msg, void* &out_packet);
+    //no need for parcer
 };
 
 #endif // !PARCER_H

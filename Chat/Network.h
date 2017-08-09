@@ -13,6 +13,7 @@
 #include "SendFileInfo.h"
 #include "IpNameList.h"
 #include "LogMessage.h"
+#include "OnlineStatus.h"
 
 #include "Mutex.h"
 #include "Thread.h"
@@ -98,6 +99,9 @@ public:
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
 
+    static unsigned HeartbeatStartup(void* this_prt);
+    void Heartbeat()const;
+
 private:
     Chat *chat_;
 	FileManager *FM_;
@@ -117,8 +121,6 @@ private:
     //bool that stops recv loop
     //if needed, just set it as 0/false
     volatile bool is_working_;
-    //mutex on send
-    Mutex send_mutex_;
 
     //num of active file sharing threads
     static volatile int file_sharing_thread_num_;
@@ -127,6 +129,10 @@ private:
 
     //list of ip - user name pairs
     IpNameList ip_name_list_;
+    //checks online status every 1.5 sec
+    OnlineStatus online_status_check_;
+    //thread with heartbeat every second
+    Thread hearbeat_thread_;
 
     //custom tcp connection port
     unsigned int custom_tcp_port_;

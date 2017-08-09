@@ -76,6 +76,11 @@ bool Network::PrepareNetwork(unsigned int broadc_port, unsigned int tcp_port)
         unp_msg.Clear();
     }
     //-----------------------
+    online_status_check_.SetIpNameList(&ip_name_list_);
+    online_status_check_.Start();
+
+    hearbeat_thread_.BeginThread(Network::HeartbeatStartup, this);
+
     is_working_ = true;
     return true;
 }
@@ -86,9 +91,7 @@ int Network::SendMsg(const UserMsg& user_msg)const
     //allocation in heap
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet);
 
-    send_mutex_.Lock();
     packet_size = broadc_socket_.Send(packet, packet_size);
-    send_mutex_.Unlock();
 
     delete[] packet; //clearing heap
     return packet_size;
@@ -102,6 +105,8 @@ void Network::Cleanup()
 void Network::StopNetwork()
 {
     is_working_ = false;
+    online_status_check_.Stop();
+    hearbeat_thread_.Join();
 }
 
 void Network::SetChat(Chat * chat)
@@ -220,9 +225,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)con
     //allocation in heap
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet);
 
-    send_mutex_.Lock();
     packet_size = broadc_socket_.SendTo(packet, packet_size, ip.c_str());
-    send_mutex_.Unlock();
 
     delete[] packet;
     return packet_size;
@@ -259,6 +262,10 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
 
         case FILE_LIST_REQUEST:
             SendList(recv_str.ip_);
+            break;
+
+        case HEARTBEAT_MESSAGE:
+            online_status_check_.IpOnline(recv_str.ip_);
             break;
 
         default:
@@ -356,4 +363,24 @@ void Network::GetList(std::vector<RecvFileInfo> &out_result)const
 bool Network::IsNameUsed(const std::string &name)const
 {
     return ip_name_list_.IsNameUsed(name);
+}
+
+unsigned Network::HeartbeatStartup(void* this_prt)
+{
+    (*(Network*)this_prt).Heartbeat();
+    return 0;
+}
+
+void Network::Heartbeat()const
+{
+    void *message;
+    int message_size = Parcer::PackMessage(HEARTBEAT_MESSAGE, NULL, message);
+    while(is_working_)
+    {
+        Sleep(1000);
+
+        broadc_socket_.Send(message, message_size);
+    }
+
+    delete[] message;
 }

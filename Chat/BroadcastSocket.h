@@ -3,6 +3,7 @@
 
 #include "AbstractSocket.h"
 #include "Defines.h"
+#include "Mutex.h"
 
 #include <WS2tcpip.h>
 
@@ -32,6 +33,8 @@ public:
 private:
     //broadcast address
     sockaddr_in broadcast_addr_;
+    //mutex on send
+    Mutex send_mutex_;
 };
 
 #endif // !BROADCAST_SOCKET_H
