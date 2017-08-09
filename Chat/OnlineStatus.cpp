@@ -1,6 +1,9 @@
 #include "OnlineStatus.h"
 
-OnlineStatus::OnlineStatus() : ip_name_list_(NULL), is_working_(false) {}
+OnlineStatus::OnlineStatus() : ip_name_list_(NULL), is_working_(false) 
+{
+    online_list_.clear();
+}
 
 OnlineStatus::~OnlineStatus() {}
 
@@ -42,25 +45,32 @@ void OnlineStatus::OfflineCheck()
 {
     is_working_ = true;
 
+    std::vector<std::string> online_ips_;
+    std::map<std::string, bool>::iterator it;
+
     while(is_working_)
     {
-        Sleep(1500);
+        Sleep(5000);
+
+        ip_name_list_->GetIpVector(online_ips_);
 
         online_list_access_mutex_.Lock();
-        for(std::pair<std::string, bool> pair : online_list_)
+        for(std::string ip : online_ips_)
         {
-            //if online status is false
-            if(!pair.second)
+            it = online_list_.find(ip);
+            if(it == online_list_.end())
+                continue;
+            else if(it->second == false)
             {
-                ip_name_list_->Remove(pair.first);
-                online_list_.erase(pair.first);
+                ip_name_list_->Remove(ip);
             }
-            //if it is true
             else
             {
-                pair.second = false;
+                online_list_[ip] = false;
             }
         }
         online_list_access_mutex_.Unlock();
+
+        online_ips_.clear();
     }
 }

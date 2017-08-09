@@ -36,6 +36,8 @@ public:
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
 
+    void GetIpVector(std::vector<std::string> &out_result)const;
+
 private:
     //map of ip - username pairs
     std::map<std::string, UserInfo> ip_name_map_;

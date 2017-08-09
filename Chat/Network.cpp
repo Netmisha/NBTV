@@ -379,7 +379,7 @@ void Network::Heartbeat()const
     int message_size = Parcer::PackMessage(HEARTBEAT_MESSAGE, NULL, message);
     while(is_working_)
     {
-        Sleep(1000);
+        Sleep(4000);
 
         broadc_socket_.Send(message, message_size);
     }

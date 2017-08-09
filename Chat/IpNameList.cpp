@@ -20,6 +20,9 @@ void IpNameList::Add(const std::string &ip, const std::string &name, char color)
 
 void IpNameList::Remove(const std::string &ip)
 {
+    if(ip_name_map_.find(ip) == ip_name_map_.end())
+        return;
+
     online_users_.erase(std::find(online_users_.begin(),
                                   online_users_.end(),
                                   ip_name_map_[ip]));
@@ -49,4 +52,12 @@ const std::vector<UserInfo>& IpNameList::GetNameList()const
 bool IpNameList::IsNameUsed(const std::string &name)const
 {
     return !(GetIp(name).empty()) || (name == PUBLIC_MSGS);
+}
+
+void IpNameList::GetIpVector(std::vector<std::string> &out_result)const
+{
+    for(std::pair<std::string, UserInfo> pair : ip_name_map_)
+    {
+        out_result.push_back(pair.first);
+    }
 }
