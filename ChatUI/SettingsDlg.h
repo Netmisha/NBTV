@@ -27,9 +27,8 @@ protected:
 private:
     AppManager* am_;
 public:
+    virtual BOOL OnInitDialog();
     afx_msg void OnBnClickedOk();
-    CStatic SetNameLable;
-    CStatic SetColorLabel;
     CEdit NameEdit;
     CEdit ColorEdit;
 };

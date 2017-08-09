@@ -30,8 +30,6 @@ void SettingsDlg::SetAM(AppManager * am)
 void SettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_NAMEL, SetNameLable);
-    DDX_Control(pDX, IDC_COLORL, SetColorLabel);
     DDX_Control(pDX, IDC_EDIT_NAME, NameEdit);
     DDX_Control(pDX, IDC_EDIT_COLOR, ColorEdit);
 }
@@ -44,6 +42,15 @@ END_MESSAGE_MAP()
 
 // SettingsDlg message handlers
 
+
+BOOL SettingsDlg::OnInitDialog()
+{
+
+    GetDlgItem(IDC_NAMEL)->SetWindowTextW(CString("Enter Name: "));
+    GetDlgItem(IDC_COLORL)->SetWindowTextW(CString("Enter Color: "));
+
+    return TRUE;
+}
 
 void SettingsDlg::OnBnClickedOk()
 {
