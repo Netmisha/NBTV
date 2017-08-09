@@ -199,6 +199,7 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
 
     case LOG_RESPONCE:
         ip_name_list_.Add(ip, msg.name_, msg.color_);
+        online_status_check_.Add(ip);
         
         if(msg.type_ == LOG_RESPONCE)
             is_fully_processed = true;
@@ -379,7 +380,7 @@ void Network::Heartbeat()const
     int message_size = Parcer::PackMessage(HEARTBEAT_MESSAGE, NULL, message);
     while(is_working_)
     {
-        Sleep(4000);
+        Sleep(HEARTBEAT_INTERVAL_MSEC);
 
         broadc_socket_.Send(message, message_size);
     }

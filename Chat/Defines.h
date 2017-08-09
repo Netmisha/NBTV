@@ -62,4 +62,9 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 //caused by shutdown+close on the other end of connection
 #define ERROR_SOCKET_NOT_CONNECTED (10057)
 
+//interval with which heartbeats will be send
+#define HEARTBEAT_INTERVAL_MSEC (2000)
+//interval with which online checks will be performed
+#define ONLINE_CHECK_INTERVAL_MSEC (3000)
+
 #endif // !DEFINES_H

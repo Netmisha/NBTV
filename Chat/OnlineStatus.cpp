@@ -1,9 +1,8 @@
 #include "OnlineStatus.h"
 
-OnlineStatus::OnlineStatus() : ip_name_list_(NULL), is_working_(false) 
-{
-    online_list_.clear();
-}
+#include "FindPairByIp.h"
+
+OnlineStatus::OnlineStatus() : ip_name_list_(NULL), is_working_(false) {}
 
 OnlineStatus::~OnlineStatus() {}
 
@@ -14,14 +13,21 @@ void OnlineStatus::SetIpNameList(IpNameList* list)
 
 void OnlineStatus::Add(const std::string &ip)
 {
-    online_list_access_mutex_.Lock();
-    online_list_[ip] = true;
-    online_list_access_mutex_.Unlock();
+    if(std::find_if(online_list_.begin(), online_list_.end(), FindPairByIp(ip)) == online_list_.end())
+    {
+        online_list_.push_back(std::pair<std::string, bool>(ip, false));
+    }
 }
 
 void OnlineStatus::IpOnline(const std::string &ip)
 {
-    Add(ip);
+    std::vector<std::pair<std::string, bool>>::iterator it = std::find_if(online_list_.begin(),
+                                                                          online_list_.end(),
+                                                                          FindPairByIp(ip));
+    if(it != online_list_.end())
+    {
+        it->second = true;
+    }
 }
 
 void OnlineStatus::Start()
@@ -45,32 +51,26 @@ void OnlineStatus::OfflineCheck()
 {
     is_working_ = true;
 
-    std::vector<std::string> online_ips_;
-    std::map<std::string, bool>::iterator it;
+    std::vector<std::pair<std::string, bool>>::iterator it;
 
     while(is_working_)
     {
-        Sleep(5000);
-
-        ip_name_list_->GetIpVector(online_ips_);
+        Sleep(ONLINE_CHECK_INTERVAL_MSEC);
 
         online_list_access_mutex_.Lock();
-        for(std::string ip : online_ips_)
+        for(it = online_list_.begin(); it != online_list_.end();)
         {
-            it = online_list_.find(ip);
-            if(it == online_list_.end())
-                continue;
-            else if(it->second == false)
+            if(it->second == false)
             {
-                ip_name_list_->Remove(ip);
+                ip_name_list_->Remove(it->first);
+                online_list_.erase(it);
             }
             else
             {
-                online_list_[ip] = false;
+                it->second = false;
+                ++it;
             }
         }
         online_list_access_mutex_.Unlock();
-
-        online_ips_.clear();
     }
 }

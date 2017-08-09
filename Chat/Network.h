@@ -99,7 +99,10 @@ public:
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
 
+    //startup function for winapi threads
+    //starts Heartbeat function
     static unsigned HeartbeatStartup(void* this_prt);
+    //loop with sending heartbeat message
     void Heartbeat()const;
 
 private:
