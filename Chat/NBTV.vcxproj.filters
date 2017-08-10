@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\Sockets">
+      <UniqueIdentifier>{84d01acd-e7e2-4753-a13b-2ad232e77078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\AbstractSocket">
+      <UniqueIdentifier>{11bed51e-62df-4bcd-9575-7f8376ecc7f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\BroadcastSocket">
+      <UniqueIdentifier>{0930cef0-124c-41da-93ac-19fbfe88e459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\RecvSocket">
+      <UniqueIdentifier>{53710956-0a85-42b9-b774-92361c449b60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Network">
+      <UniqueIdentifier>{fa85caea-0b5a-450a-8d88-eade69c281f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Parcer">
+      <UniqueIdentifier>{7d4b864f-af13-4085-a115-7dcbb8a36304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Structs">
+      <UniqueIdentifier>{fbf7341a-d794-4345-890e-285372788da8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Defines">
+      <UniqueIdentifier>{483feb59-f140-4428-870d-3000dfa18978}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Functors">
+      <UniqueIdentifier>{ca416001-877e-4b9e-9f0c-a4b58142e274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Functors\NameSearch">
+      <UniqueIdentifier>{2c3dc7bf-e3f0-4417-bbaa-81a06169ce2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Mutex">
+      <UniqueIdentifier>{4123beed-911c-4afb-88db-1c8ed18d1508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Thread">
+      <UniqueIdentifier>{d454ce85-b419-4413-959f-dff685b06c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\AppManager">
+      <UniqueIdentifier>{acfa8164-eb22-47eb-90bd-dea592294518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Chat">
+      <UniqueIdentifier>{5fca93f0-536d-47e7-a793-a2a7aff1d485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\FileManager">
+      <UniqueIdentifier>{7b58579f-dc9e-4de0-9f00-9c6e227eaeb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\FileManager\File">
+      <UniqueIdentifier>{893ce197-6d3c-4057-a628-bd184b1f09fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\FileSockets">
+      <UniqueIdentifier>{f4f2ba1b-f57c-4375-97aa-4e02a5d13765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\FileSockets\FileSendSocket">
+      <UniqueIdentifier>{053b40e8-0d94-4fe5-a4c0-59a62ebb741f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\FileSockets\FileGetSocket">
+      <UniqueIdentifier>{7c2f5f62-ef45-42b7-bc08-0d1f23c28000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Network\IpNameList">
+      <UniqueIdentifier>{a608de00-4fb7-4777-8dd9-08cfac17ab23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\FileListSendSocket">
+      <UniqueIdentifier>{b9cb00e9-9444-4860-93a2-c18923c6fb41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Sockets\TCPSocket">
+      <UniqueIdentifier>{8522eea9-3964-46b9-b4b6-e156c0f23fcd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AbstractSocket.cpp">
+      <Filter>Resource Files\Sockets\AbstractSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="BroadcastSocket.cpp">
+      <Filter>Resource Files\Sockets\BroadcastSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvSocket.cpp">
+      <Filter>Resource Files\Sockets\RecvSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Resource Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Parcer.cpp">
+      <Filter>Resource Files\Parcer</Filter>
+    </ClCompile>
+    <ClCompile Include="NameSearch.cpp">
+      <Filter>Resource Files\Functors\NameSearch</Filter>
+    </ClCompile>
+    <ClCompile Include="Mutex.cpp">
+      <Filter>Resource Files\Mutex</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Resource Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="AppManager.cpp">
+      <Filter>Resource Files\AppManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Chat.cpp">
+      <Filter>Resource Files\Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>Resource Files\FileManager</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>Resource Files\FileManager\File</Filter>
+    </ClCompile>
+    <ClCompile Include="FileGetSocket.cpp">
+      <Filter>Resource Files\Sockets\FileSockets\FileGetSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSendSocket.cpp">
+      <Filter>Resource Files\Sockets\FileSockets\FileSendSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="IpNameList.cpp">
+      <Filter>Resource Files\Network\IpNameList</Filter>
+    </ClCompile>
+    <ClCompile Include="FileListSendSocket.cpp">
+      <Filter>Resource Files\Sockets\FileListSendSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPSocket.cpp">
+      <Filter>Resource Files\Sockets\TCPSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="MyUserInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MessagesArchive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OnlineStatus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FindPairByIp.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AbstractSocket.h">
+      <Filter>Resource Files\Sockets\AbstractSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="BroadcastSocket.h">
+      <Filter>Resource Files\Sockets\BroadcastSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvSocket.h">
+      <Filter>Resource Files\Sockets\RecvSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Resource Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Parcer.h">
+      <Filter>Resource Files\Parcer</Filter>
+    </ClInclude>
+    <ClInclude Include="LogMessage.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvStruct.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>Resource Files\Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="UserMsg.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="NameSearch.h">
+      <Filter>Resource Files\Functors\NameSearch</Filter>
+    </ClInclude>
+    <ClInclude Include="Mutex.h">
+      <Filter>Resource Files\Mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Resource Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="AppManager.h">
+      <Filter>Resource Files\AppManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Chat.h">
+      <Filter>Resource Files\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Resource Files\FileManager</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>Resource Files\FileManager\File</Filter>
+    </ClInclude>
+    <ClInclude Include="UnpackedMessage.h">
+      <Filter>Resource Files\Parcer</Filter>
+    </ClInclude>
+    <ClInclude Include="FileGetSocket.h">
+      <Filter>Resource Files\Sockets\FileSockets\FileGetSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSendSocket.h">
+      <Filter>Resource Files\Sockets\FileSockets\FileSendSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="SendFileInfo.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="IpNameList.h">
+      <Filter>Resource Files\Network\IpNameList</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvFileInfo.h">
+      <Filter>Resource Files\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="FileListSendSocket.h">
+      <Filter>Resource Files\Sockets\FileListSendSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPSocket.h">
+      <Filter>Resource Files\Sockets\TCPSocket</Filter>
+    </ClInclude>
+    <ClInclude Include="MyUserInfo.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessagesArchive.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OnlineStatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FindPairByIp.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

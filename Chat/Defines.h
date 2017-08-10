@@ -65,6 +65,6 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 //interval with which heartbeats will be send
 #define HEARTBEAT_INTERVAL_MSEC (5000)
 //interval with which online checks will be performed
-#define ONLINE_CHECK_INTERVAL_MSEC (30000)
+#define ONLINE_CHECK_INTERVAL_MSEC (45000)
 
 #endif // !DEFINES_H
