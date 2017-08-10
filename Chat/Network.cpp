@@ -390,7 +390,7 @@ void Network::Heartbeat()const
         if(PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE))
         {
             //if message type is correct
-            if(msg.message == WM_TIMER && msg.hwnd == NULL && msg.wParam == timer_id)
+            if((msg.message == WM_TIMER) && (msg.hwnd == NULL) && (msg.wParam == timer_id))
             {
                 //send heartbeat
                 broadc_socket_.Send(heartbeat_message, heartbeat_size);
