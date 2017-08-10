@@ -10,6 +10,8 @@
 #include <vector>
 #include <string>
 
+const std::string PUBLIC_MSGS("PUBLIC_MSGS");
+
 typedef unsigned(*thread_function)(void*);
 
 enum ChatMsgType

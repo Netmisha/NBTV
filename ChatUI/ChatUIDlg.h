@@ -41,11 +41,19 @@ public:
     afx_msg void OnBnClickedMainbutton();
     CEdit ChatEdit;
     CListBox Chat;
+
+    std::string ModeName;
+    bool is_private;
+    void SetPrivateMode(CString str);
     
+
     void OnTimer(UINT_PTR nIDEvent);
     inline void SetUserIcon();
     inline void SetUserList();
+    void SetFileListP();
+    void SetChatP();
     inline void SetFileList();
+    void SetChat();
 private:
     void ProcessMessage(const UnpackedMessage &um, AppManager& am);
     COLORREF  GetColorByIndex(char index);
@@ -85,6 +93,7 @@ public:
     CButton AddFileButt;
     afx_msg void OnBnClickedButton1();
     afx_msg void OnBnClickedSettingBut();
+
     CButton OpsButt;
     afx_msg void OnLbnDblclkList1();
 };

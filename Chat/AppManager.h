@@ -43,8 +43,7 @@ public:
     const std::string GetIP()const;
     void PopBuffer(int num, std::string& buffer); //easy pop front
  
-    void ActivatePrivateChat();
-    void ExitPrivateChat();
+    
 
     //returns true if name is used by other user
     //false otherwise

@@ -20,9 +20,15 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
     switch(um.type_)
     {
     case CHAT_MESSAGE:
-        Chat.InsertString(Chat.GetCount(), '\n'+ CString((*(UserMsg*)um.msg_).name_.c_str())  + " : " + CString((*(UserMsg*)um.msg_).msg_.c_str()));
-        break;
+    {
+        if(!is_private)
+            Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).name_.c_str()) + " : " + CString((*(UserMsg*)um.msg_).msg_.c_str()));
+        else
+            if((*(UserMsg*)um.msg_).name_ == ModeName && (*(UserMsg*)um.msg_).type_ == PRIVATE)          
+                Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).name_.c_str()) + " : " + CString((*(UserMsg*)um.msg_).msg_.c_str()));
 
+        break;
+    }
     case LOG_MESSAGE:
     
         switch (((LogMessage*)um.msg_)->type_)
@@ -63,8 +69,34 @@ COLORREF CChatUIDlg::GetColorByIndex(char index)
     }
 }
 
+void CChatUIDlg::SetPrivateMode(CString str)
+{
+    const WCHAR* wc = str;
+    _bstr_t b(wc);
+    const char* name = b;
+    if (!strncmp(name, "Global", 6))
+    {
+        ModeName.clear();
+        is_private = false;
+        SetFileList();
+        SetChat();
+        OnBnClickedSwitchC();
+    }
+    else
+    {
+        is_private = true;
+        ModeName = name;
+        SetFileListP();
+        SetChatP();
+        OnBnClickedSwitchC();
+    }
+
+
+}
+
 void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
 {
+    //set user icon
     CStatic*
         icon = (CStatic*)GetDlgItem(IDC_USERICON);
     CImage image_;
@@ -78,10 +110,14 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
     bitmap_.Attach(image_.Detach());
     icon->SetBitmap(bitmap_);
 
+    //set user list
     std::vector<UserInfo>* list = (std::vector<UserInfo>*)app_man.ActivateCommand(std::string("/userlist"));
     CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
     if (is_working_)
         usr_list->ResetContent();
+
+    usr_list->InsertString(0, CString("Global"));
+
     if (list->size() != 0)
         for (auto i : *list)
         {
@@ -89,7 +125,7 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
             usr_list->InsertString(usr_list->GetCount(), CString(i.user_name_.c_str()));
         }
 
-
+    //set file grid
     std::vector<File> *list2 = (std::vector<File>*)app_man.ActivateCommand(std::string("/fl "));
     FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
     for (int i = 0; i < list2->size(); i++)
@@ -102,6 +138,8 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
     FileGrid.Refresh();
   
        KillTimer(TID_ONLY_ONCE);
+
+
 }
 
 inline void CChatUIDlg::SetUserIcon()
@@ -127,12 +165,43 @@ inline void CChatUIDlg::SetUserList()
     CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
     if(is_working_)
         usr_list->ResetContent();
+
+    usr_list->InsertString(0, CString("Global"));
+
     if(list->size() != 0)
     for (auto i : *list)
     {
-
         usr_list->InsertString(usr_list->GetCount(), CString(i.user_name_.c_str()));
     }
+}
+
+void CChatUIDlg::SetFileListP()
+{
+    std::vector<RecvFileInfo> *list = (std::vector<RecvFileInfo>*)app_man.ActivateCommand(std::string("/fl " + ModeName));
+    FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
+    for (int i = 0; i < list->size(); i++)
+    {
+        FileGrid.SetItemText(i, 0, CString(std::to_string(i + 1).c_str()));
+        FileGrid.SetItemText(i, 1, CString((*list)[i].name_.c_str()));
+
+        FileGrid.SetItemText(i, 2, CString(std::to_string((*list)[i].size_KB_/1024).c_str()) + CString(" MB"));
+    }
+    FileGrid.Refresh();
+}
+
+void CChatUIDlg::SetChatP()
+{
+    std::vector<UserMsg>* list = (std::vector<UserMsg>*)app_man.GetPrivateChatMsgs(ModeName);
+    
+    CListBox *usr_list = (CListBox *)GetDlgItem(IDC_CHAT);
+    if (is_working_)
+        usr_list->ResetContent();
+
+    if (list != NULL && list->size() != 0)
+        for (auto i : *list)
+        {
+            Chat.InsertString(Chat.GetCount(), '\n' + CString(i.name_.c_str()) + " : " + CString(i.msg_.c_str()));
+        }
 }
 
 void  CChatUIDlg::RecvLoop(AppManager& am)
@@ -382,7 +451,11 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
     }
     else
     {
+        if (is_private)
+        app_man.SendMsgTo(c, ModeName);
+        else
         app_man.SendMsg(c);
+        
         Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
     }
 }
@@ -459,6 +532,21 @@ inline void CChatUIDlg::SetFileList()
     FileGrid.Refresh();
 }
 
+void CChatUIDlg::SetChat()
+{
+    std::vector<UserMsg>* list = (std::vector<UserMsg>*)app_man.GetPrivateChatMsgs(PUBLIC_MSGS);
+
+    CListBox *usr_list = (CListBox *)GetDlgItem(IDC_CHAT);
+    if (is_working_)
+        usr_list->ResetContent();
+
+    if (list != NULL && list->size() != 0)
+        for (auto i : *list)
+        {
+            Chat.InsertString(Chat.GetCount(), '\n' + CString(i.name_.c_str()) + " : " + CString(i.msg_.c_str()));
+        }
+}
+
 
 void CChatUIDlg::OnBnClickedButton1()
 {
@@ -507,6 +595,7 @@ void CChatUIDlg::OnLbnDblclkList1()
         {
             ul->GetText(i, ItemSelected);
             AfxMessageBox(ItemSelected);
+            SetPrivateMode(ItemSelected);
         }
 
 
