@@ -15,8 +15,8 @@ public:
     //returns false if fails
     bool Initialize();
     //connects socket to specific ip and port
-    //returns false if fails
-    //if timeout is not passed
+    //returns false if fails to connect
+    //or timeout occurs
     bool Connect(const char* ip, unsigned int port = 0, unsigned int timeout_sec = 0);
     //sets socket to listen
     //returns false in case of failure
@@ -24,6 +24,7 @@ public:
     //accepts connection, returns socket as passed parameter
     //returns true if accept didn't fail
     //false otherwise
+    //blocks thread
     bool Accept(TCPSocket &out_socket)const;
     //tries to accept connection
     //doesn't block thread

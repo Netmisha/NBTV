@@ -28,7 +28,7 @@
 
 //0 for disabling broadcast loopback recv
 //1 for enabling
-#define BROADCAST_LOOPBACK (1)
+#define BROADCAST_LOOPBACK (0)
 
 //dir where shared files data is stored
 #define DATA_SAVE_DIR ("Data")
@@ -63,8 +63,8 @@ const std::string PUBLIC_MSGS("PUBLIC_MSGS");
 #define ERROR_SOCKET_NOT_CONNECTED (10057)
 
 //interval with which heartbeats will be send
-#define HEARTBEAT_INTERVAL_MSEC (2000)
+#define HEARTBEAT_INTERVAL_MSEC (10000)
 //interval with which online checks will be performed
-#define ONLINE_CHECK_INTERVAL_MSEC (3000)
+#define ONLINE_CHECK_INTERVAL_MSEC (15000)
 
 #endif // !DEFINES_H

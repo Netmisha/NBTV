@@ -376,14 +376,30 @@ unsigned Network::HeartbeatStartup(void* this_prt)
 
 void Network::Heartbeat()const
 {
-    void *message;
-    int message_size = Parcer::PackMessage(HEARTBEAT_MESSAGE, NULL, message);
+    void *heartbeat_message;
+    int heartbeat_size = Parcer::PackMessage(HEARTBEAT_MESSAGE, NULL, heartbeat_message);
+
+    unsigned int timer_id = SetTimer(NULL,                      //no attached windows
+                                     NULL,                      //no attached event
+                                     HEARTBEAT_INTERVAL_MSEC,   //interval
+                                     (TIMERPROC)NULL);          //no attached function
+    MSG msg;
     while(is_working_)
     {
-        Sleep(HEARTBEAT_INTERVAL_MSEC);
+        //if there is a message, get it and remove it from queue
+        if(PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE))
+        {
+            //if message type is correct
+            if(msg.message == WM_TIMER && msg.hwnd == NULL && msg.wParam == timer_id)
+            {
+                //send heartbeat
+                broadc_socket_.Send(heartbeat_message, heartbeat_size);
+            }
+        }
 
-        broadc_socket_.Send(message, message_size);
+        Sleep(0);
     }
-
-    delete[] message;
+    
+    KillTimer(NULL, timer_id);
+    delete[] heartbeat_message;
 }

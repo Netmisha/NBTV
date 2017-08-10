@@ -106,7 +106,11 @@ bool TCPSocket::ConnectionCame(unsigned int msec_timeout)const
     FD_SET(socket_, &sockets);
     TIMEVAL timeout = { msec_timeout / 1000, (msec_timeout % 1000) * 1000 };
 
-    int status = select(0, &sockets, NULL, NULL, &timeout);
+    int status = select(0,          //not used
+                        &sockets,   //check these sockets to read (and accept)
+                        NULL,       //check these sockets to write
+                        NULL,       //check these sockets exceptions
+                        &timeout);  //timeout
     //if select doesn't fail and return value isn't 0
     if(status == -1 || status == 0)
         return false;

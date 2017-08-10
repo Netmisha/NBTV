@@ -8,9 +8,7 @@ class FindPairByIp
 {
 public:
     FindPairByIp(const std::string &to_find);
-    
     bool operator()(const std::pair<std::string, bool> &pair)const;
-
 private:
     const std::string &ip_to_find_;
 };

@@ -51,26 +51,46 @@ void OnlineStatus::OfflineCheck()
 {
     is_working_ = true;
 
-    std::vector<std::pair<std::string, bool>>::iterator it;
-
+    
+    unsigned int timer_id = SetTimer(NULL,                      //no attached windows
+                                     NULL,                      //no attached event
+                                     ONLINE_CHECK_INTERVAL_MSEC,   //interval
+                                     (TIMERPROC)NULL);          //no attached function
+    MSG msg;
     while(is_working_)
     {
-        Sleep(ONLINE_CHECK_INTERVAL_MSEC);
-
-        online_list_access_mutex_.Lock();
-        for(it = online_list_.begin(); it != online_list_.end();)
+        //if there is a message, get it and remove it from queue
+        if(PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE))
         {
-            if(it->second == false)
+            //if message type is correct
+            if(msg.message == WM_TIMER && msg.hwnd == NULL && msg.wParam == timer_id)
             {
-                ip_name_list_->Remove(it->first);
-                online_list_.erase(it);
-            }
-            else
-            {
-                it->second = false;
-                ++it;
+                //check online list
+                CheckList();
             }
         }
-        online_list_access_mutex_.Unlock();
+
+        Sleep(0);
     }
+}
+
+void OnlineStatus::CheckList()
+{
+    static std::vector<std::pair<std::string, bool>>::iterator it;
+
+    online_list_access_mutex_.Lock();
+    for(it = online_list_.begin(); it != online_list_.end();)
+    {
+        if(it->second == false)
+        {
+            ip_name_list_->Remove(it->first);
+            online_list_.erase(it);
+        }
+        else
+        {
+            it->second = false;
+            ++it;
+        }
+    }
+    online_list_access_mutex_.Unlock();
 }

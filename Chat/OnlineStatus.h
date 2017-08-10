@@ -45,6 +45,8 @@ private:
     volatile bool is_working_;
     //thread for online checks
     Thread check_thread_;
+
+    void CheckList();
 };
 
 #endif // !ONLINE_STATUS_H
