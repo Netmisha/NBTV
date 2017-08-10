@@ -72,6 +72,7 @@ void OnlineStatus::OfflineCheck()
 
         Sleep(0);
     }
+    KillTimer(NULL, timer_id);
 }
 
 void OnlineStatus::CheckList()
