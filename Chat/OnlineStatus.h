@@ -34,6 +34,9 @@ public:
     static unsigned CheckStartup(void *this_ptr);
     //loop that performs checks
     void OfflineCheck();
+    //true if update needed
+    //false otherwise
+    bool CheckForUpdate();
 
 private:
     //vector of ip - online status pairs to be checked
@@ -47,6 +50,8 @@ private:
     volatile bool is_working_;
     //thread for online checks
     Thread check_thread_;
+    //bool to check if ui need update
+    volatile bool is_update_needed_;
 
     void CheckList();
 };
