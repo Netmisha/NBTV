@@ -13,14 +13,17 @@ void OnlineStatus::SetIpNameList(IpNameList* list)
 
 void OnlineStatus::Add(const std::string &ip)
 {
+    online_list_access_mutex_.Lock();
     if(std::find_if(online_list_.begin(), online_list_.end(), FindPairByIp(ip)) == online_list_.end())
     {
         online_list_.push_back(std::pair<std::string, bool>(ip, false));
     }
+    online_list_access_mutex_.Unlock();
 }
 
 void OnlineStatus::IpOnline(const std::string &ip)
 {
+    online_list_access_mutex_.Lock();
     std::vector<std::pair<std::string, bool>>::iterator it = std::find_if(online_list_.begin(),
                                                                           online_list_.end(),
                                                                           FindPairByIp(ip));
@@ -28,6 +31,19 @@ void OnlineStatus::IpOnline(const std::string &ip)
     {
         it->second = true;
     }
+    online_list_access_mutex_.Unlock();
+}
+
+void OnlineStatus::Remove(const std::string &ip)
+{
+    online_list_access_mutex_.Lock();
+    std::vector<std::pair<std::string, bool>>::iterator it = std::find_if(online_list_.begin(),
+                                                                          online_list_.end(),
+                                                                          FindPairByIp(ip));
+    if(it != online_list_.end())
+        online_list_.erase(it);
+
+    online_list_access_mutex_.Unlock();
 }
 
 void OnlineStatus::Start()

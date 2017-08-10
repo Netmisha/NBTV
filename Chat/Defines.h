@@ -19,12 +19,12 @@
 #define BUFFER_SIZE (512)
 #define CHUNK_SIZE (512)
 
-//size of ip in chars (multibite)
+//size of ip in chars (multibyte)
 #define IP_SIZE (16)
 
 //WSAStartup version define
 #define WSA_MIN_VERSION (2)
-#define WSA_MAX_VERSION (2) 
+#define WSA_MAX_VERSION (2)
 
 //0 for disabling broadcast loopback recv
 //1 for enabling

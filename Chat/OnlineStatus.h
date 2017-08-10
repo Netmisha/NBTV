@@ -22,6 +22,8 @@ public:
     void Add(const std::string &ip);
     //sets ip online status as true for next check
     void IpOnline(const std::string &ip);
+    //remove ip from checks
+    void Remove(const std::string &ip);
 
     //starts online checks
     void Start();
