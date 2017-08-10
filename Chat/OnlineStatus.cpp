@@ -2,7 +2,9 @@
 
 #include "FindPairByIp.h"
 
-OnlineStatus::OnlineStatus() : ip_name_list_(NULL), is_working_(false) {}
+OnlineStatus::OnlineStatus() : ip_name_list_(NULL),
+                               is_working_(false),
+                               is_update_needed_(false) {}
 
 OnlineStatus::~OnlineStatus() {}
 
@@ -82,7 +84,7 @@ void OnlineStatus::OfflineCheck()
             if((msg.message == WM_TIMER) && (msg.hwnd == NULL) && (msg.wParam == timer_id))
             {
                 //check online list
-                //CheckList();
+                CheckList();
             }
         }
 
@@ -102,6 +104,7 @@ void OnlineStatus::CheckList()
         {
             ip_name_list_->Remove(it->first);
             online_list_.erase(it);
+            is_update_needed_ = true;
         }
         else
         {
@@ -110,4 +113,14 @@ void OnlineStatus::CheckList()
         }
     }
     online_list_access_mutex_.Unlock();
+}
+
+bool OnlineStatus::CheckForUpdate()
+{
+    bool result = is_update_needed_;
+
+    if(result)
+        is_update_needed_ = false;
+
+    return result;
 }

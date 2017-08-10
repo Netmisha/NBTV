@@ -404,3 +404,8 @@ void Network::Heartbeat()const
     KillTimer(NULL, timer_id);
     delete[] heartbeat_message;
 }
+
+bool Network::IsUserlistInvalid()
+{
+    return online_status_check_.CheckForUpdate();
+}

@@ -102,8 +102,11 @@ public:
     //startup function for winapi threads
     //starts Heartbeat function
     static unsigned HeartbeatStartup(void* this_prt);
-    //loop with sending heartbeat message
+    //loop with sending heartbeat message 
     void Heartbeat()const;
+    //returns true if userlist needs update
+    //false otherwise
+    bool IsUserlistInvalid();
 
 private:
     Chat *chat_;

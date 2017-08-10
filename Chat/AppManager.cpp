@@ -215,3 +215,8 @@ void AppManager::SetUserInfo(char color)
     chat_.SetColor(color);
     network_.SendLogMsg(chat_.GetName(), LOG_UPDATE);
 }
+
+bool AppManager::IsUserlistInvalid()
+{
+    return network_.IsUserlistInvalid();
+}

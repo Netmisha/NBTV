@@ -59,4 +59,6 @@ public:
     void SetUserInfo(const std::string &name, char color);
     void SetUserInfo(const std::string &name);
     void SetUserInfo(char color);
+
+    bool IsUserlistInvalid();
 };
