@@ -11,7 +11,7 @@ RecvSocket::~RecvSocket()
     delete[] buffer_;
 }
 
-bool RecvSocket::Initialize(int port)
+bool RecvSocket::Initialize(unsigned int port)
 {
     if(!AbstractSocket::Initialize(UDP))
     {
@@ -33,7 +33,7 @@ bool RecvSocket::Initialize(int port)
     sockaddr_in port_bind;
     memset(&port_bind, 0, sizeof(port_bind));
     port_bind.sin_family = AF_INET;
-    port_bind.sin_port = htons(port != -1 ? (unsigned int)port : PORT);
+    port_bind.sin_port = htons(port ? port : PORT);
     port_bind.sin_addr.s_addr = INADDR_ANY;
     
     if(bind(socket_, (SOCKADDR*)&port_bind, (int)sizeof(port_bind)) != 0)
@@ -45,9 +45,8 @@ bool RecvSocket::Initialize(int port)
     return true;
 }
 
-int RecvSocket::Recv(RecvStruct* out_result)const
+int RecvSocket::Recv(RecvStruct& out_result)const
 {
-    memset(buffer_, 0, RECV_BUFFER_SIZE);
     sockaddr_in recv_info;
     int recv_info_size = sizeof(recv_info);
     
@@ -62,9 +61,11 @@ int RecvSocket::Recv(RecvStruct* out_result)const
         return -1;
     }
 
-    inet_ntop(AF_INET, &(recv_info.sin_addr), &out_result->ip_[0], IP_SIZE);
-    out_result->packet_ = new char[recv_size]();
-    memcpy(out_result->packet_, buffer_, recv_size);
+    inet_ntop(AF_INET, &(recv_info.sin_addr), &out_result.ip_[0], IP_SIZE);
+    out_result.packet_ = new char[recv_size]();
+    memcpy(out_result.packet_, buffer_, recv_size);
+
+    memset(buffer_, 0, RECV_BUFFER_SIZE);
 
     return recv_size;
 }

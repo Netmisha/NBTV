@@ -26,13 +26,18 @@ bool File::SetFile(const std::string &path)
         return false;
     }
 
+    char path_delim = '\\';
+
+    if(std::find(path.begin(), path.end(), path_delim) == path.end())
+        path_delim = '/';
+
     std::stringstream str_stream;
 
     str_stream << path_;
     while(!str_stream.eof())
     {
         //shortening path to file name
-        std::getline(str_stream, name_, '\\');
+        std::getline(str_stream, name_, path_delim);
     }
     
     HANDLE file = CreateFile(path_.c_str(),             //path
@@ -59,12 +64,12 @@ bool File::IsValid()const
     return (bool)PathFileExistsA(path_.c_str());
 }
 
-const std::string File::GetName()const
+const std::string& File::GetName()const
 {
     return name_;
 }
 
-const std::string File::GetPath()const
+const std::string& File::GetPath()const
 {
     return path_;
 }

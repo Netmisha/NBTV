@@ -4,7 +4,7 @@
 #include "Defines.h"
 #include <Windows.h>
 
-class DLL_EXP Mutex
+class DLL Mutex
 {
 public:
     Mutex();

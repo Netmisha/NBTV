@@ -7,7 +7,7 @@
 
 #include <WS2tcpip.h>
 
-class RecvSocket : public AbstractSocket
+class DLL RecvSocket : public AbstractSocket
 {
 public:
     RecvSocket();
@@ -16,10 +16,10 @@ public:
     //initializes socket to specific port
     //if no specific port stated - to standart
     //one, in Defines.h
-    bool Initialize(int port = -1);
+    bool Initialize(unsigned int port = 0U);
     //recvs message, returns size of it
     //sets parameter as pointer to it
-    int Recv(RecvStruct* out_result)const;
+    int Recv(RecvStruct& out_result)const;
 
 private:
     char *buffer_;

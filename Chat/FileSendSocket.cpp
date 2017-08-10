@@ -9,14 +9,17 @@ FileSendSocket::~FileSendSocket(){}
 
 void FileSendSocket::Initialize() {}
 
-bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, const std::string& filename)
+bool FileSendSocket::SendFile(const std::string& pass,
+                              const std::string& ip,
+                              const std::string& filename,
+                              unsigned int port)
 {
     if(!AbstractSocket::Initialize(TCP))
     {
         return false;
     }
 
-    if(!Connect(ip.c_str()))
+    if(!Connect(ip.c_str(), port, CONNECT_TIMEOUT_SEC))
     {
         return false;
     }
@@ -31,6 +34,10 @@ bool FileSendSocket::SendFile(const std::string& pass, const std::string& ip, co
                              OPEN_EXISTING,
                              FILE_ATTRIBUTE_NORMAL,
                              NULL);
+    if(file == INVALID_HANDLE_VALUE)
+    {
+        return false;
+    }
     DWORD bytes_read = 0;
     BOOL err_check;
     while (true)

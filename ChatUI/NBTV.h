@@ -10,6 +10,8 @@
 #include <vector>
 #include <string>
 
+const std::string PUBLIC_MSGS("PUBLIC_MSGS");
+
 typedef unsigned(*thread_function)(void*);
 
 enum ChatMsgType
@@ -95,44 +97,60 @@ public:
     void Join()const;
 };
 
+struct UserInfo
+{
+    std::string user_name_;
+    char color;
+};
 
 class DLL_IMP AppManager
 {
 public:
-    //function to use from UI (.DLL)
+    //returns refference to vector of user msgs of specific private chat
+    //use PUBLIC_MSGS constant for getting public messages
+    const std::vector<UserMsg>* GetPrivateChatMsgs(const std::string &name)const;
 
-    std::vector<UserMsg> GetCurrentChat();
+    //get specific yours shared file path and name
+    const std::string& GetFilePath(int file_index)const;
+    const std::string& GetFileName(int file_index)const;
+    //send list to specific ip
+    void SendList(const std::string& ip, unsigned int port = 0U);
 
-    // void GetMsgLoop(); //message getting
+    //send msg to everyone
+    int SendMsg(const std::string& msg);
+    //send msg to someone specific
+    int SendMsgTo(const std::string& msg, const std::string &name);
+    //get your name
+    const std::string& GetName()const;
+    const char GetColor() const;
 
-    void SendFile(const std::string &path, const std::string &ip, const std::string &name);
-
-    const std::string GetFilePath(int file_index)const;
-    const std::string GetFileName(int file_index)const;
-
-    void ProcessLogMessage(const LogMessage &msg, const std::string &ip);
-    void SendList(const std::string& ip);
-
-    void SendMsg(const std::string& msg); //after user wrote message in chat
-    void AddMsg(const UserMsg& ms); //will be used by recv loop
-    const std::string& GetName();
-
+    //recieve message from broadcasts
     UnpackedMessage RecieveMessage();
 
     void* ActivateCommand(std::string& msg); //called by buttons with different commands
     //ChangeName, On/Off private mode, filelists, get someone`s file,
     //add/remove file, online users list, setcolor, exit
+    //get your ip
     const std::string GetIP()const;
     void PopBuffer(int num, std::string& buffer); //easy pop front
 
     void ActivatePrivateChat();
     void ExitPrivateChat();
-    
+
     //returns true if name is used by other user
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
+    //load your info from file
+    //returns true if successful
+    bool LoadUserInfo();
 
-    void EXIT();
+    void GetFile(const std::string &name, int index);
+
+    void StopNetwork();
+
+    void SetUserInfo(const std::string &name, char color);
+    void SetUserInfo(const std::string &name);
+    void SetUserInfo(char color);
 };
 
 class DLL_IMP File
@@ -144,14 +162,13 @@ private:
     double size_KB_;
 
 public:
-
     //true if path is value
     //false otherwise
     bool SetFile(const std::string &path);
     bool IsValid()const;
 
-    const std::string GetName()const;
-    const std::string GetPath()const;
+    const std::string& GetName()const;
+    const std::string& GetPath()const;
     const double GetSizeKB()const;
     const double GetSizeMB()const;
 };

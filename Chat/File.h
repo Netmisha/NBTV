@@ -4,7 +4,7 @@
 #include "Defines.h"
 #include <string>
 
-class DLL_EXP File
+class DLL File
 {
 public:
     File();
@@ -16,8 +16,8 @@ public:
     bool SetFile(const std::string &path);
     bool IsValid()const;
 
-    const std::string GetName()const;
-    const std::string GetPath()const;
+    const std::string& GetName()const;
+    const std::string& GetPath()const;
     const double GetSizeKB()const;
     const double GetSizeMB()const;
 

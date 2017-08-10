@@ -19,7 +19,7 @@ enum SocketConnectionType
     UDP = 1
 };
 
-class AbstractSocket
+class DLL AbstractSocket
 {
 public:
     AbstractSocket();
@@ -33,6 +33,9 @@ public:
     //closes socket
     //returns false if failed to close socket
     bool Close();
+
+    //sets windows api socket to passed one
+    void SetSocket(const SOCKET &socket);
 
 protected:
     SOCKET socket_;

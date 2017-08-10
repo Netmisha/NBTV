@@ -14,7 +14,7 @@ namespace Parcer
     int  PackMessage(const MessageType &type, const void *in_msg, void* &out_result)
     {
         int packet_size = -1;
-        switch (type)
+        switch(type)
         {
         case PREPARE_MESSAGE:
             packet_size = PackPrepMessage(in_msg, out_result);
@@ -34,6 +34,9 @@ namespace Parcer
         case FILE_LIST_MESSAGE:
             packet_size = PackFileList(in_msg, out_result);
             break;
+        case HEARTBEAT_MESSAGE:
+            packet_size = PackHeartbeat(in_msg, out_result);
+            break;
         }
 
         return packet_size;
@@ -42,13 +45,13 @@ namespace Parcer
     UnpackedMessage UnpackMessage(const void *packet)
     {
         UnpackedMessage result;
-        if (!packet)
+        if(!packet)
         {
             return result;
         }
         char *temp_ptr = (char*)packet;
-        result.type_ = *temp_ptr++;
-        switch (result.type_)
+        result.type_ = (MessageType)*temp_ptr++;
+        switch(result.type_)
         {
         case PREPARE_MESSAGE:
             result.msg_ = ParcePrepMessage(temp_ptr);
@@ -63,10 +66,11 @@ namespace Parcer
             result.msg_ = ParceGetFileMessage(temp_ptr);
             break;
         case FILE_LIST_REQUEST:
-            result.type_ = FILE_LIST_REQUEST;
             break;
         case FILE_LIST_MESSAGE:
             result.msg_ = ParceFileList(temp_ptr);
+            break;
+        case HEARTBEAT_MESSAGE:
             break;
         default:
             result.type_ = INVALID_TYPE;
@@ -139,45 +143,41 @@ namespace Parcer
     int  PackLogMessage(const void *in_msg, void* &out_packet)
     {
         LogMessage *log_msg = (LogMessage*)in_msg;
-        int msg_size = log_msg->name_.length() + LOG_MESSAGE_HEADER_SIZE;
+        int msg_size = log_msg->name_.length()
+            + log_msg->prev_name_.length()
+            + LOG_MESSAGE_HEADER_SIZE;
         out_packet = new char[msg_size]();
 
         unsigned char *temp_ptr = (unsigned char*)out_packet;
         *temp_ptr++ = LOG_MESSAGE;
         *temp_ptr++ = log_msg->type_;
         *temp_ptr++ = (unsigned char)log_msg->name_.length();
-        memcpy(temp_ptr, &log_msg->name_[0], log_msg->name_.length());
+        *temp_ptr++ = log_msg->color_;
+        *temp_ptr++ = (unsigned char)log_msg->prev_name_.length();
 
-        if(log_msg->type_ == LOG_UPDATE)
-        {
-            msg_size += sizeof(unsigned char)+log_msg->prev_name_.length();
-            temp_ptr += log_msg->name_.length();
-            *temp_ptr++ = (unsigned char)log_msg->prev_name_.length();
-            memcpy(temp_ptr, &log_msg->prev_name_[0], log_msg->prev_name_.length());
-        }
+        memcpy(temp_ptr, &log_msg->name_[0], log_msg->name_.length());
+        temp_ptr += log_msg->name_.length();
+        memcpy(temp_ptr, &log_msg->prev_name_[0], log_msg->prev_name_.length());
 
         return msg_size;
     }
 
-    void*  ParceLogMessage(const void *in_packet)
+    void* ParceLogMessage(const void *in_packet)
     {
         LogMessage *result = new LogMessage();
         unsigned char *temp_ptr = (unsigned char*)in_packet;
 
         result->type_ = (LogType)*temp_ptr++;
-        int name_size = *temp_ptr++;
+        int name_size = (int)*temp_ptr++;
+        result->color_ = *temp_ptr++;
+        int prev_name_size = (int)*temp_ptr++;
+
         result->name_.resize(name_size);
-
         memcpy(&result->name_[0], temp_ptr, name_size);
+        temp_ptr += name_size;
 
-        if(result->type_ == LOG_UPDATE)
-        {
-            temp_ptr += name_size;
-            name_size = *temp_ptr++;
-
-            result->prev_name_.resize(name_size);
-            memcpy(&result->prev_name_[0], temp_ptr, name_size);
-        }
+        result->prev_name_.resize(prev_name_size);
+        memcpy(&result->prev_name_[0], temp_ptr, prev_name_size);
 
         return (void*)result;
     }
@@ -189,15 +189,15 @@ namespace Parcer
 
         unsigned char *temp_ptr = (unsigned char*)out_packet;
         *temp_ptr++ = GET_FILE_MESSAGE;
-        *temp_ptr++ = *((int*)in_msg);
+        *(short*)temp_ptr++ = *((short*)in_msg);
 
         return msg_size;
     }
 
     void* ParceGetFileMessage(const void * in_packet)
     {
-        int *result = new int;
-        *result = *((int*)in_packet);
+        short *result = new short;
+        *result = *((short*)in_packet);
 
         return (void*)result;
     }
@@ -247,4 +247,10 @@ namespace Parcer
         return recv_file_info;
     }
 
+    int PackHeartbeat(const void *in_msg, void* &out_packet)
+    {
+        out_packet = new char[1]();
+        *(unsigned char*)out_packet = HEARTBEAT_MESSAGE;
+        return HEARTBEAT_MESSAGE_SIZE;
+    }
 }

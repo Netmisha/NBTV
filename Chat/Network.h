@@ -13,13 +13,14 @@
 #include "SendFileInfo.h"
 #include "IpNameList.h"
 #include "LogMessage.h"
+#include "OnlineStatus.h"
 
 #include "Mutex.h"
 #include "Thread.h"
 
 #include <string>
 
-class Network
+class DLL Network
 {
 public:
     //sets up is_working_ bool and
@@ -39,7 +40,7 @@ public:
     //function to prepare network for working
     //returns false in case of failure
     //true otherwise
-    bool PrepareNetwork();
+    bool PrepareNetwork(unsigned int broadc_port = 0U, unsigned int tcp_port = 0U);
     //stops network
     //note that network will take some
     //time to stop, this isn't an synchronous function
@@ -64,7 +65,10 @@ public:
     static unsigned GetFileStartup(void *socket_ptr);
     //sends file with specific path and name to
     //user with specific ip
-    void SendFile(const std::string &path, const std::string &ip, const std::string &name);
+    void SendFile(const std::string &path,
+                  const std::string &ip,
+                  const std::string &name,
+                  unsigned int port = 0U);
     //thread startup function for SendFile
     static unsigned SendFileStartup(void *send_file_info);
 
@@ -74,15 +78,14 @@ public:
     //returns -1 if send failed
     int RequestList(const std::string& user_name);
     //send list to specific ip
-    void SendList(const std::string& ip)const;
+    bool SendList(const std::string& ip, unsigned int port = 0U)const;
     //get list, used right after RequestList
     //return value is passed as refference parameter
     //it is safe as the sender connects to requester
     void GetList(std::vector<RecvFileInfo> &out_result)const;
 
     //returns vector of online users
-    //return value is passed as refference parameter
-    void GetOnlineUsers(std::vector<std::string> &users)const;
+    const std::vector<UserInfo>& GetOnlineUsers()const;
     //get your local ip
     //only valid if PrepareNetwork was called at least once
     //otherwise will return empty string
@@ -96,6 +99,12 @@ public:
     //false otherwise
     bool IsNameUsed(const std::string &name)const;
 
+    //startup function for winapi threads
+    //starts Heartbeat function
+    static unsigned HeartbeatStartup(void* this_prt);
+    //loop with sending heartbeat message
+    void Heartbeat()const;
+
 private:
     Chat *chat_;
 	FileManager *FM_;
@@ -105,6 +114,7 @@ private:
     //socket for recieving messages
     RecvSocket recv_socket_;
     //socket for getting files
+    //and list
     FileGetSocket file_get_socket_;
 
     //local machine ip
@@ -114,8 +124,6 @@ private:
     //bool that stops recv loop
     //if needed, just set it as 0/false
     volatile bool is_working_;
-    //mutex on send
-    Mutex send_mutex_;
 
     //num of active file sharing threads
     static volatile int file_sharing_thread_num_;
@@ -124,6 +132,13 @@ private:
 
     //list of ip - user name pairs
     IpNameList ip_name_list_;
+    //checks online status every 1.5 sec
+    OnlineStatus online_status_check_;
+    //thread with heartbeat every second
+    Thread hearbeat_thread_;
+
+    //custom tcp connection port
+    unsigned int custom_tcp_port_;
 
     //cleanup function, closes sockets
     void Cleanup();

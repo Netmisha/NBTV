@@ -20,9 +20,9 @@ public:
 
 
     //get specific file path
-    const std::string GetFilePath(int file_index)const;
+    const std::string& GetFilePath(int file_index)const;
     //get specific file name
-    const std::string GetFileName(int file_index)const;
+    const std::string& GetFileName(int file_index)const;
     //get size in kilobytes
     const double GetFileSizeKB(int file_index)const;
     //get size in megabytes
@@ -34,14 +34,17 @@ public:
     //get all file names
     void GetFileNames(std::vector<std::string> &out_result)const;
     //get vector of all files
-    void GetFiles(std::vector<File> &out_result)const;
+    const std::vector<File>& GetFiles()const;
 
 private:
     //vector of shared files
     std::vector<File> shared_files_;
+    //refference to this string is returned
+    //if invalid index has been passed
+    std::string error_string_;
 
     //saves shared file info
-    void Save();
+    void Save()const;
     //loads shared file info
     void Load();
 };

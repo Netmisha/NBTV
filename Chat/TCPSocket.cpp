@@ -19,7 +19,7 @@ bool TCPSocket::Initialize()
     return true;
 }
 
-bool TCPSocket::Connect(const char* ip, unsigned int port)
+bool TCPSocket::Connect(const char* ip, unsigned int port, unsigned int timeout_sec)
 {
     if(socket_ == INVALID_SOCKET)
     {
@@ -33,21 +33,18 @@ bool TCPSocket::Connect(const char* ip, unsigned int port)
     sock_addr.sin_port = htons(port ? port : FILE_PORT); //Host TO Network Short
     inet_pton(sock_addr.sin_family, ip, &(sock_addr.sin_addr));
 
+    int timeout = (timeout_sec ? timeout_sec : 0);
     //trying to connect 
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i <= timeout * 4; ++i)
     {
-        if(i == 9)
-        {
-            return false;
-        }
-        else if(connect(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
-        {
-            Sleep(1000);
-        }
-        else
-        {
+        //if connection succeed
+        if(connect(socket_, (sockaddr*)(&sock_addr), sizeof(sock_addr)) != 0)
             break;
-        }
+        //if timeout occurs
+        else if(i == timeout)
+            return false;
+        //wait a second
+        Sleep(250);
     }
 
     return true;
@@ -90,8 +87,44 @@ int TCPSocket::Recv(char* buffer, int size)const
     return recv(socket_, buffer, size, 0);
 }
 
-TCPSocket TCPSocket::Accept()const
+bool TCPSocket::Accept(TCPSocket &out_socket)const
 {
     SOCKET temp_sock = accept(socket_, NULL, NULL);
-    return TCPSocket(temp_sock);
+    if(temp_sock == INVALID_SOCKET)
+    {
+        return false;
+    }
+
+    out_socket.SetSocket(temp_sock);
+    return true;
+}
+
+bool TCPSocket::ConnectionCame(unsigned int msec_timeout)const
+{
+    fd_set sockets;
+    FD_ZERO(&sockets);
+    FD_SET(socket_, &sockets);
+    TIMEVAL timeout = { msec_timeout / 1000, (msec_timeout % 1000) * 1000 };
+
+    int status = select(0,          //not used
+                        &sockets,   //check these sockets to read (and accept)
+                        NULL,       //check these sockets to write
+                        NULL,       //check these sockets exceptions
+                        &timeout);  //timeout
+    //if select doesn't fail and return value isn't 0
+    if(status == -1 || status == 0)
+        return false;
+
+    return true;
+}
+
+bool TCPSocket::TryAccept(TCPSocket &out_socket, unsigned int msec_timeout)const
+{
+    if(!ConnectionCame(msec_timeout))
+        return false;
+
+    if(!Accept(out_socket))
+        return false;
+
+    return true;
 }

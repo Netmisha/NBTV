@@ -1,29 +1,42 @@
 #include "IpNameList.h"
 
 #include <algorithm>
+#include "Defines.h"
 
 IpNameList::IpNameList(){}
 
 IpNameList::~IpNameList(){}
 
-void IpNameList::Add(const std::string &ip, const std::string &name)
+void IpNameList::Add(const std::string &ip, const std::string &name, char color)
 {
-    ip_name_map_[ip] = name;
+    if(ip_name_map_.find(ip) != ip_name_map_.end())
+    {
+        Remove(ip);
+    }
+
+    ip_name_map_[ip] = UserInfo{ name, color };
+    online_users_.push_back(UserInfo{ name, color });
 }
 
 void IpNameList::Remove(const std::string &ip)
 {
+    if(ip_name_map_.find(ip) == ip_name_map_.end())
+        return;
+
+    online_users_.erase(std::find(online_users_.begin(),
+                                  online_users_.end(),
+                                  ip_name_map_[ip]));
     ip_name_map_.erase(ip);
 }
 
 std::string IpNameList::GetName(const std::string &ip)const
 {
-    return ip_name_map_.find(ip)->second;
+    return ip_name_map_.find(ip)->second.user_name_;
 }
 
 std::string IpNameList::GetIp(const std::string &name)const
 {
-    std::map<std::string, std::string>::const_iterator it = find_if(ip_name_map_.begin(),
+    std::map<std::string, UserInfo>::const_iterator it = find_if(ip_name_map_.begin(),
                                                                     ip_name_map_.end(),
                                                                     NameSearch(&name));
     if(it != ip_name_map_.cend())
@@ -31,15 +44,20 @@ std::string IpNameList::GetIp(const std::string &name)const
     return std::string("");
 }
 
-void IpNameList::GetNameList(std::vector<std::string> &out_result)const
+const std::vector<UserInfo>& IpNameList::GetNameList()const
 {
-    for(std::pair<std::string, std::string> pair_ : ip_name_map_)
-    {
-        out_result.push_back(pair_.second);
-    }
+    return online_users_;
 }
 
 bool IpNameList::IsNameUsed(const std::string &name)const
 {
-    return !(GetIp(name).empty());
+    return !(GetIp(name).empty()) || (name == PUBLIC_MSGS);
+}
+
+void IpNameList::GetIpVector(std::vector<std::string> &out_result)const
+{
+    for(std::pair<std::string, UserInfo> pair : ip_name_map_)
+    {
+        out_result.push_back(pair.first);
+    }
 }

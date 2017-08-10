@@ -8,7 +8,7 @@
 
 typedef unsigned(*thread_function)(void*);
 
-class DLL_EXP Thread
+class DLL Thread
 {
 public:
     Thread();

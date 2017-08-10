@@ -6,14 +6,14 @@
 volatile int Network::file_sharing_thread_num_ = 0;
 Mutex Network::threads_num_mutex_;
 
-Network::Network() : is_working_(false), my_ip_(""){}
+Network::Network() : is_working_(false), my_ip_(""), custom_tcp_port_(0U){}
 
 Network::~Network()
 {
     Cleanup();
 }
 
-bool Network::PrepareNetwork()
+bool Network::PrepareNetwork(unsigned int broadc_port, unsigned int tcp_port)
 {
     WSAData wsa_data;
     int error_check = WSAStartup(MAKEWORD(WSA_MIN_VERSION, WSA_MAX_VERSION), 
@@ -23,20 +23,23 @@ bool Network::PrepareNetwork()
         return false;
     }
 
-    if(!broadc_socket_.Initialize())
+    if(!broadc_socket_.Initialize(broadc_port))
     {
         return false;
     }
 
-    if(!recv_socket_.Initialize())
+    if(!recv_socket_.Initialize(broadc_port))
     {
         return false;
     }
 
-    if (!file_get_socket_.Initialize())
+    if (!file_get_socket_.Initialize(tcp_port))
 	{
 		return false;
 	}
+
+    if(tcp_port)
+        custom_tcp_port_ = tcp_port;
 
     //getting local pc ip
     int rand_value = rand(), buffer = 0;
@@ -54,7 +57,7 @@ bool Network::PrepareNetwork()
     while(true)
     {
         RecvStruct recv_struct;
-        err_check = recv_socket_.Recv(&recv_struct);
+        err_check = recv_socket_.Recv(recv_struct);
 
         if(err_check == SOCKET_ERROR)
             return false;
@@ -73,6 +76,11 @@ bool Network::PrepareNetwork()
         unp_msg.Clear();
     }
     //-----------------------
+    online_status_check_.SetIpNameList(&ip_name_list_);
+    online_status_check_.Start();
+
+    hearbeat_thread_.BeginThread(Network::HeartbeatStartup, this);
+
     is_working_ = true;
     return true;
 }
@@ -83,9 +91,7 @@ int Network::SendMsg(const UserMsg& user_msg)const
     //allocation in heap
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, &user_msg, packet);
 
-    send_mutex_.Lock();
     packet_size = broadc_socket_.Send(packet, packet_size);
-    send_mutex_.Unlock();
 
     delete[] packet; //clearing heap
     return packet_size;
@@ -99,6 +105,8 @@ void Network::Cleanup()
 void Network::StopNetwork()
 {
     is_working_ = false;
+    online_status_check_.Stop();
+    hearbeat_thread_.Join();
 }
 
 void Network::SetChat(Chat * chat)
@@ -115,7 +123,7 @@ int Network::SendLogMsg(const std::string &name,
                         const LogType &type,
                         const std::string &prev_name)
 {
-    LogMessage log_msg = { type, name, prev_name };
+    LogMessage log_msg = { type, name, prev_name, chat_->GetColor() };
     void *send_buffer = NULL;
     //allocation in heap
     int send_size = Parcer::PackMessage(LOG_MESSAGE, &log_msg, send_buffer);
@@ -127,7 +135,7 @@ int Network::SendLogMsg(const std::string &name,
 
 void Network::GetFile(const std::string& user_name, int index)
 {
-	int file_index = index;
+	short file_index = (short)index;
 	void *send_buffer = NULL;
     //allocation in heap
 	int send_size = Parcer::PackMessage(GET_FILE_MESSAGE, &file_index, send_buffer);
@@ -162,12 +170,11 @@ int Network::RequestList(const std::string& user_name)
     return send_size;
 }
 
-void Network::SendList(const std::string& ip)const
+bool Network::SendList(const std::string& ip, unsigned int port)const
 {
-    std::vector<File> files;
-    FM_->GetFiles(files);
+    const std::vector<File> files = FM_->GetFiles();
 
-    FileListSendSocket().SendFileList(files, ip);
+    return FileListSendSocket().SendFileList(files, ip, port);
 }
 
 bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
@@ -187,8 +194,12 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
         //do not put break here
     
     case LOG_UPDATE:
+        if(!msg.prev_name_.empty())
+            chat_->ChangeOtherUserName(msg.prev_name_, msg.name_);
+
     case LOG_RESPONCE:
-        ip_name_list_.Add(ip, msg.name_);
+        ip_name_list_.Add(ip, msg.name_, msg.color_);
+        online_status_check_.Add(ip);
         
         if(msg.type_ == LOG_RESPONCE)
             is_fully_processed = true;
@@ -196,6 +207,7 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
         break;
 
     case LOG_OFFLINE:
+        online_status_check_.Remove(ip);
         ip_name_list_.Remove(ip);
         break;
     }
@@ -215,9 +227,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)con
     //allocation in heap
     int packet_size = Parcer::PackMessage(CHAT_MESSAGE, (void*)&user_msg, packet);
 
-    send_mutex_.Lock();
     packet_size = broadc_socket_.SendTo(packet, packet_size, ip.c_str());
-    send_mutex_.Unlock();
 
     delete[] packet;
     return packet_size;
@@ -225,7 +235,7 @@ int Network::SendMsgTo(const std::string &user_name, const UserMsg &user_msg)con
 
 bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_unp_msg)
 {
-    bool is_fully_processed = true;
+    bool is_fully_processed = (is_working_ ? true : false);
 
     if((recv_str.ip_ != my_ip_) || BROADCAST_LOOPBACK)
     {
@@ -235,19 +245,29 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
         switch(out_unp_msg.type_)
         {
 
+        case CHAT_MESSAGE:
+            chat_->AddMsg(*(UserMsg*)out_unp_msg.msg_);
+            is_fully_processed = false;
+            break;
+
         case LOG_MESSAGE:
             is_fully_processed = ProcessLogMessage(*(LogMessage*)out_unp_msg.msg_,
                                                    recv_str.ip_);
             break;
 
         case GET_FILE_MESSAGE:
-            SendFile(FM_->GetFilePath(*((int*)out_unp_msg.msg_)),
+            SendFile(FM_->GetFilePath(*((short*)out_unp_msg.msg_)),
                      recv_str.ip_,
-                     FM_->GetFileName(*((int*)out_unp_msg.msg_)));
+                     FM_->GetFileName(*((short*)out_unp_msg.msg_)),
+                     custom_tcp_port_);
             break;
 
         case FILE_LIST_REQUEST:
             SendList(recv_str.ip_);
+            break;
+
+        case HEARTBEAT_MESSAGE:
+            online_status_check_.IpOnline(recv_str.ip_);
             break;
 
         default:
@@ -259,9 +279,9 @@ bool Network::ProcessMessage(const RecvStruct &recv_str, UnpackedMessage &out_un
     return is_fully_processed;
 }
 
-void Network::GetOnlineUsers(std::vector<std::string> &out_users)const
+const std::vector<UserInfo>& Network::GetOnlineUsers()const
 {
-    ip_name_list_.GetNameList(out_users);
+    return ip_name_list_.GetNameList();
 }
 
 const std::string Network::GetIP()const
@@ -271,13 +291,15 @@ const std::string Network::GetIP()const
 
 unsigned Network::SendFileStartup(void *send_file_info)
 {
+    SendFileInfo* file_info = (SendFileInfo*)send_file_info;
     threads_num_mutex_.Lock();
     file_sharing_thread_num_++;
     threads_num_mutex_.Unlock();
 
-    FileSendSocket().SendFile((*(SendFileInfo*)send_file_info).path_,
-                              (*(SendFileInfo*)send_file_info).ip_,
-                              (*(SendFileInfo*)send_file_info).name_);
+    FileSendSocket().SendFile(file_info->path_,
+                              file_info->ip_,
+                              file_info->name_,
+                              file_info->port_);
     delete send_file_info;
 
     threads_num_mutex_.Lock();
@@ -289,11 +311,12 @@ unsigned Network::SendFileStartup(void *send_file_info)
 
 void Network::SendFile(const std::string &path,
                        const std::string &ip,
-                       const std::string &name)
+                       const std::string &name,
+                       unsigned int port)
 {
     //explisit conversion to object
     //then copying it to heap
-    SendFileInfo *sfi = new SendFileInfo(SendFileInfo{ path, name, ip });
+    SendFileInfo *sfi = new SendFileInfo(SendFileInfo{ path, name, ip, port });
     Thread th(Network::SendFileStartup, sfi);
 }
 
@@ -321,12 +344,14 @@ UnpackedMessage Network::RecieveMessage()
     while(is_working_)
     {
         unp_msg.type_ = INVALID_TYPE;
-        recv_socket_.Recv(&packet);
+        recv_socket_.Recv(packet);
         bool is_fully_processed = ProcessMessage(packet, unp_msg);
         packet.Clear();
         if(is_fully_processed)
         {
-            unp_msg.Clear();
+            if(unp_msg.type_ != INVALID_TYPE)
+                unp_msg.Clear();
+
             continue;
         }
         break;
@@ -342,4 +367,40 @@ void Network::GetList(std::vector<RecvFileInfo> &out_result)const
 bool Network::IsNameUsed(const std::string &name)const
 {
     return ip_name_list_.IsNameUsed(name);
+}
+
+unsigned Network::HeartbeatStartup(void* this_prt)
+{
+    (*(Network*)this_prt).Heartbeat();
+    return 0;
+}
+
+void Network::Heartbeat()const
+{
+    void *heartbeat_message;
+    int heartbeat_size = Parcer::PackMessage(HEARTBEAT_MESSAGE, NULL, heartbeat_message);
+
+    unsigned int timer_id = SetTimer(NULL,                      //no attached windows
+                                     NULL,                      //no attached event
+                                     HEARTBEAT_INTERVAL_MSEC,   //interval
+                                     (TIMERPROC)NULL);          //no attached function
+    MSG msg;
+    while(is_working_)
+    {
+        //if there is a message, get it and remove it from queue
+        if(PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE))
+        {
+            //if message type is correct
+            if((msg.message == WM_TIMER) && (msg.hwnd == NULL) && (msg.wParam == timer_id))
+            {
+                //send heartbeat
+                broadc_socket_.Send(heartbeat_message, heartbeat_size);
+            }
+        }
+
+        Sleep(0);
+    }
+    
+    KillTimer(NULL, timer_id);
+    delete[] heartbeat_message;
 }

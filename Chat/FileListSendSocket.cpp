@@ -1,19 +1,22 @@
 #include "FileListSendSocket.h"
 
 #include "Parcer.h"
+#include "Defines.h"
 
 FileListSendSocket::FileListSendSocket() {}
 
 FileListSendSocket::~FileListSendSocket() {}
 
-bool FileListSendSocket::SendFileList(const std::vector<File> &to_send, const std::string &ip)
+bool FileListSendSocket::SendFileList(const std::vector<File> &to_send,
+                                      const std::string &ip,
+                                      unsigned int port)
 {
     if(!TCPSocket::Initialize())
     {
         return false;
     }
 
-    if(!Connect(ip.c_str()))
+    if(!Connect(ip.c_str(), port, CONNECT_TIMEOUT_SEC))
     {
         return false;
     }
