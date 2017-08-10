@@ -79,11 +79,20 @@
     <Filter Include="Resource Files\Sockets\TCPSocket">
       <UniqueIdentifier>{8522eea9-3964-46b9-b4b6-e156c0f23fcd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\UserInfo">
+      <UniqueIdentifier>{5fffecde-0446-4031-95a8-b4737f321068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Chat\MessagesArchive">
+      <UniqueIdentifier>{eb1db6d6-4edc-4f29-97b4-e502ae7bfe42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Network\OnlineStatus">
+      <UniqueIdentifier>{a7ed54e7-1d48-47d4-bea0-e059a7e278fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Functors\FindPairByIp">
+      <UniqueIdentifier>{4ac5f033-eff4-41f2-a60d-806e2b8376d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AbstractSocket.cpp">
       <Filter>Resource Files\Sockets\AbstractSocket</Filter>
     </ClCompile>
@@ -136,16 +145,16 @@
       <Filter>Resource Files\Sockets\TCPSocket</Filter>
     </ClCompile>
     <ClCompile Include="MyUserInfo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files\UserInfo</Filter>
     </ClCompile>
     <ClCompile Include="MessagesArchive.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files\Chat\MessagesArchive</Filter>
     </ClCompile>
     <ClCompile Include="OnlineStatus.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files\Network\OnlineStatus</Filter>
     </ClCompile>
     <ClCompile Include="FindPairByIp.cpp">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Functors\FindPairByIp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -222,16 +231,19 @@
       <Filter>Resource Files\Sockets\TCPSocket</Filter>
     </ClInclude>
     <ClInclude Include="MyUserInfo.h">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files\UserInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInfo.h">
+      <Filter>Resource Files\Structs</Filter>
     </ClInclude>
     <ClInclude Include="MessagesArchive.h">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files\Chat\MessagesArchive</Filter>
     </ClInclude>
     <ClInclude Include="OnlineStatus.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files\Network\OnlineStatus</Filter>
     </ClInclude>
     <ClInclude Include="FindPairByIp.h">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Functors\FindPairByIp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

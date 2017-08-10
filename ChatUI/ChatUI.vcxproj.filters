@@ -13,17 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Table">
-      <UniqueIdentifier>{c444a8e6-4f9c-454c-8144-6e99bdce280a}</UniqueIdentifier>
+    <Filter Include="Source Files\ChatUI">
+      <UniqueIdentifier>{5754b2c8-cf9c-4c57-a7e8-52d121b9ac25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ChatUIDlg">
+      <UniqueIdentifier>{4b5d719f-ed8d-4eef-9ff3-489185d633ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CGridCtrl">
+      <UniqueIdentifier>{a7a3ae5b-dd6a-4738-b548-2ecafc230e30}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ChatUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ChatUIDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,64 +36,67 @@
     <ClInclude Include="NBTV.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="ChatUI.h">
+      <Filter>Source Files\ChatUI</Filter>
     </ClInclude>
-    <ClInclude Include="GridCtrl_src\GridCtrl.h">
-      <Filter>Table</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl_src\GridDropTarget.h">
-      <Filter>Table</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl_src\InPlaceEdit.h">
-      <Filter>Table</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl_src\MemDC.h">
-      <Filter>Table</Filter>
-    </ClInclude>
-    <ClInclude Include="GridCtrl_src\TitleTip.h">
-      <Filter>Table</Filter>
+    <ClInclude Include="ChatUIDlg.h">
+      <Filter>Source Files\ChatUIDlg</Filter>
     </ClInclude>
     <ClInclude Include="GridCtrl_src\CellRange.h">
-      <Filter>Table</Filter>
+      <Filter>Source Files\CGridCtrl</Filter>
     </ClInclude>
     <ClInclude Include="GridCtrl_src\GridCell.h">
-      <Filter>Table</Filter>
+      <Filter>Source Files\CGridCtrl</Filter>
     </ClInclude>
     <ClInclude Include="GridCtrl_src\GridCellBase.h">
-      <Filter>Table</Filter>
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\GridCtrl.h">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\GridDropTarget.h">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\InPlaceEdit.h">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\MemDC.h">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCtrl_src\TitleTip.h">
+      <Filter>Source Files\CGridCtrl</Filter>
     </ClInclude>
     <ClInclude Include="SettingsDlg.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChatUI.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ChatUI</Filter>
     </ClCompile>
     <ClCompile Include="ChatUIDlg.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\ChatUIDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCell.cpp">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCellBase.cpp">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridCtrl.cpp">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\GridDropTarget.cpp">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\InPlaceEdit.cpp">
+      <Filter>Source Files\CGridCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCtrl_src\TitleTip.cpp">
+      <Filter>Source Files\CGridCtrl</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCtrl_src\GridDropTarget.cpp">
-      <Filter>Table</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCtrl_src\InPlaceEdit.cpp">
-      <Filter>Table</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCtrl_src\TitleTip.cpp">
-      <Filter>Table</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCtrl_src\GridCell.cpp">
-      <Filter>Table</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCtrl_src\GridCellBase.cpp">
-      <Filter>Table</Filter>
-    </ClCompile>
-    <ClCompile Include="GridCtrl_src\GridCtrl.cpp">
-      <Filter>Table</Filter>
     </ClCompile>
     <ClCompile Include="SettingsDlg.cpp">
       <Filter>Source Files</Filter>
