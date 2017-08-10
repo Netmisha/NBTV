@@ -35,7 +35,6 @@
 *.sdf
 *.v12.suo
 *.opensdf
-*.sln
 *.txt
 
 # vs folders
