@@ -32,8 +32,6 @@
 *.app
 
 # Project Files
-*.vcxproj
-*.vcxproj.filters
 *.sdf
 *.v12.suo
 *.opensdf

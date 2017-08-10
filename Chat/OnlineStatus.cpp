@@ -82,7 +82,7 @@ void OnlineStatus::OfflineCheck()
             if((msg.message == WM_TIMER) && (msg.hwnd == NULL) && (msg.wParam == timer_id))
             {
                 //check online list
-                //CheckList();
+                CheckList();
             }
         }
 
