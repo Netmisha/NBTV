@@ -137,8 +137,18 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
         FileGrid.SetItemText(i, 2, CString(std::to_string((*list2)[i].GetSizeMB()).c_str()) + CString(" MB"));
     }
     FileGrid.Refresh();
-  
-       KillTimer(TID_ONLY_ONCE);
+
+
+	KillTimer(TID_ONLY_ONCE);
+
+	if (app_man.GetName().empty() || app_man.IsNameUsed(app_man.GetName()))
+	{
+
+		AfxMessageBox(CString("Name is used !!!"));
+		OnBnClickedSettingBut();
+
+	}
+
 
 
 }
