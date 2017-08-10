@@ -207,6 +207,7 @@ bool Network::ProcessLogMessage(const LogMessage &msg, const std::string &ip)
         break;
 
     case LOG_OFFLINE:
+        online_status_check_.Remove(ip);
         ip_name_list_.Remove(ip);
         break;
     }
