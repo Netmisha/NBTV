@@ -21,7 +21,8 @@ void CChatUIDlg::ProcessMessage(const  UnpackedMessage &um, AppManager& am)
     {
     case CHAT_MESSAGE:
     {
-        if(!is_private)
+        
+        if(!is_private && (*(UserMsg*)um.msg_).type_ == PUBLIC)
             Chat.InsertString(Chat.GetCount(), '\n' + CString((*(UserMsg*)um.msg_).name_.c_str()) + " : " + CString((*(UserMsg*)um.msg_).msg_.c_str()));
         else
             if((*(UserMsg*)um.msg_).name_ == ModeName && (*(UserMsg*)um.msg_).type_ == PRIVATE)          
