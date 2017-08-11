@@ -101,4 +101,6 @@ public:
 
     afx_msg void OnBnClickedSwitchchat();
     afx_msg void OnBnClickedSwitchfl();
+    CMFCButton DownloadButt;
+    afx_msg void OnBnClickedMfcdownload();
 };

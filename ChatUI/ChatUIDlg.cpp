@@ -82,6 +82,7 @@ void CChatUIDlg::SetPrivateMode(CString str)
         SetFileList();
         SetChat(); 
         OnBnClickedSwitchchat();
+
     }
     else
     {
@@ -89,7 +90,11 @@ void CChatUIDlg::SetPrivateMode(CString str)
         ModeName = name;
         SetFileListP();
         SetChatP();
+
         OnBnClickedSwitchchat();
+
+
+
     }
 
 
@@ -151,6 +156,7 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
 
         FileGrid.SetItemText(i, 2, CString(std::to_string((*list2)[i].GetSizeMB()).c_str()) + CString(" MB"));
     }
+    FileGrid.SetEditable(FALSE);
     FileGrid.Refresh();
 
 
@@ -168,9 +174,7 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
     CMFCButton*
         icon2 = (CMFCButton*)GetDlgItem(IDC_MFC_SET);
 
-    std::string path2("Resourses\\settings.png");
-    //path += ((char)toupper(name[0]));
-    //path += ".png";
+    std::string path2("Resourses\\settings.png");;
     CImage image_2;
     image_2.Load(CString(path2.c_str()));
 
@@ -184,8 +188,6 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
         icon3 = (CMFCButton*)GetDlgItem(IDC_SWITCHCHAT);
 
     std::string path3("Resourses\\chat.png");
-    //path += ((char)toupper(name[0]));
-    //path += ".png";
     CImage image_3;
     image_3.Load(CString(path3.c_str()));
 
@@ -199,14 +201,25 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
         icon4 = (CMFCButton*)GetDlgItem(IDC_SWITCHFL);
     CImage image_4;
     std::string path4("Resourses\\fl.png");
-    //path += ((char)toupper(name[0]));
-    //path += ".png";
     image_4.Load(CString(path4.c_str()));
 
     CBitmap bitmap_4;
     bitmap_4.Attach(image_4.Detach());
     icon4->SetBitmap(bitmap_4);
     icon4->SetFocus();
+
+    CMFCButton*
+        icon5 = (CMFCButton*)GetDlgItem(IDC_MFCDOWNLOAD);
+    CImage image_5;
+    std::string path5("Resourses\\download.png");
+    image_5.Load(CString(path5.c_str()));
+
+    CBitmap bitmap_5;
+    bitmap_5.Attach(image_5.Detach());
+    icon5->SetBitmap(bitmap_5);
+    icon5->SetFocus();
+
+    
     MainButton.SetFocus();
 }
 
@@ -317,6 +330,7 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
     DDX_Control(pDX, IDC_USERLIST_LABEL, UserListLabel);
     DDX_Control(pDX, IDC_BUTTON1, AddFileButt);
+    DDX_Control(pDX, IDC_MFCDOWNLOAD, DownloadButt);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -332,6 +346,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_BN_CLICKED(IDC_MFC_SET, &CChatUIDlg::OnBnClickedMfcSet)
     ON_BN_CLICKED(IDC_SWITCHCHAT, &CChatUIDlg::OnBnClickedSwitchchat)
     ON_BN_CLICKED(IDC_SWITCHFL, &CChatUIDlg::OnBnClickedSwitchfl)
+    ON_BN_CLICKED(IDC_MFCDOWNLOAD, &CChatUIDlg::OnBnClickedMfcdownload)
 END_MESSAGE_MAP()
 
 
@@ -431,11 +446,11 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
     _bstr_t b(wc);
     const char* c = b;
 
-  
+
     ChatEdit.SetWindowTextW(TEXT(""));
 
     std::string name = app_man.GetName();
-   
+
     if (*c == '/')
     {
         if (!strncmp(c, "/w ", 3))
@@ -448,12 +463,12 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                 delete is_ok;
             }
             else
-            Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + *(&str+4));
+                Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + *(&str + 4));
         }
         else if (!strncmp(c, "/userlist", 9))
         {
             std::vector<std::string> *users = (std::vector<std::string>*) app_man.ActivateCommand(std::string(c));
-            for(auto i : *users)
+            for (auto i : *users)
             {
                 std::string str = '\n' + i;
                 Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
@@ -461,7 +476,7 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
         }
         else if (!strncmp(c, "/setname", 8))
         {
-            if (app_man.ActivateCommand(std::string(c)) == NULL)   
+            if (app_man.ActivateCommand(std::string(c)) == NULL)
                 AfxMessageBox(CString("Name is used !!!"));
             else
             {
@@ -477,9 +492,9 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                 for (size_t i = 0; i < list->size(); i++)
                 {
                     std::string str = std::to_string(i + 1) + ' ' + (*list)[i].GetName() + ' ' + std::to_string((*list)[i].GetSizeMB());
-                    Chat.InsertString( Chat.GetCount(), CString( str.c_str() )  );
+                    Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
                 }
-                
+
             }
             else
             {
@@ -489,7 +504,7 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                     std::string str = std::to_string(i + 1) + ' ' + (*list)[i].name_ + ' ' + std::to_string((*list)[i].size_KB_ / 1024);
                     Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
                 }
-                
+
             }
         }
         else if (!strncmp(c, "/getf", 5))
@@ -513,12 +528,16 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
     }
     else
     {
-        if (is_private)
-        app_man.SendMsgTo(c, ModeName);
-        else
-        app_man.SendMsg(c);
-        
-        Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
+        if (strlen(c))
+        {
+
+            if (is_private)
+                app_man.SendMsgTo(c, ModeName);
+            else
+                app_man.SendMsg(c);
+
+            Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
+        }
     }
 }
 
@@ -657,6 +676,9 @@ void CChatUIDlg::OnBnClickedSwitchchat()
     Chat.ShowWindow(SW_SHOW);
     FileGrid.ShowWindow(SW_HIDE);
     AddFileButt.ShowWindow(SW_HIDE);
+    DownloadButt.ShowWindow(SW_HIDE);
+    
+
 }
 
 
@@ -666,5 +688,18 @@ void CChatUIDlg::OnBnClickedSwitchfl()
     ChatEdit.ShowWindow(SW_HIDE);
     Chat.ShowWindow(SW_HIDE);
     FileGrid.ShowWindow(SW_SHOW);
+    if (is_private)
+    DownloadButt.ShowWindow(SW_SHOW);
+    else
     AddFileButt.ShowWindow(SW_SHOW);
+}
+
+
+void CChatUIDlg::OnBnClickedMfcdownload()
+{
+    CCellID cellID = FileGrid.GetFocusCell();
+    CGridCellBase* cell = FileGrid.GetCell(cellID.row, cellID.col);
+    app_man.GetFile(ModeName, cellID.row + 1);
+    
+    cell->SetBackClr(GREEN);
 }
