@@ -45,9 +45,9 @@ public:
     std::string ModeName;
     bool is_private;
     void SetPrivateMode(CString str);
-    
 
     void OnTimer(UINT_PTR nIDEvent);
+    
     inline void SetUserIcon();
     inline void SetUserList();
     void SetFileListP();
@@ -61,6 +61,8 @@ private:
    
 public:
     volatile bool is_working_ = false;
+    static unsigned CheckForCick(void* a);
+
     // user name next to icon
     CStatic UserNameLabel;
     afx_msg void OnStnClickedUserName();
@@ -77,23 +79,26 @@ public:
     CListBox UserList;
 
     Thread recv_thread_;
+    Thread check_thread_;
 
     HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
    
 
     CGridCtrl FileGrid;
-    // switch to chat    // switch to chat
-    CButton CheckChat;
-    // switch to file list
-    CButton CheckFileList;
+   
 
-    afx_msg void OnBnClickedSwitchC();
-    afx_msg void OnBnClickedSwitchFl();
+
 
     CButton AddFileButt;
     afx_msg void OnBnClickedButton1();
-    afx_msg void OnBnClickedSettingBut();
 
     CButton OpsButt;
     afx_msg void OnLbnDblclkList1();
+
+
+    CImage image_2;
+    afx_msg void OnBnClickedMfcSet();
+
+    afx_msg void OnBnClickedSwitchchat();
+    afx_msg void OnBnClickedSwitchfl();
 };

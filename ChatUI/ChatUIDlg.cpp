@@ -80,8 +80,8 @@ void CChatUIDlg::SetPrivateMode(CString str)
         ModeName.clear();
         is_private = false;
         SetFileList();
-        SetChat();
-        OnBnClickedSwitchC();
+        SetChat(); 
+        OnBnClickedSwitchchat();
     }
     else
     {
@@ -89,10 +89,25 @@ void CChatUIDlg::SetPrivateMode(CString str)
         ModeName = name;
         SetFileListP();
         SetChatP();
-        OnBnClickedSwitchC();
+        OnBnClickedSwitchchat();
     }
 
 
+}
+
+unsigned CChatUIDlg::CheckForCick(void * a)
+{
+
+
+    while(((CChatUIDlg*)a)->is_working_)
+    {
+        if (app_man.IsUserlistInvalid())
+        {
+            ((CChatUIDlg*)a)->SetUserList();
+        }
+        Sleep(1);
+    }
+    return 0;
 }
 
 void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
@@ -139,18 +154,60 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
     FileGrid.Refresh();
 
 
-	KillTimer(TID_ONLY_ONCE);
+    KillTimer(TID_ONLY_ONCE);
 
-	if (app_man.GetName().empty() || app_man.IsNameUsed(app_man.GetName()))
-	{
+    if (app_man.GetName().empty() || app_man.IsNameUsed(app_man.GetName()))
+    {
 
-		AfxMessageBox(CString("Name is used !!!"));
-		OnBnClickedSettingBut();
+        AfxMessageBox(CString("Name is used !!!"));
+        OnBnClickedMfcSet();
 
-	}
+    }
+
+    //set up button icons 
+    CMFCButton*
+        icon2 = (CMFCButton*)GetDlgItem(IDC_MFC_SET);
+
+    std::string path2("Resourses\\settings.png");
+    //path += ((char)toupper(name[0]));
+    //path += ".png";
+    CImage image_2;
+    image_2.Load(CString(path2.c_str()));
+
+    CBitmap bitmap_2;
+    bitmap_2.Attach(image_2.Detach());
+    icon2->SetBitmap(bitmap_2);
+    icon2->SetFocus();
 
 
+    CMFCButton*
+        icon3 = (CMFCButton*)GetDlgItem(IDC_SWITCHCHAT);
 
+    std::string path3("Resourses\\chat.png");
+    //path += ((char)toupper(name[0]));
+    //path += ".png";
+    CImage image_3;
+    image_3.Load(CString(path3.c_str()));
+
+    CBitmap bitmap_3;
+    bitmap_3.Attach(image_3.Detach());
+    icon3->SetBitmap(bitmap_3);
+    icon3->SetFocus();
+
+
+    CMFCButton*
+        icon4 = (CMFCButton*)GetDlgItem(IDC_SWITCHFL);
+    CImage image_4;
+    std::string path4("Resourses\\fl.png");
+    //path += ((char)toupper(name[0]));
+    //path += ".png";
+    image_4.Load(CString(path4.c_str()));
+
+    CBitmap bitmap_4;
+    bitmap_4.Attach(image_4.Detach());
+    icon4->SetBitmap(bitmap_4);
+    icon4->SetFocus();
+    MainButton.SetFocus();
 }
 
 inline void CChatUIDlg::SetUserIcon()
@@ -259,10 +316,7 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAT, Chat);
     DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
     DDX_Control(pDX, IDC_USERLIST_LABEL, UserListLabel);
-    DDX_Control(pDX, IDC_SWITCH_C, CheckChat);
-    DDX_Control(pDX, IDC_SWITCH_FL, CheckFileList);
     DDX_Control(pDX, IDC_BUTTON1, AddFileButt);
-    DDX_Control(pDX, IDC_SETTING_BUT, OpsButt);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -273,11 +327,11 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_STN_CLICKED(IDC_USERICON, &CChatUIDlg::OnStnClickedUsericon)
     ON_WM_CTLCOLOR()
     ON_WM_TIMER()
-    ON_BN_CLICKED(IDC_SWITCH_C, &CChatUIDlg::OnBnClickedSwitchC)
-    ON_BN_CLICKED(IDC_SWITCH_FL, &CChatUIDlg::OnBnClickedSwitchFl)
     ON_BN_CLICKED(IDC_BUTTON1, &CChatUIDlg::OnBnClickedButton1)
-    ON_BN_CLICKED(IDC_SETTING_BUT, &CChatUIDlg::OnBnClickedSettingBut)
     ON_LBN_DBLCLK(IDC_LIST1, &CChatUIDlg::OnLbnDblclkList1)
+    ON_BN_CLICKED(IDC_MFC_SET, &CChatUIDlg::OnBnClickedMfcSet)
+    ON_BN_CLICKED(IDC_SWITCHCHAT, &CChatUIDlg::OnBnClickedSwitchchat)
+    ON_BN_CLICKED(IDC_SWITCHFL, &CChatUIDlg::OnBnClickedSwitchfl)
 END_MESSAGE_MAP()
 
 
@@ -290,14 +344,11 @@ BOOL CChatUIDlg::OnInitDialog()
   
     UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
     UserListLabel.SetWindowTextW(CString("Active Users: "));
-    CheckFileList.SetWindowTextW(CString("FL"));
-    CheckChat.SetWindowTextW(CString("C"));
     AddFileButt.SetWindowTextW(CString("ADD FILE"));
-    OpsButt.SetWindowTextW(CString("Ops"));
 
    
     recv_thread_.BeginThread(StartRecvLoop, this);
-    
+ //   check_thread_.BeginThread(CheckForCick, this);
 
 
 
@@ -311,7 +362,7 @@ BOOL CChatUIDlg::OnInitDialog()
     FileGrid.SetColumnWidth(1, 550);
     FileGrid.SetColumnWidth(2, 105);
 
-    OnBnClickedSwitchC();//set chat mode
+    OnBnClickedSwitchchat();//set chat mode
 
     SetTimer(TID_ONLY_ONCE, 200, NULL);
 
@@ -510,24 +561,7 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 }
 
 
-void CChatUIDlg::OnBnClickedSwitchC()
-{
-    MainButton.ShowWindow(SW_SHOW);
-    ChatEdit.ShowWindow(SW_SHOW);
-    Chat.ShowWindow(SW_SHOW);
-    FileGrid.ShowWindow(SW_HIDE);
-    AddFileButt.ShowWindow(SW_HIDE);
-}
 
-
-void CChatUIDlg::OnBnClickedSwitchFl()
-{
-    MainButton.ShowWindow(SW_HIDE);
-    ChatEdit.ShowWindow(SW_HIDE);
-    Chat.ShowWindow(SW_HIDE);
-    FileGrid.ShowWindow(SW_SHOW);
-    AddFileButt.ShowWindow(SW_SHOW);
-}
 
 inline void CChatUIDlg::SetFileList()
 {
@@ -574,19 +608,7 @@ void CChatUIDlg::OnBnClickedButton1()
 }
 
 
-void CChatUIDlg::OnBnClickedSettingBut()
-{
-   
-    SettingsDlg dlg; //setting dlg
-    dlg.SetAM(&app_man);
 
-    if (dlg.DoModal() == IDOK) // DoModal() - open dlg
-    {
-        UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
-        SetUserIcon();
-    }
-
-}
 
 
 void CChatUIDlg::OnLbnDblclkList1()
@@ -612,4 +634,37 @@ void CChatUIDlg::OnLbnDblclkList1()
 
 
    
+}
+
+
+void CChatUIDlg::OnBnClickedMfcSet()
+{
+    SettingsDlg dlg; //setting dlg
+    dlg.SetAM(&app_man);
+
+    if (dlg.DoModal() == IDOK) // DoModal() - open dlg
+    {
+        UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+        SetUserIcon();
+    }
+}
+
+
+void CChatUIDlg::OnBnClickedSwitchchat()
+{
+    MainButton.ShowWindow(SW_SHOW);
+    ChatEdit.ShowWindow(SW_SHOW);
+    Chat.ShowWindow(SW_SHOW);
+    FileGrid.ShowWindow(SW_HIDE);
+    AddFileButt.ShowWindow(SW_HIDE);
+}
+
+
+void CChatUIDlg::OnBnClickedSwitchfl()
+{
+    MainButton.ShowWindow(SW_HIDE);
+    ChatEdit.ShowWindow(SW_HIDE);
+    Chat.ShowWindow(SW_HIDE);
+    FileGrid.ShowWindow(SW_SHOW);
+    AddFileButt.ShowWindow(SW_SHOW);
 }
