@@ -35,7 +35,7 @@ namespace UnitTests
 
             RecvStruct recv_str;
             Assert::AreEqual(TEST_BROADCAST_MSG_SIZE,
-                             recv_sock.Recv(&recv_str));
+                             recv_sock.Recv(recv_str));
 
             Assert::IsTrue(recv_sock.Close());
             Assert::IsTrue(br_sock.Close());
