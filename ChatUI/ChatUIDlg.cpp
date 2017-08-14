@@ -102,17 +102,19 @@ void CChatUIDlg::SetPrivateMode(CString str)
 
 unsigned CChatUIDlg::CheckForCick(void * a)
 {
-
-
-    while(((CChatUIDlg*)a)->is_working_)
-    {
-        if (app_man.IsUserlistInvalid())
-        {
-            ((CChatUIDlg*)a)->SetUserList();
-        }
-        Sleep(1);
-    }
+    ((CChatUIDlg*)a)->SyncUserlist();
     return 0;
+}
+
+void CChatUIDlg::SyncUserlist()
+{
+    while(is_working_)
+    {
+        if(app_man.IsUserlistInvalid())
+            SetUserList();
+
+        Sleep(0);
+    }
 }
 
 void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
@@ -253,6 +255,7 @@ inline void CChatUIDlg::SetUserIcon()
 
 inline void CChatUIDlg::SetUserList()
 {
+    user_list_update_.Lock();
     std::vector<UserInfo>* list = (std::vector<UserInfo>*)app_man.ActivateCommand(std::string("/userlist"));
     CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
     if(is_working_)
@@ -265,6 +268,7 @@ inline void CChatUIDlg::SetUserList()
     {
         usr_list->InsertString(usr_list->GetCount(), CString(i.user_name_.c_str()));
     }
+    user_list_update_.Unlock();
 }
 
 void CChatUIDlg::SetFileListP()
@@ -330,6 +334,7 @@ CChatUIDlg::~CChatUIDlg()
     app_man.StopNetwork();
     is_working_ = false;
     recv_thread_.Join();
+    check_thread_.Join();
 }
 
 void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
@@ -373,12 +378,6 @@ BOOL CChatUIDlg::OnInitDialog()
     UserListLabel.SetWindowTextW(CString("Active Users: "));
     AddFileButt.SetWindowTextW(CString("ADD FILE"));
 
-   
-    recv_thread_.BeginThread(StartRecvLoop, this);
- //   check_thread_.BeginThread(CheckForCick, this);
-
-
-
     //set file table
     RECT rect = { LONG(25), LONG(65), LONG(735), LONG(440) };
     FileGrid.Create(rect, this, 25);
@@ -393,9 +392,6 @@ BOOL CChatUIDlg::OnInitDialog()
     SetPrivateMode(L"Global");
 
     SetTimer(TID_ONLY_ONCE, 200, NULL);
-
-
-  
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
@@ -406,9 +402,8 @@ BOOL CChatUIDlg::OnInitDialog()
     GetDlgItem(IDC_USER_NAME)->SetFont(&font, TRUE);
 
 	// TODO: Add extra initialization here
-
-
-
+    recv_thread_.BeginThread(StartRecvLoop, this);
+    //check_thread_.BeginThread(CheckForCick, this);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

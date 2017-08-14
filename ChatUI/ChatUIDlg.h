@@ -62,6 +62,7 @@ private:
 public:
     volatile bool is_working_ = false;
     static unsigned CheckForCick(void* a);
+    void SyncUserlist();
 
     // user name next to icon
     CStatic UserNameLabel;
@@ -80,6 +81,7 @@ public:
 
     Thread recv_thread_;
     Thread check_thread_;
+    Mutex user_list_update_;
 
     HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
    
