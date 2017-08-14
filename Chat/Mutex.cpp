@@ -1,15 +1,11 @@
 #include "Mutex.h"
 
-Mutex::Mutex() : mutex_handle_(NULL)
+Mutex::Mutex()
 {
     mutex_handle_ = CreateMutex(NULL, FALSE, NULL);
 }
 
-Mutex::~Mutex()
-{
-    if(IsValid())
-        CloseHandle(mutex_handle_);
-}
+Mutex::~Mutex(){}
 
 void Mutex::Lock()const
 {
