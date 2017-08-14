@@ -190,6 +190,11 @@ bool AppManager::LoadUserInfo()
    return result;
 }
 
+void AppManager::GetFile(const std::string & name, int index)
+{
+    network_.GetFile(name, index - 1);
+}
+
 void AppManager::StopNetwork()
 {
     network_.StopNetwork();
