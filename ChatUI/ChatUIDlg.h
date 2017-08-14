@@ -52,7 +52,7 @@ public:
     inline void SetUserList();
     void SetFileListP();
     void SetChatP();
-    inline void SetFileList();
+    inline void SetFileList(int all  = 0);
     void SetChat();
 private:
     void ProcessMessage(const UnpackedMessage &um, AppManager& am);
@@ -103,4 +103,5 @@ public:
     afx_msg void OnBnClickedSwitchfl();
     CMFCButton DownloadButt;
     afx_msg void OnBnClickedMfcdownload();
+    afx_msg void OnBnClickedMfcremove();
 };

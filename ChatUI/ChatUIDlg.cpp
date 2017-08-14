@@ -219,6 +219,17 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
     icon5->SetBitmap(bitmap_5);
     icon5->SetFocus();
 
+    CMFCButton*
+        icon6 = (CMFCButton*)GetDlgItem(IDC_MFCREMOVE);
+    CImage image_6;
+    std::string path6("Resourses\\bin.png");
+    image_6.Load(CString(path6.c_str()));
+
+    CBitmap bitmap_6;
+    bitmap_6.Attach(image_6.Detach());
+    icon6->SetBitmap(bitmap_6);
+    icon6->SetFocus();
+    
     
     MainButton.SetFocus();
 }
@@ -347,6 +358,7 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_BN_CLICKED(IDC_SWITCHCHAT, &CChatUIDlg::OnBnClickedSwitchchat)
     ON_BN_CLICKED(IDC_SWITCHFL, &CChatUIDlg::OnBnClickedSwitchfl)
     ON_BN_CLICKED(IDC_MFCDOWNLOAD, &CChatUIDlg::OnBnClickedMfcdownload)
+    ON_BN_CLICKED(IDC_MFCREMOVE, &CChatUIDlg::OnBnClickedMfcremove)
 END_MESSAGE_MAP()
 
 
@@ -378,6 +390,7 @@ BOOL CChatUIDlg::OnInitDialog()
     FileGrid.SetColumnWidth(2, 105);
 
     OnBnClickedSwitchchat();//set chat mode
+    SetPrivateMode(L"Global");
 
     SetTimer(TID_ONLY_ONCE, 200, NULL);
 
@@ -582,17 +595,25 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 
 
 
-inline void CChatUIDlg::SetFileList()
+inline void CChatUIDlg::SetFileList(int all )
 {
     std::vector<File> *list = (std::vector<File>*)app_man.ActivateCommand(std::string("/fl "));
-   FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
-    for (int i = 0; i < list->size(); i++)
+    if (all)
     {
-        FileGrid.SetItemText(i, 0, CString(std::to_string(i+1).c_str()));
-        FileGrid.SetItemText(i, 1, CString(  (*list)[i].GetName().c_str()  ));
+        FileGrid.DeleteRow(all - 1);
+        FileGrid.SetRowCount(10);
         
-        FileGrid.SetItemText(i, 2, CString( std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
     }
+    
+        FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
+        for (int i = 0; i < list->size(); i++)
+        {
+            FileGrid.SetItemText(i, 0, CString(std::to_string(i + 1).c_str()));
+            FileGrid.SetItemText(i, 1, CString((*list)[i].GetName().c_str()));
+
+            FileGrid.SetItemText(i, 2, CString(std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
+        }
+    
     FileGrid.Refresh();
 }
 
@@ -677,7 +698,7 @@ void CChatUIDlg::OnBnClickedSwitchchat()
     FileGrid.ShowWindow(SW_HIDE);
     AddFileButt.ShowWindow(SW_HIDE);
     DownloadButt.ShowWindow(SW_HIDE);
-    
+    GetDlgItem(IDC_MFCREMOVE)->ShowWindow(SW_HIDE);
 
 }
 
@@ -691,7 +712,10 @@ void CChatUIDlg::OnBnClickedSwitchfl()
     if (is_private)
     DownloadButt.ShowWindow(SW_SHOW);
     else
-    AddFileButt.ShowWindow(SW_SHOW);
+    {
+        GetDlgItem(IDC_MFCREMOVE)->ShowWindow(SW_SHOW);
+        AddFileButt.ShowWindow(SW_SHOW);
+    }
 }
 
 
@@ -701,5 +725,17 @@ void CChatUIDlg::OnBnClickedMfcdownload()
     CGridCellBase* cell = FileGrid.GetCell(cellID.row, cellID.col);
     app_man.GetFile(ModeName, cellID.row + 1);
     
-    cell->SetBackClr(GREEN);
+}
+
+
+void CChatUIDlg::OnBnClickedMfcremove()
+{
+    CCellID cellID = FileGrid.GetFocusCell();
+    CGridCellBase* cell = FileGrid.GetCell(cellID.row, cellID.col);
+    
+    std::string str = "/removef ";
+    str+= std::to_string(cellID.row + 1);
+
+    app_man.ActivateCommand(str);
+    SetFileList(cellID.row + 1);
 }
