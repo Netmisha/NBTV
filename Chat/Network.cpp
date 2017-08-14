@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <algorithm>
 
+#include <ctime>
+
 volatile int Network::file_sharing_thread_num_ = 0;
 Mutex Network::threads_num_mutex_;
 
@@ -42,6 +44,8 @@ bool Network::PrepareNetwork(unsigned int broadc_port, unsigned int tcp_port)
         custom_tcp_port_ = tcp_port;
 
     //getting local pc ip
+    //setting seed for random number as current time
+    srand(time(NULL));
     int rand_value = rand(), buffer = 0;
     void *rand_value_send = NULL;
     //allocation in heap
