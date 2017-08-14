@@ -275,6 +275,12 @@ void CChatUIDlg::SetFileListP()
 {
     std::vector<RecvFileInfo> *list = (std::vector<RecvFileInfo>*)app_man.ActivateCommand(std::string("/fl " + ModeName));
     FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
+    for (int j = 9; j >= 0; j--)
+    {
+        FileGrid.DeleteRow(j);
+    }
+
+    FileGrid.SetRowCount(10);
     for (int i = 0; i < list->size(); i++)
     {
         FileGrid.SetItemText(i, 0, CString(std::to_string(i + 1).c_str()));
@@ -593,22 +599,25 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 inline void CChatUIDlg::SetFileList(int all )
 {
     std::vector<File> *list = (std::vector<File>*)app_man.ActivateCommand(std::string("/fl "));
-    if (all)
+    for (int j =9 ; j>=0; j--)
     {
-        FileGrid.DeleteRow(all - 1);
-        FileGrid.SetRowCount(10);
-        
+        FileGrid.DeleteRow(j); 
     }
-    
-        FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
-        for (int i = 0; i < list->size(); i++)
+
+    FileGrid.SetRowCount(10);
+        FileGrid.ClearCells(CCellRange(0,0,9,2));
+        int i = 0;
+        for (; i < list->size(); i++)
         {
             FileGrid.SetItemText(i, 0, CString(std::to_string(i + 1).c_str()));
             FileGrid.SetItemText(i, 1, CString((*list)[i].GetName().c_str()));
 
             FileGrid.SetItemText(i, 2, CString(std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
         }
-    
+        FileGrid.SetItemText(i, 0, CString(""));
+        FileGrid.SetItemText(i, 1, CString(""));
+
+        FileGrid.SetItemText(i, 2, CString(""));
     FileGrid.Refresh();
 }
 
