@@ -1,13 +1,13 @@
 #include "Mutex.h"
 
-Mutex::Mutex()
+Mutex::Mutex() : mutex_handle_(NULL)
 {
     mutex_handle_ = CreateMutex(NULL, FALSE, NULL);
 }
 
 Mutex::~Mutex()
 {
-    if(mutex_handle_ != INVALID_HANDLE_VALUE)
+    if(IsValid())
         CloseHandle(mutex_handle_);
 }
 
