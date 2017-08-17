@@ -80,8 +80,9 @@ void CChatUIDlg::SetPrivateMode(CString str)
         ModeName.clear();
         is_private = false;
         SetFileList();
-        SetChat();
-        OnBnClickedSwitchC();
+        SetChat(); 
+        OnBnClickedSwitchchat();
+
     }
     else
     {
@@ -89,10 +90,31 @@ void CChatUIDlg::SetPrivateMode(CString str)
         ModeName = name;
         SetFileListP();
         SetChatP();
-        OnBnClickedSwitchC();
+
+        OnBnClickedSwitchchat();
+
+
+
     }
 
 
+}
+
+unsigned CChatUIDlg::CheckForCick(void * a)
+{
+    ((CChatUIDlg*)a)->SyncUserlist();
+    return 0;
+}
+
+void CChatUIDlg::SyncUserlist()
+{
+    while(is_working_)
+    {
+        if(app_man.IsUserlistInvalid())
+            SetUserList();
+
+        Sleep(0);
+    }
 }
 
 void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
@@ -136,11 +158,82 @@ void CChatUIDlg::OnTimer(UINT_PTR nIDEvent)
 
         FileGrid.SetItemText(i, 2, CString(std::to_string((*list2)[i].GetSizeMB()).c_str()) + CString(" MB"));
     }
+    FileGrid.SetEditable(FALSE);
     FileGrid.Refresh();
-  
-       KillTimer(TID_ONLY_ONCE);
 
 
+    KillTimer(TID_ONLY_ONCE);
+
+    if (app_man.GetName().empty() || app_man.IsNameUsed(app_man.GetName()))
+    {
+
+        AfxMessageBox(CString("Name is used !!!"));
+        OnBnClickedMfcSet();
+
+    }
+
+    //set up button icons 
+    CMFCButton*
+        icon2 = (CMFCButton*)GetDlgItem(IDC_MFC_SET);
+
+    std::string path2("Resourses\\settings.png");;
+    CImage image_2;
+    image_2.Load(CString(path2.c_str()));
+
+    CBitmap bitmap_2;
+    bitmap_2.Attach(image_2.Detach());
+    icon2->SetBitmap(bitmap_2);
+    icon2->SetFocus();
+
+
+    CMFCButton*
+        icon3 = (CMFCButton*)GetDlgItem(IDC_SWITCHCHAT);
+
+    std::string path3("Resourses\\chat.png");
+    CImage image_3;
+    image_3.Load(CString(path3.c_str()));
+
+    CBitmap bitmap_3;
+    bitmap_3.Attach(image_3.Detach());
+    icon3->SetBitmap(bitmap_3);
+    icon3->SetFocus();
+
+
+    CMFCButton*
+        icon4 = (CMFCButton*)GetDlgItem(IDC_SWITCHFL);
+    CImage image_4;
+    std::string path4("Resourses\\fl.png");
+    image_4.Load(CString(path4.c_str()));
+
+    CBitmap bitmap_4;
+    bitmap_4.Attach(image_4.Detach());
+    icon4->SetBitmap(bitmap_4);
+    icon4->SetFocus();
+
+    CMFCButton*
+        icon5 = (CMFCButton*)GetDlgItem(IDC_MFCDOWNLOAD);
+    CImage image_5;
+    std::string path5("Resourses\\download.png");
+    image_5.Load(CString(path5.c_str()));
+
+    CBitmap bitmap_5;
+    bitmap_5.Attach(image_5.Detach());
+    icon5->SetBitmap(bitmap_5);
+    icon5->SetFocus();
+
+    CMFCButton*
+        icon6 = (CMFCButton*)GetDlgItem(IDC_MFCREMOVE);
+    CImage image_6;
+    std::string path6("Resourses\\bin.png");
+    image_6.Load(CString(path6.c_str()));
+
+    CBitmap bitmap_6;
+    bitmap_6.Attach(image_6.Detach());
+    icon6->SetBitmap(bitmap_6);
+    icon6->SetFocus();
+    
+    
+    MainButton.SetFocus();
 }
 
 inline void CChatUIDlg::SetUserIcon()
@@ -162,6 +255,7 @@ inline void CChatUIDlg::SetUserIcon()
 
 inline void CChatUIDlg::SetUserList()
 {
+    user_list_update_.Lock();
     std::vector<UserInfo>* list = (std::vector<UserInfo>*)app_man.ActivateCommand(std::string("/userlist"));
     CListBox *usr_list = (CListBox *)GetDlgItem(IDC_LIST1);
     if(is_working_)
@@ -174,12 +268,19 @@ inline void CChatUIDlg::SetUserList()
     {
         usr_list->InsertString(usr_list->GetCount(), CString(i.user_name_.c_str()));
     }
+    user_list_update_.Unlock();
 }
 
 void CChatUIDlg::SetFileListP()
 {
     std::vector<RecvFileInfo> *list = (std::vector<RecvFileInfo>*)app_man.ActivateCommand(std::string("/fl " + ModeName));
     FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
+    for (int j = 9; j >= 0; j--)
+    {
+        FileGrid.DeleteRow(j);
+    }
+
+    FileGrid.SetRowCount(10);
     for (int i = 0; i < list->size(); i++)
     {
         FileGrid.SetItemText(i, 0, CString(std::to_string(i + 1).c_str()));
@@ -239,6 +340,7 @@ CChatUIDlg::~CChatUIDlg()
     app_man.StopNetwork();
     is_working_ = false;
     recv_thread_.Join();
+    check_thread_.Join();
 }
 
 void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
@@ -249,10 +351,8 @@ void CChatUIDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_CHAT, Chat);
     DDX_Control(pDX, IDC_USER_NAME, UserNameLabel);
     DDX_Control(pDX, IDC_USERLIST_LABEL, UserListLabel);
-    DDX_Control(pDX, IDC_SWITCH_C, CheckChat);
-    DDX_Control(pDX, IDC_SWITCH_FL, CheckFileList);
     DDX_Control(pDX, IDC_BUTTON1, AddFileButt);
-    DDX_Control(pDX, IDC_SETTING_BUT, OpsButt);
+    DDX_Control(pDX, IDC_MFCDOWNLOAD, DownloadButt);
 }
 
 BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
@@ -263,11 +363,13 @@ BEGIN_MESSAGE_MAP(CChatUIDlg, CDialogEx)
     ON_STN_CLICKED(IDC_USERICON, &CChatUIDlg::OnStnClickedUsericon)
     ON_WM_CTLCOLOR()
     ON_WM_TIMER()
-    ON_BN_CLICKED(IDC_SWITCH_C, &CChatUIDlg::OnBnClickedSwitchC)
-    ON_BN_CLICKED(IDC_SWITCH_FL, &CChatUIDlg::OnBnClickedSwitchFl)
     ON_BN_CLICKED(IDC_BUTTON1, &CChatUIDlg::OnBnClickedButton1)
-    ON_BN_CLICKED(IDC_SETTING_BUT, &CChatUIDlg::OnBnClickedSettingBut)
     ON_LBN_DBLCLK(IDC_LIST1, &CChatUIDlg::OnLbnDblclkList1)
+    ON_BN_CLICKED(IDC_MFC_SET, &CChatUIDlg::OnBnClickedMfcSet)
+    ON_BN_CLICKED(IDC_SWITCHCHAT, &CChatUIDlg::OnBnClickedSwitchchat)
+    ON_BN_CLICKED(IDC_SWITCHFL, &CChatUIDlg::OnBnClickedSwitchfl)
+    ON_BN_CLICKED(IDC_MFCDOWNLOAD, &CChatUIDlg::OnBnClickedMfcdownload)
+    ON_BN_CLICKED(IDC_MFCREMOVE, &CChatUIDlg::OnBnClickedMfcremove)
 END_MESSAGE_MAP()
 
 
@@ -280,16 +382,7 @@ BOOL CChatUIDlg::OnInitDialog()
   
     UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
     UserListLabel.SetWindowTextW(CString("Active Users: "));
-    CheckFileList.SetWindowTextW(CString("FL"));
-    CheckChat.SetWindowTextW(CString("C"));
     AddFileButt.SetWindowTextW(CString("ADD FILE"));
-    OpsButt.SetWindowTextW(CString("Ops"));
-
-   
-    recv_thread_.BeginThread(StartRecvLoop, this);
-    
-
-
 
     //set file table
     RECT rect = { LONG(25), LONG(65), LONG(735), LONG(440) };
@@ -301,12 +394,10 @@ BOOL CChatUIDlg::OnInitDialog()
     FileGrid.SetColumnWidth(1, 550);
     FileGrid.SetColumnWidth(2, 105);
 
-    OnBnClickedSwitchC();//set chat mode
+    OnBnClickedSwitchchat();//set chat mode
+    SetPrivateMode(L"Global");
 
     SetTimer(TID_ONLY_ONCE, 200, NULL);
-
-
-  
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
@@ -317,9 +408,8 @@ BOOL CChatUIDlg::OnInitDialog()
     GetDlgItem(IDC_USER_NAME)->SetFont(&font, TRUE);
 
 	// TODO: Add extra initialization here
-
-
-
+    recv_thread_.BeginThread(StartRecvLoop, this);
+    //check_thread_.BeginThread(CheckForCick, this);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -370,11 +460,11 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
     _bstr_t b(wc);
     const char* c = b;
 
-  
+
     ChatEdit.SetWindowTextW(TEXT(""));
 
     std::string name = app_man.GetName();
-   
+
     if (*c == '/')
     {
         if (!strncmp(c, "/w ", 3))
@@ -387,12 +477,12 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                 delete is_ok;
             }
             else
-            Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + *(&str+4));
+                Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + *(&str + 4));
         }
         else if (!strncmp(c, "/userlist", 9))
         {
             std::vector<std::string> *users = (std::vector<std::string>*) app_man.ActivateCommand(std::string(c));
-            for(auto i : *users)
+            for (auto i : *users)
             {
                 std::string str = '\n' + i;
                 Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
@@ -400,7 +490,7 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
         }
         else if (!strncmp(c, "/setname", 8))
         {
-            if (app_man.ActivateCommand(std::string(c)) == NULL)   
+            if (app_man.ActivateCommand(std::string(c)) == NULL)
                 AfxMessageBox(CString("Name is used !!!"));
             else
             {
@@ -416,9 +506,9 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                 for (size_t i = 0; i < list->size(); i++)
                 {
                     std::string str = std::to_string(i + 1) + ' ' + (*list)[i].GetName() + ' ' + std::to_string((*list)[i].GetSizeMB());
-                    Chat.InsertString( Chat.GetCount(), CString( str.c_str() )  );
+                    Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
                 }
-                
+
             }
             else
             {
@@ -428,7 +518,7 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
                     std::string str = std::to_string(i + 1) + ' ' + (*list)[i].name_ + ' ' + std::to_string((*list)[i].size_KB_ / 1024);
                     Chat.InsertString(Chat.GetCount(), CString(str.c_str()));
                 }
-                
+
             }
         }
         else if (!strncmp(c, "/getf", 5))
@@ -452,12 +542,16 @@ void CChatUIDlg::OnBnClickedMainbutton() //msg sending
     }
     else
     {
-        if (is_private)
-        app_man.SendMsgTo(c, ModeName);
-        else
-        app_man.SendMsg(c);
-        
-        Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
+        if (strlen(c))
+        {
+
+            if (is_private)
+                app_man.SendMsgTo(c, ModeName);
+            else
+                app_man.SendMsg(c);
+
+            Chat.InsertString(Chat.GetCount(), CString(name.c_str()) + CString(" : ") + str);
+        }
     }
 }
 
@@ -500,36 +594,30 @@ HBRUSH CChatUIDlg::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 }
 
 
-void CChatUIDlg::OnBnClickedSwitchC()
-{
-    MainButton.ShowWindow(SW_SHOW);
-    ChatEdit.ShowWindow(SW_SHOW);
-    Chat.ShowWindow(SW_SHOW);
-    FileGrid.ShowWindow(SW_HIDE);
-    AddFileButt.ShowWindow(SW_HIDE);
-}
 
 
-void CChatUIDlg::OnBnClickedSwitchFl()
-{
-    MainButton.ShowWindow(SW_HIDE);
-    ChatEdit.ShowWindow(SW_HIDE);
-    Chat.ShowWindow(SW_HIDE);
-    FileGrid.ShowWindow(SW_SHOW);
-    AddFileButt.ShowWindow(SW_SHOW);
-}
-
-inline void CChatUIDlg::SetFileList()
+inline void CChatUIDlg::SetFileList(int all )
 {
     std::vector<File> *list = (std::vector<File>*)app_man.ActivateCommand(std::string("/fl "));
-   FileGrid.ClearCells(CCellRange(FileGrid.GetCellRange()));
-    for (int i = 0; i < list->size(); i++)
+    for (int j =9 ; j>=0; j--)
     {
-        FileGrid.SetItemText(i, 0, CString(std::to_string(i+1).c_str()));
-        FileGrid.SetItemText(i, 1, CString(  (*list)[i].GetName().c_str()  ));
-        
-        FileGrid.SetItemText(i, 2, CString( std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
+        FileGrid.DeleteRow(j); 
     }
+
+    FileGrid.SetRowCount(10);
+        FileGrid.ClearCells(CCellRange(0,0,9,2));
+        int i = 0;
+        for (; i < list->size(); i++)
+        {
+            FileGrid.SetItemText(i, 0, CString(std::to_string(i + 1).c_str()));
+            FileGrid.SetItemText(i, 1, CString((*list)[i].GetName().c_str()));
+
+            FileGrid.SetItemText(i, 2, CString(std::to_string((*list)[i].GetSizeMB()).c_str()) + CString(" MB"));
+        }
+        FileGrid.SetItemText(i, 0, CString(""));
+        FileGrid.SetItemText(i, 1, CString(""));
+
+        FileGrid.SetItemText(i, 2, CString(""));
     FileGrid.Refresh();
 }
 
@@ -564,19 +652,7 @@ void CChatUIDlg::OnBnClickedButton1()
 }
 
 
-void CChatUIDlg::OnBnClickedSettingBut()
-{
-   
-    SettingsDlg dlg; //setting dlg
-    dlg.SetAM(&app_man);
 
-    if (dlg.DoModal() == IDOK) // DoModal() - open dlg
-    {
-        UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
-        SetUserIcon();
-    }
-
-}
 
 
 void CChatUIDlg::OnLbnDblclkList1()
@@ -602,4 +678,68 @@ void CChatUIDlg::OnLbnDblclkList1()
 
 
    
+}
+
+
+void CChatUIDlg::OnBnClickedMfcSet()
+{
+    SettingsDlg dlg; //setting dlg
+    dlg.SetAM(&app_man);
+
+    if (dlg.DoModal() == IDOK) // DoModal() - open dlg
+    {
+        UserNameLabel.SetWindowTextW(CString(app_man.GetName().c_str()));
+        SetUserIcon();
+    }
+}
+
+
+void CChatUIDlg::OnBnClickedSwitchchat()
+{
+    MainButton.ShowWindow(SW_SHOW);
+    ChatEdit.ShowWindow(SW_SHOW);
+    Chat.ShowWindow(SW_SHOW);
+    FileGrid.ShowWindow(SW_HIDE);
+    AddFileButt.ShowWindow(SW_HIDE);
+    DownloadButt.ShowWindow(SW_HIDE);
+    GetDlgItem(IDC_MFCREMOVE)->ShowWindow(SW_HIDE);
+
+}
+
+
+void CChatUIDlg::OnBnClickedSwitchfl()
+{
+    MainButton.ShowWindow(SW_HIDE);
+    ChatEdit.ShowWindow(SW_HIDE);
+    Chat.ShowWindow(SW_HIDE);
+    FileGrid.ShowWindow(SW_SHOW);
+    if (is_private)
+    DownloadButt.ShowWindow(SW_SHOW);
+    else
+    {
+        GetDlgItem(IDC_MFCREMOVE)->ShowWindow(SW_SHOW);
+        AddFileButt.ShowWindow(SW_SHOW);
+    }
+}
+
+
+void CChatUIDlg::OnBnClickedMfcdownload()
+{
+    CCellID cellID = FileGrid.GetFocusCell();
+    CGridCellBase* cell = FileGrid.GetCell(cellID.row, cellID.col);
+    app_man.GetFile(ModeName, cellID.row + 1);
+    
+}
+
+
+void CChatUIDlg::OnBnClickedMfcremove()
+{
+    CCellID cellID = FileGrid.GetFocusCell();
+    CGridCellBase* cell = FileGrid.GetCell(cellID.row, cellID.col);
+    
+    std::string str = "/removef ";
+    str+= std::to_string(cellID.row + 1);
+
+    app_man.ActivateCommand(str);
+    SetFileList(cellID.row + 1);
 }

@@ -5,11 +5,7 @@ Mutex::Mutex()
     mutex_handle_ = CreateMutex(NULL, FALSE, NULL);
 }
 
-Mutex::~Mutex()
-{
-    if(mutex_handle_ != INVALID_HANDLE_VALUE)
-        CloseHandle(mutex_handle_);
-}
+Mutex::~Mutex(){}
 
 void Mutex::Lock()const
 {

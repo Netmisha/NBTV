@@ -20,6 +20,9 @@ public:
     bool BeginThread(thread_function func, void *params);
     //joines thread
     void Join()const;
+    //returns true if thread is joined
+    //false otherwise
+    bool TryJoin()const;
 
 private:
 

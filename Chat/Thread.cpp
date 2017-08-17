@@ -24,3 +24,13 @@ void Thread::Join()const
 {
     WaitForSingleObject(thread_handle_, INFINITE);
 }
+
+bool Thread::TryJoin()const
+{
+    bool result = false;
+    if(WaitForSingleObject(thread_handle_, 0) == WAIT_OBJECT_0)
+    {
+        result = true;
+    }
+    return result;
+}
